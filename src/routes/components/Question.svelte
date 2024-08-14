@@ -9,9 +9,6 @@
     <div class="number-container">
         <p>{number}</p>
     </div>
-    {#each reasons as reason}
-        <Badge title={reason}/>
-    {/each}
 </div>
 
 <style>

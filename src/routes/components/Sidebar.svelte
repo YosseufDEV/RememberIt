@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { DATABASE } from "../../database";
     import AddCollectionForm from "./AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import { invoke } from "@tauri-apps/api/core";
+    import { getCollectionTitles } from "../../database"
 
     $: collections = [] as { id: number, title: string }[];
 
@@ -13,7 +13,7 @@
     }
 
     async function fetchCollections() {
-        collections = await invoke("get_collections_titles");
+        collections = await getCollectionTitles();
     }
 
 

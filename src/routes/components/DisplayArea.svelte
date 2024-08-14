@@ -1,44 +1,42 @@
 <script lang="ts">  
-    import { Reason } from "../types";
-    import { questions_collection } from "../selected-questions-store";
-    import { DATABASE, loadDatabase } from "../../database";
+import { invoke } from "@tauri-apps/api/core";
+
     import AddQuestionForm from "./AddQuestionForm.svelte";
     import Question from "./Question.svelte";
-    import { invoke } from "@tauri-apps/api/core";
+    import type { QuestionsCollection } from "../types"
+    import { questions_collection } from "../selected-questions-store";
+    import { getCollectionById, getQuestionsByCollectionId, insertQuestionByCollectionId } from "../../database";
 
-    $: questionsCollection = []
-
-    async function get_first_collection() {
-        questions_collection.set(await invoke("get_questions_by_collection_id", { id: 1 }))
-    }
-
-    // TODO: Update This Shit
-    function deleteQuestionFromCurrentCollection(question_number: number) {
-        const D_copy = DATABASE;
-        const NEW_DATABASE = DATABASE[questionsCollection.id].questions.filter((q) => q.question_number != question_number) 
-        D_copy[questionsCollection.id].questions = NEW_DATABASE;
-        // updateDatabase(D_copy)
-        questions_collection.set(D_copy[questionsCollection.id]);
-    }
+    $: questionsCollection = { questions: [], id: -1, title: "UNTITLED" } as QuestionsCollection
 
     async function addQuestionToCurrentCollection(e: CustomEvent) {
         const question = e.detail;
-        await invoke("insert_question_by_collection_id", { questionNumber: question.question_number, collectionId: 0 })
-    }
+        let notDuplicate = true;
 
+        questionsCollection.questions.forEach((q) => {
+            if(q.question_number == question.question_number) {
+                notDuplicate = false;
+            }
+        })
+
+        if(notDuplicate) {
+            insertQuestionByCollectionId(question.question_number, questionsCollection.id)
+            questionsCollection.questions = await getQuestionsByCollectionId(questionsCollection.id);
+            console.log("updated");
+        }
+
+    }
     questions_collection.subscribe((collection) => questionsCollection = collection);
 
 </script>
 
 <div>
-    {#await loadDatabase()}
-    {/await}
-    {#if DATABASE.length > 0}
+    {#if questions_collection}
         <h1>{questionsCollection.title}</h1>
-        {#each questionsCollection.questions  as question (question.question_number)}
-        <Question number={question.question_number} reasons={question.reason}/>
-        {/each}
     {/if}
+    {#each questionsCollection.questions  as question (question.question_number)}
+        <Question number={question.question_number} reasons={question.reason}/>
+    {/each}
     <p>{questionsCollection.id}</p>
     <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
 </div>

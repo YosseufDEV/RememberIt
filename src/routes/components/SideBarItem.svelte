@@ -1,10 +1,11 @@
 <script lang="ts">
+    import { getCollectionById } from "../../database";
     import { questions_collection } from "../selected-questions-store";
     import { invoke } from "@tauri-apps/api/core";
 
 
     async function handleClick(e: MouseEvent) {
-        questions_collection.set(await invoke("get_questions_by_collection_id", { id: id }))
+        questions_collection.set(await getCollectionById(id))
     }
 
     export let id: number, name: string="Untitled";

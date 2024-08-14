@@ -14,6 +14,7 @@ pub fn run() {
                 crate::database::get_collections_titles,
                 crate::database::insert_question_by_collection_id,
                 crate::database::get_questions_by_collection_id,
+                crate::database::get_collection_by_id,
         ])
         .plugin(tauri_plugin_shell::init())
         .run(tauri::generate_context!())

@@ -30,6 +30,27 @@ pub fn create_collection(title: String) -> QuestionsCollection {
 }
 
 #[tauri::command]
+pub fn get_collection_by_id(col_id: i32) -> ReturnedQuestionsCollection {
+    use crate::schema::questions_collection::dsl::*;
+    use crate::schema::question::dsl::{question, collection_id};
+
+    let connection = &mut establish_connection();
+
+    let collection: QuestionsCollection = questions_collection.filter(id.eq(col_id))
+                                                              .first(connection)
+                                                              .expect("Failed to insert collection");
+    let questions: Vec<Question> = question.filter(collection_id.to_owned().eq(collection.id))
+                                           .select(Question::as_select())
+                                           .load(connection)
+                                           .expect("Failed to fetch questions for collection");
+    ReturnedQuestionsCollection {
+        title: collection.title,
+        id: collection.id,
+        questions
+    }
+}
+
+#[tauri::command]
 pub fn insert_question_by_collection_id(question_number: i32, collection_id: i32) -> Question {
     use crate::schema::question;
 
@@ -48,13 +69,13 @@ pub fn insert_question_by_collection_id(question_number: i32, collection_id: i32
 }
 
 #[tauri::command]
-pub fn get_questions_by_collection_id(id: i32) -> Vec<Question> {
+pub fn get_questions_by_collection_id(col_id: i32) -> Vec<Question> {
     use crate::schema::question::dsl::*;
 
     let connection = &mut establish_connection();
 
     question
-        .filter(collection_id.to_owned().eq(id))
+        .filter(collection_id.to_owned().eq(col_id))
         .select(Question::as_select()).load(connection)
         .expect("Failed to fetch questions for collection")
 }
