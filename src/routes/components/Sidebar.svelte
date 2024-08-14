@@ -2,18 +2,26 @@
     import AddCollectionForm from "./AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import { invoke } from "@tauri-apps/api/core";
-    import { getCollectionTitles } from "../../database"
+    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../database"
+    import AddParentCollectionForm from "./AddParentCollectionForm.svelte";
+    import type { ParentCollection, QuestionsCollection } from "../types";
 
-    $: collections = [] as { id: number, title: string }[];
+    $: parentCollections = [] as ParentCollection[];
 
     async function handleCollectionSubmit(e: CustomEvent) {
-        await invoke("create_collection", { title: e.detail.title })
+        createCollection(e.detail.title);
+        fetchCollections();
+
+    }
+
+    async function handleParentCollectionSubmit(e: CustomEvent) {
+        createParentCollection(e.detail.title);
         fetchCollections();
 
     }
 
     async function fetchCollections() {
-        collections = await getCollectionTitles();
+        parentCollections = await getAllParentCollections();
     }
 
 
@@ -21,9 +29,10 @@
 
 <div class="container">
     {#await fetchCollections() } {/await}
-    {#each collections as collection (collection.id)}
+    {#each parentCollections as collection (collection.id)}
         <SideBarItem id={collection.id} name={collection.title} />
     {/each}
+    <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
 </div>
 
