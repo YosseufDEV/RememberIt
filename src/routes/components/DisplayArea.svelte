@@ -1,43 +1,45 @@
 <script lang="ts">  
-import { invoke } from "@tauri-apps/api/core";
-
+    import ParentRender from "./ParentRender.svelte";
+    import ChildCollectionRender from "./ChildCollectionRender.svelte";
     import AddQuestionForm from "./AddQuestionForm.svelte";
-    import Question from "./Question.svelte";
-    import type { QuestionsCollection } from "../types"
-    import { questions_collection } from "../selected-questions-store";
-    import { getCollectionById, getQuestionsByCollectionId, insertQuestionByCollectionId } from "../../database";
 
-    $: questionsCollection = { questions: [], id: -1, title: "UNTITLED" } as QuestionsCollection
+    import type { QuestionsCollection, ParentCollection, Question } from "../types"
+    import { getQuestionsByCollectionId, insertQuestionByCollectionId } from "../../database";
+    import { active_collection } from "../active_collection_store";
+
+
+    $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
 
     async function addQuestionToCurrentCollection(e: CustomEvent) {
-        const question = e.detail;
-        let notDuplicate = true;
+        if('parent_collection_id' in activeCollection) {
+            const question = e.detail;
+            let notDuplicate = true;
 
-        questionsCollection.questions.forEach((q) => {
-            if(q.question_number == question.question_number) {
-                notDuplicate = false;
+            activeCollection.questions.forEach((q: Question) => {
+                if(q.question_number == question.question_number) {
+                    notDuplicate = false;
+                }
+            })
+
+            // TODO: Add a nested reason to the "question" in question
+            if(notDuplicate) {
+                insertQuestionByCollectionId(question.question_number, activeCollection.id)
+                activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
+                console.log("updated");
             }
-        })
 
-        if(notDuplicate) {
-            insertQuestionByCollectionId(question.question_number, questionsCollection.id)
-            questionsCollection.questions = await getQuestionsByCollectionId(questionsCollection.id);
-            console.log("updated");
         }
-
     }
-    questions_collection.subscribe((collection) => questionsCollection = collection);
+    active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>
 
 <div>
-    {#if questions_collection}
-        <h1>{questionsCollection.title}</h1>
+    {#if 'parent_collection_id' in activeCollection}
+        <ChildCollectionRender childCollection={activeCollection} />
+        {:else if activeCollection.id > 0}
+        <ParentRender parentCollection={activeCollection}/>
     {/if}
-    {#each questionsCollection.questions  as question (question.question_number)}
-        <Question number={question.question_number} reasons={question.reason}/>
-    {/each}
-    <p>{questionsCollection.id}</p>
     <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
 </div>
 

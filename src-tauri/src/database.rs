@@ -27,15 +27,22 @@ pub fn create_parent_collection(title: String) -> ParentCollection {
 }
 
 #[tauri::command]
-pub fn get_parent_collection_by_id(p_id: i32) -> ParentCollection {
+pub fn get_parent_collection_by_id(p_id: i32) -> ReturnedParentCollection {
     use crate::schema::parent_collection::dsl::*;
 
     let connection = &mut establish_connection();
 
-    parent_collection
-        .filter(id.to_owned().eq(p_id))
-        .first(connection)
-        .expect("Failed to fetch parent collection")
+    let collection: ParentCollection = parent_collection
+                        .filter(id.to_owned().eq(p_id))
+                        .first(connection)
+                        .expect("Failed to fetch parent collection");
+    let child_collections = get_collections_by_parent_id(p_id);
+
+    ReturnedParentCollection {
+        id: collection.id,
+        title: collection.title,
+        child_collections
+    }
 }
 
 #[tauri::command]

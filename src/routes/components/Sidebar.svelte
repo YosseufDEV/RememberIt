@@ -1,15 +1,22 @@
 <script lang="ts">
+    import { get } from "svelte/store";
+
     import AddCollectionForm from "./AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
-    import { invoke } from "@tauri-apps/api/core";
-    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../database"
     import AddParentCollectionForm from "./AddParentCollectionForm.svelte";
+    import SidebarItemChild from "./SidebarItemChild.svelte";
     import type { ParentCollection, QuestionsCollection } from "../types";
+    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../database"
+    import { active_collection } from "../active_collection_store";
 
     $: parentCollections = [] as ParentCollection[];
 
+    // BUG: Would throw an error when the selected element is not a parent
     async function handleCollectionSubmit(e: CustomEvent) {
-        createCollection(e.detail.title);
+        let parent = get(active_collection);
+        if(parent) {
+            createCollection(e.detail.title, parent.id);
+        }
         fetchCollections();
 
     }
@@ -31,6 +38,9 @@
     {#await fetchCollections() } {/await}
     {#each parentCollections as collection (collection.id)}
         <SideBarItem id={collection.id} name={collection.title} />
+        {#each collection.child_collections as childCollection (childCollection.id)}
+            <SidebarItemChild id={childCollection.id} name={childCollection.title} />
+        {/each}
     {/each}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
