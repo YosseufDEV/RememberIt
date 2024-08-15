@@ -4,7 +4,6 @@
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
-    import SidebarItemChild from "./SidebarItemChild.svelte";
 
     import type { ParentCollection, QuestionsCollection } from "../../types";
     import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles, insertReason } from "../../../database"
@@ -41,10 +40,11 @@
 </script>
 
 <div class="container">
-    {#await fetchCollections() } {/await}
-    {#each parentCollections as collection (collection.id)}
-        <SideBarItem id={collection.id} name={collection.title} />
-    {/each}
+    {#await fetchCollections() then } 
+        {#each parentCollections as collection (collection.id)}
+            <SideBarItem id={collection.id} name={collection.title} />
+        {/each}
+    {/await}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
     <AddLabelForm on:addCollection={handleLabelSubmit}/>

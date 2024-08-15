@@ -1,7 +1,7 @@
 <script lang="ts">  
-    import ParentRender from "./ParentRender.svelte";
-    import ChildCollectionRender from "./ChildCollectionRender.svelte";
     import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
+    import ParentCollectionView from "./Views/ParentCollectionView.svelte";
+    import ChildCollectionView from "./Views/ChildCollectionView.svelte";
 
     import type { QuestionsCollection, ParentCollection, Question } from "../types"
     import { getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
@@ -44,9 +44,9 @@
 
 <div>
     {#if 'parent_collection_id' in activeCollection}
-        <ChildCollectionRender childCollection={activeCollection} />
+        <ChildCollectionView childCollection={activeCollection} />
         {:else if activeCollection.id > 0}
-        <ParentRender parentCollection={activeCollection}/>
+        <ParentCollectionView parentCollection={activeCollection}/>
     {/if}
     <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
 </div>
