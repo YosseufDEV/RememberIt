@@ -22,14 +22,15 @@
             })
 
             // TODO: Add a nested reason to the "question" in question
+            // BUG: Would throw and error when not inside a collection!
             if(notDuplicate) {
                 insertQuestionByCollectionId(question.question_number, activeCollection.id)
                 activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
                 console.log("updated");
             }
-
         }
     }
+
     active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>

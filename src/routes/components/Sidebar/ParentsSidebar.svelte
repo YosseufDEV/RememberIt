@@ -1,13 +1,14 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import AddCollectionForm from "./AddCollectionForm.svelte";
+    import AddCollectionForm from "../AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
-    import AddParentCollectionForm from "./AddParentCollectionForm.svelte";
+    import AddParentCollectionForm from "../AddParentCollectionForm.svelte";
     import SidebarItemChild from "./SidebarItemChild.svelte";
-    import type { ParentCollection, QuestionsCollection } from "../types";
-    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../database"
-    import { active_collection } from "../active_collection_store";
+
+    import type { ParentCollection, QuestionsCollection } from "../../types";
+    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../../database"
+    import { active_collection } from "../../active_collection_store";
 
     $: parentCollections = [] as ParentCollection[];
 
@@ -38,9 +39,6 @@
     {#await fetchCollections() } {/await}
     {#each parentCollections as collection (collection.id)}
         <SideBarItem id={collection.id} name={collection.title} />
-        {#each collection.child_collections as childCollection (childCollection.id)}
-            <SidebarItemChild id={childCollection.id} name={childCollection.title} />
-        {/each}
     {/each}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />

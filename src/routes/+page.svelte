@@ -1,12 +1,14 @@
 <script lang="ts">
-    import Sidebar from "./components/Sidebar.svelte";
     import DisplayArea from "./components/DisplayArea.svelte";
+    import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
+    import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import '../app.css'
 </script>
 
 <div class="container">
+    <ParentsSidebar />
+    <ChildrenSidebar />
     <DisplayArea />
-    <Sidebar />
 </div>
 
 <style>
