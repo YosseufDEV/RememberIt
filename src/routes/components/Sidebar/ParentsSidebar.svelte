@@ -1,14 +1,15 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import AddCollectionForm from "../AddCollectionForm.svelte";
+    import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
-    import AddParentCollectionForm from "../AddParentCollectionForm.svelte";
+    import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
     import SidebarItemChild from "./SidebarItemChild.svelte";
 
     import type { ParentCollection, QuestionsCollection } from "../../types";
-    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles } from "../../../database"
+    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles, insertReason } from "../../../database"
     import { active_collection } from "../../active_collection_store";
+    import AddLabelForm from "../Forms/AddLabelForm.svelte";
 
     $: parentCollections = [] as ParentCollection[];
 
@@ -28,6 +29,10 @@
 
     }
 
+    async function handleLabelSubmit(e: CustomEvent) {
+        insertReason(e.detail.label);
+    }
+
     async function fetchCollections() {
         parentCollections = await getAllParentCollections();
     }
@@ -42,6 +47,7 @@
     {/each}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
+    <AddLabelForm on:addCollection={handleLabelSubmit}/>
 </div>
 
 <style>

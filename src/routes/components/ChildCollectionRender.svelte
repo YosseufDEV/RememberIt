@@ -9,6 +9,6 @@
 <div>
     <h1>{childCollection.title}</h1>
     {#each childCollection.questions  as question (question.question_number)}
-        <Question number={question.question_number} reasons={question.reason}/>
+        <Question number={question.question_number} reasons={question.reasons}/>
     {/each}
 </div>

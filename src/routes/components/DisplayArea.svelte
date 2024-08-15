@@ -1,10 +1,10 @@
 <script lang="ts">  
     import ParentRender from "./ParentRender.svelte";
     import ChildCollectionRender from "./ChildCollectionRender.svelte";
-    import AddQuestionForm from "./AddQuestionForm.svelte";
+    import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
 
     import type { QuestionsCollection, ParentCollection, Question } from "../types"
-    import { getQuestionsByCollectionId, insertQuestionByCollectionId } from "../../database";
+    import { getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
     import { active_collection } from "../active_collection_store";
 
 
@@ -12,7 +12,13 @@
 
     async function addQuestionToCurrentCollection(e: CustomEvent) {
         if('parent_collection_id' in activeCollection) {
-            const question = e.detail;
+            type SumbitedQuestion = {
+                id: number,
+                question_number: number,
+                reason: number,
+            }
+                
+            const question: SumbitedQuestion = e.detail;
             let notDuplicate = true;
 
             activeCollection.questions.forEach((q: Question) => {
@@ -24,9 +30,10 @@
             // TODO: Add a nested reason to the "question" in question
             // BUG: Would throw and error when not inside a collection!
             if(notDuplicate) {
-                insertQuestionByCollectionId(question.question_number, activeCollection.id)
+                insertQuestionByCollectionId(question.question_number, activeCollection.id).then(q => {
+                    insertQuestionReason(q.id, question.reason)
+                })
                 activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
-                console.log("updated");
             }
         }
     }

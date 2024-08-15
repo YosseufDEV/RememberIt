@@ -1,19 +1,21 @@
 <script lang="ts">
-    import { Reason } from "../types";
-
-    export let title: Reason;
+    export let label: string;
 </script>
 
 <div class="container">
-    <p>{title}</p> 
+    <p>{label}</p> 
 </div>
 
 <style>
     .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 75px;
         background: #AB274F; 
-        border-radius: 10px;
+        border-radius: 20px;
         margin: 0 2px;
-        padding: 5px;
+        padding: 2px;
         color: white;
         font-weight: 500;
     }

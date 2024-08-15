@@ -10,7 +10,7 @@
     {#each parentCollection.child_collections  as collection (collection.id)}
         <h3>{collection.title}</h3>
         {#each collection.questions  as question (question.question_number)}
-            <Question number={question.question_number} reasons={question.reason}/>
+            <Question number={question.question_number} reasons={question.reasons}/>
         {/each}
     {/each}
     <!-- <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/> -->

@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { ParentCollection, Question, QuestionsCollection } from "./routes/types";
+import type { ParentCollection, Question, QuestionsCollection, Reason } from "./routes/types";
 
 async function createParentCollection(title: string) {
     await invoke("create_parent_collection", { title })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
@@ -38,15 +38,34 @@ async function getQuestionsByCollectionId(id: number): Promise<Question[]> {
      return await invoke("get_questions_by_collection_id", { colId: id });
 }
 
+async function insertReason(label: string): Promise<string> {
+    return await invoke("insert_reason", { label })
+}
+
+async function getReasons(): Promise<Reason[]> {
+    return await invoke("get_reasons")
+}
+
+async function insertQuestionReason(questionId: number, reasonId: number) {
+    return await invoke("insert_question_reason", { questionId, reasonId })
+}
+
+async function getQuestionReasonsById(questionId: number): Promise<string[]> {
+    return await invoke("get_question_reasons_by_id", { questionId })
+}
 
 export { 
-         getCollectionById,
-         getCollectionTitles, 
-         getQuestionsByCollectionId, 
-         createCollection, 
-         insertQuestionByCollectionId,
-         createParentCollection,
-         getAllParentCollections,
-         getParentCollectionById,
-         getCollectionsByParentId
+    createCollection, 
+    createParentCollection,
+    insertQuestionReason,
+    insertQuestionByCollectionId,
+    insertReason,
+    getCollectionById,
+    getCollectionTitles, 
+    getQuestionsByCollectionId, 
+    getAllParentCollections,
+    getParentCollectionById,
+    getCollectionsByParentId,
+    getReasons,
+    getQuestionReasonsById,
 }; 

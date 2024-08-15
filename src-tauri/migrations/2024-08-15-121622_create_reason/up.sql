@@ -1,0 +1,5 @@
+-- Your SQL goes here
+CREATE TABLE reason (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    label TEXT NOT NULL
+);

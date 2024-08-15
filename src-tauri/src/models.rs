@@ -31,6 +31,14 @@ pub struct QuestionsCollection {
 }
 
 
+#[derive(Serialize)]
+pub struct ReturnedQuestionsCollection {
+    pub id: i32,
+    pub parent_collection_id: i32,
+    pub title: String,
+    pub questions: Vec<ReturnedQuestion>,
+}
+
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::questions_collection)]
 pub struct NewQuestionsCollection {
@@ -38,12 +46,17 @@ pub struct NewQuestionsCollection {
     pub title: String,
 }
 
-#[derive(Serialize)]
-pub struct ReturnedQuestionsCollection {
+#[derive(Queryable, Identifiable, Selectable, Serialize)]
+#[diesel(table_name = crate::schema::reason)]
+pub struct Reason {
     pub id: i32,
-    pub parent_collection_id: i32,
-    pub title: String,
-    pub questions: Vec<Question>,
+    pub label: String,
+}
+
+#[derive(Insertable, Serialize)]
+#[diesel(table_name = crate::schema::reason)]
+pub struct NewReason {
+    pub label: String,
 }
 
 #[derive(Queryable, Associations, Identifiable, Selectable, Serialize)]
@@ -60,4 +73,22 @@ pub struct Question {
 pub struct NewQuestion {
     pub question_number: i32,
     pub collection_id: i32,
+}
+
+#[derive(Serialize)]
+pub struct ReturnedQuestion {
+    pub id: i32,
+    pub question_number: i32,
+    pub collection_id: i32,
+    pub reasons: Vec<String>
+}
+
+#[derive(Identifiable, Insertable, Selectable, Queryable, Associations)]
+#[diesel(belongs_to(Reason))]
+#[diesel(belongs_to(Question))]
+#[diesel(primary_key(question_id, reason_id))]
+#[diesel(table_name = crate::schema::question_reason)]
+pub struct QuestionReason {
+    pub question_id: i32,
+    pub reason_id: i32,
 }

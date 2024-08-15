@@ -2,13 +2,16 @@
     import type { Reason } from "../types";
     import Badge from "./Badge.svelte";
 
-    export let number: number, reasons: Reason[];
+    export let number: number, reasons: string[];
 </script>
 
 <div class="container">
     <div class="number-container">
         <p>{number}</p>
     </div>
+    {#each reasons as reason}
+        <Badge label={reason}/>
+    {/each}
 </div>
 
 <style>

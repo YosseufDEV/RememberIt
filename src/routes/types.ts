@@ -1,9 +1,7 @@
-export enum Reason {
-    DIDNT_THINK = "Didn't Think",
-    COULDNT_UNDERSTAND = "Couldn't Understand",
-    COULDNT_RECALL = "Couldn't Recall",
+export interface Reason {
+    id: number,
+    label: string,
 }
-
 
 export interface ParentCollection {
     id: number,
@@ -19,6 +17,7 @@ export interface QuestionsCollection {
 }
 
 export interface Question {
+    id: number,
     question_number: number,
-    reason: Reason[],
+    reason: string[],
 }
