@@ -4,9 +4,17 @@ export enum Reason {
     COULDNT_RECALL = "Couldn't Recall",
 }
 
+
+export interface ParentCollection {
+    id: number,
+    title: string,
+    child_collections: QuestionsCollection[]
+}
+
 export interface QuestionsCollection {
     title: string,
     id: number,
+    parent_collection_id: number,
     questions: Question[]
 }
 

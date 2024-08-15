@@ -1,5 +1,5 @@
 -- Your SQL goes here
-CREATE TABLE questions_collection (
+CREATE TABLE parent_collection (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     title TEXT NOT NULL
 );

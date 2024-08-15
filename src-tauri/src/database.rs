@@ -8,17 +8,76 @@ fn establish_connection() -> SqliteConnection {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
     SqliteConnection::establish(&database_url)
-                        .unwrap_or_else(|_|
-                            panic!("Failed to connect to database {}", database_url))
+                        .unwrap_or_else(|_| panic!("Failed to connect to database {}", database_url))
 }
 
 #[tauri::command]
-pub fn create_collection(title: String) -> QuestionsCollection {
+pub fn create_parent_collection(title: String) -> ParentCollection {
+    use crate::schema::parent_collection;
+
+    let conn = &mut establish_connection();
+
+    let collection = NewParentCollection { title };
+
+    diesel::insert_into(parent_collection::table)
+            .values(&collection)
+            .returning(ParentCollection::as_returning())
+            .get_result(conn)
+            .expect("Failed to insert collection")
+}
+
+#[tauri::command]
+pub fn get_parent_collection_by_id(p_id: i32) -> ReturnedParentCollection {
+    use crate::schema::parent_collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    let collection: ParentCollection = parent_collection
+                        .filter(id.to_owned().eq(p_id))
+                        .first(connection)
+                        .expect("Failed to fetch parent collection");
+    let child_collections = get_collections_by_parent_id(p_id);
+
+    ReturnedParentCollection {
+        id: collection.id,
+        title: collection.title,
+        child_collections
+    }
+}
+
+#[tauri::command]
+pub fn get_all_parent_collections() -> Vec<ReturnedParentCollection> {
+    use crate::schema::parent_collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    let mut whole_collections: Vec<ReturnedParentCollection> = Vec::new();
+    let selected_parent_collections = parent_collection
+        .select(ParentCollection::as_select())
+        .load(connection)
+        .expect("Failed to fetch parent collection");
+    for collection in selected_parent_collections.iter() {
+        let questions_collection = get_collections_by_parent_id(collection.id);
+
+        let whole_collection = ReturnedParentCollection {
+            id: collection.id,
+            title: collection.title.clone(),
+            child_collections: questions_collection,
+        };
+
+        whole_collections.push(whole_collection);
+    }
+    whole_collections
+}
+
+#[tauri::command]
+pub fn create_collection(title: String, parent_collection_id: i32) -> QuestionsCollection {
     use crate::schema::questions_collection;
 
     let conn = &mut establish_connection();
 
     let collection = NewQuestionsCollection {
+        parent_collection_id,
         title
     };
 
@@ -46,8 +105,38 @@ pub fn get_collection_by_id(col_id: i32) -> ReturnedQuestionsCollection {
     ReturnedQuestionsCollection {
         title: collection.title,
         id: collection.id,
+        parent_collection_id: collection.parent_collection_id, 
         questions
     }
+}
+
+#[tauri::command]
+pub fn get_collections_by_parent_id(par_id: i32) -> Vec<ReturnedQuestionsCollection> {
+    use crate::schema::questions_collection::dsl::*;
+    use crate::schema::question::dsl::{question, collection_id};
+
+    let connection = &mut establish_connection();
+    let mut collections_vec = Vec::new();
+
+    let collections: Vec<QuestionsCollection> = questions_collection
+                                                .filter(parent_collection_id.eq(par_id))
+                                                .select(QuestionsCollection::as_select())
+                                                .load(connection)
+                                                .expect("Failed to insert collection");
+    for collection in collections.iter() {
+        let selected_questions: Vec<Question> = question.filter(collection_id.to_owned().eq(collection.id))
+                                               .select(Question::as_select())
+                                               .load(connection)
+                                               .expect("Failed to fetch questions for collection");
+        let whole_collection = ReturnedQuestionsCollection {
+            id: collection.id,
+            title: collection.title.clone(),
+            questions: selected_questions,
+            parent_collection_id: par_id
+        };
+        collections_vec.push(whole_collection);
+    }
+    collections_vec
 }
 
 #[tauri::command]
@@ -99,6 +188,7 @@ pub fn get_all_collections() -> Vec<ReturnedQuestionsCollection> {
         let complete_collection = ReturnedQuestionsCollection {
             id: collection.id,
             title: collection.title.clone(),
+            parent_collection_id: collection.id,
             questions
         };
         complete_collections.push(complete_collection)

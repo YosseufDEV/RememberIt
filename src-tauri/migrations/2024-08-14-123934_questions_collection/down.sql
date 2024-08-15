@@ -1,2 +1,2 @@
 -- This file should undo anything in `up.sql`
-drop table questions_collection
+DROP TABLE question_collection
