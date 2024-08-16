@@ -46,6 +46,10 @@ async function getQuestionsByCollectionId(id: number): Promise<Question[]> {
      return await invoke("get_questions_by_collection_id", { colId: id });
 }
 
+async function getQuestionByQuestionNumber(id: number, questionNumber: number): Promise<Question> {
+     return await invoke("get_question_by_question_number", { colId: id, questionNumber});
+}
+
 async function insertReason(label: string): Promise<string> {
     return await invoke("insert_reason", { label })
 }
@@ -72,6 +76,7 @@ export {
     getCollectionById,
     getCollectionTitles, 
     getQuestionsByCollectionId, 
+    getQuestionByQuestionNumber, 
     getAllParentCollections,
     getParentCollectionById,
     getCollectionsByParentId,

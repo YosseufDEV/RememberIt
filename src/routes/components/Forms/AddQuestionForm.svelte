@@ -12,6 +12,7 @@
             question_number: questionNumber,
             reason: reason
         }
+        console.log(question);
         dispatch("addQuestion", question);
     }
 </script>

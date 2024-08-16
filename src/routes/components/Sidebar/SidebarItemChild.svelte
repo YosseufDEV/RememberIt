@@ -15,15 +15,14 @@
 </script>
 
 <!-- svelte-ignore a11y-<code> -->
-<div class="item" on:click={handleClick}>
-    <p>{collection.title}</p>
+<div click={handleClick}>
+    <p class="item" >{collection.title}</p>
 </div>
 
 <style> 
     .item {
         margin-left: 10px;
         font-size: 20px;
-        color: grey;
     }
     .item:hover {
         color: blue;

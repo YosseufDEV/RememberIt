@@ -16,6 +16,7 @@
     {#each activeParent.child_collections as childCollection (childCollection.id)}
         <SidebarItemChild collection={childCollection} />
     {/each}
+    <!-- FIX: Clicking on any nested child will change parent -->
     <NestedChildrenSidebarView collection={activeParent}/>
     <!-- {#each activeParent.nested_parent_collections as childCollection (childCollection.id)} -->
     <!--     <SidebarItemChild collection={childCollection} /> -->
@@ -25,7 +26,7 @@
 
 <style>
     .container {
-        background: #e5e5e5;
+        background: rgba(0, 0, 0, 0.95);
         width: 25%;
         height: 100%;
         display: flex; 

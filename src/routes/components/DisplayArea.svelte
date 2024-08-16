@@ -4,8 +4,9 @@
     import ChildCollectionView from "./Views/ChildCollectionView.svelte";
 
     import type { QuestionsCollection, ParentCollection, Question } from "../types"
-    import { getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
+    import { getQuestionByQuestionNumber, getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
     import { active_collection } from "../active_collection_store";
+    import Page from "../+page.svelte";
 
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
@@ -28,12 +29,16 @@
             })
 
             // TODO: Add a nested reason to the "question" in question
-            // BUG: Would throw and error when not inside a collection!
+            // BUG: Would not work when not inside a collection!
             if(notDuplicate) {
-                insertQuestionByCollectionId(question.question_number, activeCollection.id).then(q => {
-                    insertQuestionReason(q.id, question.reason)
+                insertQuestionByCollectionId(question.question_number, activeCollection.id).then(async q => {
+                    await insertQuestionReason(q.id, question.reason)
                 })
                 activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
+            } else {
+                const questionObj = await getQuestionByQuestionNumber(activeCollection.id, e.detail.question_number)
+                console.log(questionObj);
+                console.log(await insertQuestionReason(questionObj.id, question.reason));
             }
         }
     }
@@ -57,7 +62,8 @@
 
 <style>
     div {
-        margin-left: 25px;
+        padding: 0px 25px;
+        background: rgba(0, 0, 0, 0.8);
         width: 100%;
         height: 100%;
     }

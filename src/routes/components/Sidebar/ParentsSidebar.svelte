@@ -74,7 +74,7 @@
 
 <style>
     .container {
-        background: white;
+        background: rgba(0, 0, 0, 0.8);
         width: 25%;
         height: 100%;
         display: flex; 

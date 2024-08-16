@@ -98,6 +98,7 @@ pub struct ReturnedQuestion {
 #[diesel(belongs_to(Question))]
 #[diesel(primary_key(question_id, reason_id))]
 #[diesel(table_name = crate::schema::question_reason)]
+// FIX: Question can't have 2 of the same reason
 pub struct QuestionReason {
     pub question_id: i32,
     pub reason_id: i32,
