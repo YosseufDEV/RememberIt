@@ -3,6 +3,7 @@
 diesel::table! {
     parent_collection (id) {
         id -> Integer,
+        parent_id -> Nullable<Integer>,
         title -> Text,
     }
 }

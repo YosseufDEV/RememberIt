@@ -71,7 +71,6 @@ pub fn get_collections_by_parent_id(par_id: i32) -> Vec<ReturnedQuestionsCollect
 #[tauri::command]
 pub fn get_all_collections() -> Vec<ReturnedQuestionsCollection> {
     use crate::schema::questions_collection::dsl::*;
-    use crate::schema::question::dsl::*;
 
     let connection = &mut establish_connection();
     let mut complete_collections: Vec<ReturnedQuestionsCollection> = Vec::new();

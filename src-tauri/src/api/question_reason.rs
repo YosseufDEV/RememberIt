@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use crate::database::establish_connection;
-use crate::models::{ QuestionReason, Reason };
+use crate::models::{ QuestionReason };
 
 #[tauri::command]
 pub fn insert_question_reason(question_id: i32, reason_id: i32) {

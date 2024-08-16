@@ -4,16 +4,22 @@
     import SidebarItemChild from "./SidebarItemChild.svelte";
 
     import { active_parent } from "../../active-parent-store";
+    import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
 
-    $: activeParent = get(active_parent) ? get(active_parent) : { title: "", id: -1, child_collections: [] };
+    let get_active_parent = get(active_parent);
+    $: activeParent = get_active_parent ? get_active_parent : { title: "", id: -1, child_collections: [], nested_parent_collections: [] };
     active_parent.subscribe((parent) => activeParent = parent);
 
 </script>
 
 <div class="container">
     {#each activeParent.child_collections as childCollection (childCollection.id)}
-        <SidebarItemChild id={childCollection.id} name={childCollection.title} />
+        <SidebarItemChild collection={childCollection} />
     {/each}
+    <NestedChildrenSidebarView collection={activeParent}/>
+    <!-- {#each activeParent.nested_parent_collections as childCollection (childCollection.id)} -->
+    <!--     <SidebarItemChild collection={childCollection} /> -->
+    <!-- {/each} -->
     <!-- <AddCollectionForm on:addCollection={handleCollectionSubmit} /> -->
 </div>
 

@@ -4,26 +4,46 @@
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
-
-    import type { ParentCollection, QuestionsCollection } from "../../types";
-    import { createCollection, createParentCollection, getAllParentCollections, getCollectionTitles, insertReason } from "../../../database"
-    import { active_collection } from "../../active_collection_store";
     import AddLabelForm from "../Forms/AddLabelForm.svelte";
+    import AddNestedParent from "../Forms/AddNestedParent.svelte";
+
+    import { createCollection, createNestedParentCollection, 
+             createParentCollection, 
+             getAllParentCollections, 
+             getParentCollectionById, 
+             insertReason } from "../../../database"
+    import type { ParentCollection } from "../../types";
+    import { active_collection } from "../../active_collection_store";
+    import { active_parent } from "../../active-parent-store";
 
     $: parentCollections = [] as ParentCollection[];
 
     // BUG: Would throw an error when the selected element is not a parent
+
+    async function handleParnetClick(e: MouseEvent, id: number) {
+        const parent = await getParentCollectionById(id)
+        active_collection.set(parent)
+        active_parent.set(parent)
+    }
+
     async function handleCollectionSubmit(e: CustomEvent) {
         let parent = get(active_collection);
         if(parent) {
             createCollection(e.detail.title, parent.id);
         }
         fetchCollections();
-
     }
 
     async function handleParentCollectionSubmit(e: CustomEvent) {
         createParentCollection(e.detail.title);
+        fetchCollections();
+
+    }
+
+    async function handleNestedParentCollectionSubmit(e: CustomEvent) {
+        let activeParent = get(active_parent)
+        if(active_parent)
+            createNestedParentCollection(e.detail.title, activeParent.id);
         fetchCollections();
 
     }
@@ -33,7 +53,8 @@
     }
 
     async function fetchCollections() {
-        parentCollections = await getAllParentCollections();
+        // true is for getting all "UNNESTED" parents (first level)
+        parentCollections = await getAllParentCollections(true);
     }
 
 
@@ -42,11 +63,12 @@
 <div class="container">
     {#await fetchCollections() then } 
         {#each parentCollections as collection (collection.id)}
-            <SideBarItem id={collection.id} name={collection.title} />
+            <SideBarItem handleClick={(e) => handleParnetClick(e, collection.id)} collection={collection} />
         {/each}
     {/await}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
+    <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
     <AddLabelForm on:addCollection={handleLabelSubmit}/>
 </div>
 

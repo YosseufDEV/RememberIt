@@ -38,7 +38,11 @@
         }
     }
 
-    active_collection.subscribe((collection) => activeCollection = collection);
+    active_collection.subscribe((collection) => 
+    {
+        activeCollection = collection;
+        console.log(collection);
+    });
 
 </script>
 

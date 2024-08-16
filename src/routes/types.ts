@@ -6,7 +6,9 @@ export interface Reason {
 export interface ParentCollection {
     id: number,
     title: string,
+    parent_id: number,
     child_collections: QuestionsCollection[]
+    nested_parent_collections: ParentCollection[]
 }
 
 export interface QuestionsCollection {
@@ -19,5 +21,5 @@ export interface QuestionsCollection {
 export interface Question {
     id: number,
     question_number: number,
-    reason: string[],
+    reasons: string[],
 }

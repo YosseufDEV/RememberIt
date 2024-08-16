@@ -1,21 +1,22 @@
 <script lang="ts">
-    import { getCollectionById, getParentCollectionById } from "../../../database";
+    import { getParentCollectionById } from "../../../database";
     import { active_parent } from "../../active-parent-store";
     import { active_collection } from "../../active_collection_store";
+    import type { QuestionsCollection } from "../../types"
 
 
     async function handleClick() {
-        let collection = await getCollectionById(id)
         active_collection.set(collection)
         active_parent.set(await getParentCollectionById(collection.parent_collection_id))
     }
 
-    export let id: number, name: string="Untitled";
+    export let collection: QuestionsCollection 
+    console.log(collection);
 </script>
 
 <!-- svelte-ignore a11y-<code> -->
 <div class="item" on:click={handleClick}>
-    <p>{name}</p>
+    <p>{collection.title}</p>
 </div>
 
 <style> 

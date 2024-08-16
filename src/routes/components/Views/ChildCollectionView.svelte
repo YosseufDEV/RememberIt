@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Question from "./Question.svelte";
-    import type { QuestionsCollection } from "../types";
+    import Question from "../Question.svelte";
+    import type { QuestionsCollection } from "../../types";
 
-    export let childCollection: QuestionsCollection;
+    export let childCollection: QuestionsCollection, margin=0;
     console.log(childCollection);
 </script>
 

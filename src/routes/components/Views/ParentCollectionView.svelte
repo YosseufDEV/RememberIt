@@ -1,8 +1,7 @@
 <script>
-    import Question from "./Question.svelte";
+    import Question from "../Question.svelte";
 
     export let parentCollection;
-    console.log(parentCollection);
 </script>
 
 <div>

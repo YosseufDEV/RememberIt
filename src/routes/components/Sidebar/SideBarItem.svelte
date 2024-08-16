@@ -1,20 +1,15 @@
 <script lang="ts">
-    import { getParentCollectionById } from "../../../database";
-    import { active_parent } from "../../active-parent-store";
-    import { active_collection } from "../../active_collection_store";
+    import type { MouseEventHandler } from "svelte/elements";
+    import type { ParentCollection } from "../../types";
+    import SidebarNestedItems from "./SidebarNestedItems.svelte";
 
 
-    async function handleClick(e: MouseEvent) {
-        const parent = await getParentCollectionById(id)
-        active_collection.set(parent)
-        active_parent.set(parent)
-    }
-
-    export let id: number, name: string="Untitled";
+    export let collection: ParentCollection, handleClick: any, margin=12;
 </script>
 
-<div class="item" on:click={handleClick}>
-    <p>{name}</p>
+<div style={`margin-left: ${margin}px;'`}> 
+    <p on:click={handleClick} class="item">{collection.title}</p>
+    <SidebarNestedItems collection={collection}/>
 </div>
 
 <style> 

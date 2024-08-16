@@ -5,6 +5,7 @@ use serde::Serialize;
 #[diesel(table_name = crate::schema::parent_collection)]
 pub struct ParentCollection {
     pub id: i32,
+    pub parent_id: Option<i32>,
     pub title: String,
 }
 
@@ -14,11 +15,20 @@ pub struct NewParentCollection {
     pub title: String,
 }
 
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::parent_collection)]
+pub struct NewNestedParentCollection {
+    pub title: String,
+    pub parent_id: i32,
+}
+
 #[derive(Serialize)]
 pub struct ReturnedParentCollection {
     pub id: i32,
+    pub parent_id: Option<i32>,
     pub title: String,
-    pub child_collections: Vec<ReturnedQuestionsCollection>
+    pub child_collections: Vec<ReturnedQuestionsCollection>,
+    pub nested_parent_collections: Box<Vec<ReturnedParentCollection>>
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize, Associations)]
