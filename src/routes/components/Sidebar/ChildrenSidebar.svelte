@@ -14,7 +14,7 @@
 
 <div class="container">
     {#each activeParent.child_collections as childCollection (childCollection.id)}
-        <SidebarItemChild collection={childCollection} />
+    <SidebarItemChild collection={childCollection} />
     {/each}
     <!-- FIX: Clicking on any nested child will change parent -->
     <NestedChildrenSidebarView collection={activeParent}/>
@@ -27,7 +27,7 @@
 <style>
     .container {
         background: rgba(0, 0, 0, 0.95);
-        width: 25%;
+        width: 35%;
         height: 100%;
         display: flex; 
         flex-direction: column;

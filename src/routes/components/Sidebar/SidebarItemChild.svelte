@@ -7,7 +7,7 @@
 
     async function handleClick() {
         active_collection.set(collection)
-        active_parent.set(await getParentCollectionById(collection.parent_collection_id))
+        // active_parent.set(await getParentCollectionById(collection.parent_collection_id))
     }
 
     export let collection: QuestionsCollection 
@@ -15,7 +15,7 @@
 </script>
 
 <!-- svelte-ignore a11y-<code> -->
-<div click={handleClick}>
+<div on:click={handleClick}>
     <p class="item" >{collection.title}</p>
 </div>
 
