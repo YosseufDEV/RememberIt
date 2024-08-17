@@ -3,7 +3,6 @@
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import '../app.css'
-    import { getCurrentWindow } from "@tauri-apps/api/window";
 </script>
 
 <div class="container">

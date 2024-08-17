@@ -22,11 +22,4 @@
 </div>
 
 <style> 
-    .item {
-        font-size: 20px;
-        margin: 5px;
-    }
-    .item:hover {
-        color: red;
-    }
 </style>
