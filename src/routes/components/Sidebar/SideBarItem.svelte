@@ -1,18 +1,17 @@
 <script lang="ts">
-    import type { ParentCollection } from "../../types";
+    import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
     import { active_parent } from "../../active-parent-store";
+    import type { ParentCollection } from "../../types";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
 
-    import gsap from "gsap";
-    import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
 
     export let collection: ParentCollection, handleClick: any;
 
     let children: HTMLElement;
     let chevron: HTMLElement | null = null;
     let collapsableParent: HTMLElement | null = null;
-    let activeAnimation: TweenMax | TimelineMax | null = null;
+    let activeAnimation: GSAPTween | GSAPTimeline | null = null;
 
     function getCollectionsLength(collection: ParentCollection) {
         let length = 0;
@@ -28,7 +27,7 @@
         return length;
     } 
 
-    // Flags
+    // Changable Flags
     let selected = false,
         collapsed=false;
 
@@ -60,9 +59,9 @@
             selected = false;
         }
     })
+
 </script>
 
-<!-- TODO: Make the children not show behind parent (impossible) -->
 <div bind:clientWidth={maxWidth} class="main-container"> 
     <div class="collection-container" 
          class:children-doesnt-have-nested={!hasNestedParents && !isNested} 
@@ -70,7 +69,6 @@
          class:has-nested-parents={hasNestedParents}>
         {#if hasNestedParents}
             <div on:click={toggleCollection} class="chevron-container">
-                <!--TODO: Replace This-->
                 <ChevronDown fill={"#505050"} size={23} bind:ref={chevron}/>
             </div>
         {/if}
@@ -101,6 +99,12 @@
         grid-template-columns: auto 1fr auto !important;
     }
 
+    .children-doesnt-have-nested {
+        color: green;
+        font-size: 95px;
+        margin-left: 35px;
+    }
+
     .chevron-container {
         color: green !important;
     }
@@ -129,16 +133,10 @@
         position: relative;
         margin-left: 15px;
     }
-    .children-has-nested {
-        margin-left: 15px;
-    }
-    .children-doesnt-have-nested {
-        color: green;
-        font-size: 95px;
-        margin-left: 35px;
-    }
+
     .collections-count {
         margin-left: 15px;
+        font-weight: 500;
         color: grey;
     }
 </style>
