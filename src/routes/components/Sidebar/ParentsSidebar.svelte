@@ -1,12 +1,6 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
-    import SideBarItem from "./SideBarItem.svelte";
-    import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
-    import AddLabelForm from "../Forms/AddLabelForm.svelte";
-    import AddNestedParent from "../Forms/AddNestedParent.svelte";
-
     import { createCollection, createNestedParentCollection, 
              createParentCollection, 
              getAllParentCollections, 
@@ -15,6 +9,12 @@
     import type { ParentCollection } from "../../types";
     import { active_collection } from "../../active_collection_store";
     import { active_parent } from "../../active-parent-store";
+    import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
+    import SideBarItem from "./SideBarItem.svelte";
+    import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
+    import AddLabelForm from "../Forms/AddLabelForm.svelte";
+    import AddNestedParent from "../Forms/AddNestedParent.svelte";
+
 
     $: parentCollections = [] as ParentCollection[];
 

@@ -3,9 +3,15 @@
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import '../app.css'
+    import getColor from "./typescript/color_generator";
 </script>
 
 <div class="container">
+    {#await getColor()}
+        
+    {:then color} 
+        {console.log(color)} 
+    {/await}
     <ParentsSidebar />
     <ChildrenSidebar />
     <DisplayArea />

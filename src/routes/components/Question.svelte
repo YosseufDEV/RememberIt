@@ -17,7 +17,7 @@
 <style>
     .container {
         width: fit-content;
-        background: white;
+        background: rgba(125, 125, 125, 0.5);
         display: flex;
         padding: 5px;
         margin: 15px 0px;

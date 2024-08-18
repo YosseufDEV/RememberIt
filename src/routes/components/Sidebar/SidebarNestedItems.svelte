@@ -1,9 +1,9 @@
 <script lang="ts">
+    import SideBarItem from "./SideBarItem.svelte";
     import { getParentCollectionById } from "../../../database";
     import { active_parent } from "../../active-parent-store";
     import { active_collection } from "../../active_collection_store";
     import type { ParentCollection } from "../../types";
-    import SideBarItem from "./SideBarItem.svelte";
 
 
     async function handleClick(id: number) {

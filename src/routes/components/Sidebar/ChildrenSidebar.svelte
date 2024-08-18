@@ -26,7 +26,7 @@
 
 <style>
     .container {
-        background: rgba(0, 0, 0, 0.93);
+        background: rgba(0, 0, 0, 0.89);
         width: 35%;
         height: 100%;
         display: flex; 

@@ -1,28 +1,21 @@
 <script lang="ts">
-    import SidebarNestedItems from "./SidebarNestedItems.svelte";
-    import chevron_down from "$lib/assets/chevron_down.svg"
-    import { active_parent } from "../../active-parent-store";
     import type { ParentCollection } from "../../types";
-    import gsap from "gsap";
+    import { active_parent } from "../../active-parent-store";
+    import SidebarNestedItems from "./SidebarNestedItems.svelte";
+    import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
 
+    import gsap from "gsap";
+    import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
 
     export let collection: ParentCollection, handleClick: any;
-    let children: HTMLElement;
 
-    // Flags
-    let selected = false, 
-        hasNestedParents = collection.nested_parent_collections.length > 0,
-        collapsed=false,
-        activeAnimation: TweenMax | TimelineMax | null =null;
-    let maxWidth: number = 0;
-    let chevron: HTMLImageElement | null = null;
+    let children: HTMLElement;
+    let chevron: HTMLElement | null = null;
+    let collapsableParent: HTMLElement | null = null;
+    let activeAnimation: TweenMax | TimelineMax | null = null;
 
     function getCollectionsLength(collection: ParentCollection) {
         let length = 0;
-
-        if(!collection) {
-            return 0;
-        }
 
         for(const childCollection of collection.child_collections) {
             length += childCollection.questions.length;
@@ -35,59 +28,26 @@
         return length;
     } 
 
-    const ANIMATION_DURATION = 0.2;
+    // Flags
+    let selected = false,
+        collapsed=false;
 
-    function animateChevronOpened() {
-        gsap.to(chevron, {
-            rotate: "0",
-            duration: ANIMATION_DURATION
-        })
-    }
+    // Constant Flags
+    const hasNestedParents = collection.nested_parent_collections.length > 0,
+          isNested = collection.parent_id == null;
 
-    function animateChevronClosed() {
-        gsap.to(chevron, {
-            rotate: "-90",
-            duration: ANIMATION_DURATION
-        })
-    }
-
-    function expandCollection() {
-        activeAnimation = gsap.fromTo(children, 
-                { top: `-${maxWidth}px`, opacity: 0, duration: ANIMATION_DURATION, delay: 0,},
-                { top: "0px", 
-                  opacity: 1, 
-                  position: "relative", 
-                  duration: ANIMATION_DURATION, 
-                  delay: 0,
-                  ease: "power2.out"
-                }
-            )
-    }
-
-    function collapseCollection() {
-        let timeline = gsap.timeline();
-        activeAnimation = timeline;
-            timeline.
-                to(children, 
-                    { 
-                        top: `-${maxWidth}px`, 
-                        duration: ANIMATION_DURATION, 
-                        ease: "power2.in",
-                        opacity: 0 
-                    })
-                .to(children, { position: "absolute" })
-    }
+    let maxWidth: number = 0;
 
     function toggleCollection() {
-        if(collapsed) {
+        if(collapsed && chevron) {
             activeAnimation?.kill();
-            expandCollection();
-            animateChevronOpened();
+            activeAnimation = expandCollection(children, maxWidth);
+            animateChevronOpened(chevron);
             collapsed = false;
-        } else {
+        } else if(!collapsed && chevron && collapsableParent) {
             activeAnimation?.kill();
-            collapseCollection()
-            animateChevronClosed();
+            activeAnimation = collapseCollection(collapsableParent, children, maxWidth)
+            animateChevronClosed(chevron);
             collapsed = true;
         }
     }
@@ -100,15 +60,18 @@
             selected = false;
         }
     })
-
 </script>
 
+<!-- TODO: Make the children not show behind parent (impossible) -->
 <div bind:clientWidth={maxWidth} class="main-container"> 
-    <div class="collection-container" class:has-nested-parents={hasNestedParents}>
+    <div class="collection-container" 
+         class:children-doesnt-have-nested={!hasNestedParents && !isNested} 
+         bind:this={collapsableParent} 
+         class:has-nested-parents={hasNestedParents}>
         {#if hasNestedParents}
-            <div on:click={toggleCollection}>
+            <div on:click={toggleCollection} class="chevron-container">
                 <!--TODO: Replace This-->
-                <img bind:this={chevron} src={chevron_down}/>
+                <ChevronDown fill={"#505050"} size={23} bind:ref={chevron}/>
             </div>
         {/if}
         <div on:click={handleClick} class="container" >
@@ -117,7 +80,7 @@
         </div>
     </div>
     <div class="children" bind:this={children}>
-    <SidebarNestedItems collection={collection}/>
+        <SidebarNestedItems collection={collection}/>
     </div>
 </div>
 <style> 
@@ -134,18 +97,23 @@
         grid-template-columns: 1fr auto;
     }
 
-    /* ISSUE: Nested Element is actually showing before its parent (margin not working right)*/
     .has-nested-parents {
         grid-template-columns: auto 1fr auto !important;
     }
+
+    .chevron-container {
+        color: green !important;
+    }
+
     .collection-container {
-        background: initial;
         overflow: hidden;
         width: 100%;
         display: grid;
-        z-index: 500;
         grid-column-gap: 10px;
         grid-template-columns: 1fr auto;
+    }
+    .collection-container p {
+        background: inherit;
     }
     .item {
         font-size: 20px;
@@ -154,12 +122,20 @@
         color: red;
     }
     .selected {
-        color: salmon;
+        color: indianred;
     }
     .children {
         z-index: 0;
         position: relative;
-        margin-left: 25px;
+        margin-left: 15px;
+    }
+    .children-has-nested {
+        margin-left: 15px;
+    }
+    .children-doesnt-have-nested {
+        color: green;
+        font-size: 95px;
+        margin-left: 35px;
     }
     .collections-count {
         margin-left: 15px;
