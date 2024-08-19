@@ -1,7 +1,7 @@
 <script lang="ts">
     import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
-    import { active_parent } from "../../active-parent-store";
-    import type { ParentCollection } from "../../types";
+    import { active_parent } from "../../stores/active-parent-store";
+    import type { ParentCollection } from "../../typescript/types";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
 

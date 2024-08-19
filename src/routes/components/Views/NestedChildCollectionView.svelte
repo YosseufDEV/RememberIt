@@ -1,6 +1,6 @@
 <script lang="ts">
 import Question from "../Question.svelte";
-    import type { ParentCollection } from "../../types";
+    import type { ParentCollection } from "../../typescript/types";
     import ChildCollectionView from "./ChildCollectionView.svelte";
 
     export let nestedCollection: ParentCollection;

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { getReasons } from "../../../database";
-    import { type Question } from "../../types";
+    import { getAllReasons } from "../../../database";
+    import { type Question } from "../../typescript/types";
     import { createEventDispatcher } from "svelte";
 
     let dispatch = createEventDispatcher();
@@ -18,7 +18,7 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    {#await getReasons()}
+    {#await getAllReasons()}
         {:then reasons}
             <input placeholder="Question Number" bind:value={questionNumber} type="number">
             <select bind:value={reason}>

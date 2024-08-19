@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Reason } from "../types";
+    import type { Reason } from "../typescript/types";
 
     export let reason: Reason;
 </script>

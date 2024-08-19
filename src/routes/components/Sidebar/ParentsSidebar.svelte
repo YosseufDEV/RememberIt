@@ -4,16 +4,18 @@
     import { createCollection, createNestedParentCollection, 
              createParentCollection, 
              getAllParentCollections, 
+             getAllReasons, 
              getParentCollectionById, 
              insertReason } from "../../../database"
-    import type { ParentCollection } from "../../types";
-    import { active_collection } from "../../active_collection_store";
-    import { active_parent } from "../../active-parent-store";
+    import type { ParentCollection } from "../../typescript/types";
+    import { active_collection } from "../../stores/active_collection_store";
+    import { active_parent } from "../../stores/active-parent-store";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
     import AddLabelForm from "../Forms/AddLabelForm.svelte";
     import AddNestedParent from "../Forms/AddNestedParent.svelte";
+    import TagSidebarItem from "./TagSidebarItem.svelte";
 
 
     $: parentCollections = [] as ParentCollection[];
@@ -65,6 +67,12 @@
         {#each parentCollections as collection (collection.id)}
             <SideBarItem handleClick={(e) => handleParnetClick(e, collection.id)} collection={collection} />
         {/each}
+    {/await}
+    {#await getAllReasons() }
+        {:then reasons}
+            {#each reasons as reason}
+                <TagSidebarItem tag={reason}/>
+            {/each}
     {/await}
     <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />

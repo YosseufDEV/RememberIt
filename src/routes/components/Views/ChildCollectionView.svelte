@@ -1,6 +1,6 @@
 <script lang="ts">
     import Question from "../Question.svelte";
-    import type { QuestionsCollection } from "../../types";
+    import type { QuestionsCollection } from "../../typescript/types";
 
     export let childCollection: QuestionsCollection;
 </script>

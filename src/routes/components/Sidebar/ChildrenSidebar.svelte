@@ -3,10 +3,11 @@
 
     import SidebarItemChild from "./SidebarItemChild.svelte";
 
-    import { active_parent } from "../../active-parent-store";
+    import { active_parent } from "../../stores/active-parent-store";
     import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
 
     let get_active_parent = get(active_parent);
+    // TODO: Update THIS 
     $: activeParent = get_active_parent ? get_active_parent : { title: "", id: -1, child_collections: [], nested_parent_collections: [] };
     active_parent.subscribe((parent) => activeParent = parent);
 

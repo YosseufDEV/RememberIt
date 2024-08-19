@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ParentCollection } from "../../types";
+    import type { ParentCollection } from "../../typescript/types";
     import SidebarItemChild from "../Sidebar/SidebarItemChild.svelte";
 
     export let collection: ParentCollection;

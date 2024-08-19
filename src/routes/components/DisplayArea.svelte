@@ -3,9 +3,9 @@
     import ParentCollectionView from "./Views/ParentCollectionView.svelte";
     import ChildCollectionView from "./Views/ChildCollectionView.svelte";
 
-    import type { QuestionsCollection, ParentCollection, Question } from "../types"
+    import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
     import { getQuestionByQuestionNumber, getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
-    import { active_collection } from "../active_collection_store";
+    import { active_collection } from "../stores/active_collection_store";
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
 

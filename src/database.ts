@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { ParentCollection, Question, QuestionsCollection, Reason } from "./routes/types";
+import type { ParentCollection, Question, QuestionsCollection, Reason } from "./routes/typescript/types";
 
 async function createParentCollection(title: string) {
     await invoke("create_parent_collection", { title })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
@@ -54,7 +54,7 @@ async function insertReason(label: string, color: string): Promise<string> {
     return await invoke("insert_reason", { label, color })
 }
 
-async function getReasons(): Promise<Reason[]> {
+async function getAllReasons(): Promise<Reason[]> {
     return await invoke("get_reasons")
 }
 
@@ -80,6 +80,6 @@ export {
     getAllParentCollections,
     getParentCollectionById,
     getCollectionsByParentId,
-    getReasons,
+    getAllReasons,
     getQuestionReasonsById,
 }; 

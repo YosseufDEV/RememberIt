@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { getParentCollectionById } from "../../../database";
-    import { active_parent } from "../../active-parent-store";
-    import { active_collection } from "../../active_collection_store";
-    import type { QuestionsCollection } from "../../types"
+    import { active_collection } from "../../stores/active_collection_store";
+    import type { QuestionsCollection } from "../../typescript/types"
 
 
     async function handleClick() {
