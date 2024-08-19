@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use crate::database::establish_connection;
-use crate::models::{ QuestionReason };
+use crate::models::{ QuestionReason, Reason };
 
 #[tauri::command]
 pub fn insert_question_reason(question_id: i32, reason_id: i32) {
@@ -16,7 +16,7 @@ pub fn insert_question_reason(question_id: i32, reason_id: i32) {
 }
 
 #[tauri::command]
-pub fn get_question_reasons_by_id(question_id: i32) -> Vec<String> {
+pub fn get_question_reasons_by_id(question_id: i32) -> Vec<Reason> {
     use crate::schema::question_reason;
     use crate::schema::reason;
 
@@ -25,8 +25,7 @@ pub fn get_question_reasons_by_id(question_id: i32) -> Vec<String> {
     reason::table
             .inner_join(question_reason::table.on(reason::id.eq(question_reason::reason_id)))
             .filter(question_reason::question_id.eq(question_id))
-            .select(reason::label)
+            .select(reason::all_columns)
             .load(connection)
             .expect("Failed to get question's reasons")
-
 }

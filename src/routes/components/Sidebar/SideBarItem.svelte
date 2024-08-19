@@ -65,8 +65,8 @@
 <div bind:clientWidth={maxWidth} class="main-container"> 
     <div class="collection-container" 
          class:children-doesnt-have-nested={!hasNestedParents && !isNested} 
-         bind:this={collapsableParent} 
-         class:has-nested-parents={hasNestedParents}>
+         class:has-nested-parents={hasNestedParents}
+         bind:this={collapsableParent}>
         {#if hasNestedParents}
             <div on:click={toggleCollection} class="chevron-container">
                 <ChevronDown fill={"#505050"} size={23} bind:ref={chevron}/>
@@ -89,7 +89,6 @@
         flex-direction: column;
     }
     .container {
-        width: 100%;
         overflow: hidden;
         display: grid;
         grid-template-columns: 1fr auto;

@@ -5,9 +5,10 @@ use crate::models::{ Reason, NewReason };
 use crate::schema::reason;
 
 #[tauri::command]
-pub fn insert_reason(label: String) -> Reason {
+pub fn insert_reason(label: String, color: String) -> Reason {
     let reason = NewReason {
         label,
+        color,
     };
 
     let connection = &mut establish_connection();

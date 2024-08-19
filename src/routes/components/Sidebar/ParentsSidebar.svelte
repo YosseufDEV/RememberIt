@@ -49,7 +49,7 @@
     }
 
     async function handleLabelSubmit(e: CustomEvent) {
-        insertReason(e.detail.label);
+        insertReason(e.detail.label, e.detail.color);
     }
 
     async function fetchCollections() {

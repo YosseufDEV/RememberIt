@@ -50,8 +50,8 @@ async function getQuestionByQuestionNumber(id: number, questionNumber: number): 
      return await invoke("get_question_by_question_number", { colId: id, questionNumber});
 }
 
-async function insertReason(label: string): Promise<string> {
-    return await invoke("insert_reason", { label })
+async function insertReason(label: string, color: string): Promise<string> {
+    return await invoke("insert_reason", { label, color })
 }
 
 async function getReasons(): Promise<Reason[]> {

@@ -40,11 +40,7 @@
         }
     }
 
-    active_collection.subscribe((collection) => 
-    {
-        activeCollection = collection;
-        console.log(collection);
-    });
+    active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>
 

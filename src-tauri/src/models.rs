@@ -60,6 +60,7 @@ pub struct NewQuestionsCollection {
 #[diesel(table_name = crate::schema::reason)]
 pub struct Reason {
     pub id: i32,
+    pub color: String,
     pub label: String,
 }
 
@@ -67,6 +68,7 @@ pub struct Reason {
 #[diesel(table_name = crate::schema::reason)]
 pub struct NewReason {
     pub label: String,
+    pub color: String,
 }
 
 #[derive(Queryable, Associations, Identifiable, Selectable, Serialize)]
@@ -90,7 +92,7 @@ pub struct ReturnedQuestion {
     pub id: i32,
     pub question_number: i32,
     pub collection_id: i32,
-    pub reasons: Vec<String>
+    pub reasons: Vec<Reason>
 }
 
 #[derive(Identifiable, Insertable, Selectable, Queryable, Associations)]

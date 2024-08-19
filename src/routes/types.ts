@@ -1,6 +1,7 @@
 export interface Reason {
     id: number,
     label: string,
+    color: string,
 }
 
 export interface ParentCollection {

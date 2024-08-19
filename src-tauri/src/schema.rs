@@ -34,6 +34,7 @@ diesel::table! {
 diesel::table! {
     reason (id) {
         id -> Integer,
+        color -> Text,
         label -> Text,
     }
 }

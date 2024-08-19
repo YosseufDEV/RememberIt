@@ -1,9 +1,11 @@
 <script lang="ts">
-    export let label: string;
+    import type { Reason } from "../types";
+
+    export let reason: Reason;
 </script>
 
-<div class="container">
-    <p>{label}</p> 
+<div class="container" style={`background: ${reason.color}`}>
+    <p>{reason.label}</p> 
 </div>
 
 <style>
@@ -11,8 +13,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #AB274F; 
         border-radius: 20px;
+        background: #000;
         margin: 0 2px;
         padding: 3px 12px;
         color: white;
