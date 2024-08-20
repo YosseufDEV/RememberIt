@@ -1,7 +1,7 @@
 <script lang="ts">  
     import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
-    import ParentCollectionView from "./Views/ParentCollectionView.svelte";
-    import ChildCollectionView from "./Views/ChildCollectionView.svelte";
+    import ParentCollectionView from "./Views/DisplayArea/ParentCollectionView.svelte";
+    import ChildCollectionView from "./Views/DisplayArea/ChildCollectionView.svelte";
 
     import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
     import { getQuestionByQuestionNumber, getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";

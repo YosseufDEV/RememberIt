@@ -1,10 +1,9 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import SidebarItemChild from "./SidebarItemChild.svelte";
-
     import { active_parent } from "../../stores/active-parent-store";
     import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
+    import ChildrenSidebarItem from "./ChildrenSidebarItem.svelte";
 
     let get_active_parent = get(active_parent);
     // TODO: Update THIS 
@@ -15,7 +14,7 @@
 
 <div class="container">
     {#each activeParent.child_collections as childCollection (childCollection.id)}
-    <SidebarItemChild collection={childCollection} />
+    <ChildrenSidebarItem collection={childCollection} />
     {/each}
     <!-- FIX: Clicking on any nested child will change parent -->
     <NestedChildrenSidebarView collection={activeParent}/>

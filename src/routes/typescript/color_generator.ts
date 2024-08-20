@@ -77,10 +77,12 @@ function generateColor(colors: Color[]): string {
         color = colors[randomIndex][selector][index];
     }
     color = colors[randomIndex]['hex'];
+    let colorAsRgb = hexToRgb(color);
+    let isGreyish: boolean = (colorAsRgb[0] == colorAsRgb[1] && colorAsRgb[1] == colorAsRgb[2]);
 
     const contrastRatio = contrast(hexToRgb(color), [255,255,255])
 
-    if(contrastRatio <= 4.5)
+    if(contrastRatio <= 3.5 || isGreyish)
         return generateColor(colors); 
     return color;
 }

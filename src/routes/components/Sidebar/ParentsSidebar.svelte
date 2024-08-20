@@ -68,16 +68,16 @@
             <SideBarItem handleClick={(e) => handleParnetClick(e, collection.id)} collection={collection} />
         {/each}
     {/await}
+    <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
+    <AddCollectionForm on:addCollection={handleCollectionSubmit} />
+    <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
+    <AddLabelForm on:addCollection={handleLabelSubmit}/>
     {#await getAllReasons() }
         {:then reasons}
             {#each reasons as reason}
                 <TagSidebarItem tag={reason}/>
             {/each}
     {/await}
-    <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
-    <AddCollectionForm on:addCollection={handleCollectionSubmit} />
-    <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
-    <AddLabelForm on:addCollection={handleLabelSubmit}/>
 </div>
 
 <style>
