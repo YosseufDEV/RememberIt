@@ -82,7 +82,7 @@
     .container {
         background: rgba(0, 0, 0, 0.8);
         padding: 0px 10px;
-        width: 35%;
+        width: 45%;
         height: 100%;
         display: flex; 
         flex-direction: column;

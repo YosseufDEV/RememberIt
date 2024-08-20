@@ -7,10 +7,10 @@
 
     export let collection: ParentCollection, handleClick: any;
 
-    let children: HTMLElement;
-    let chevron: HTMLElement | null = null;
-    let collapsableParent: HTMLElement | null = null;
-    let activeAnimation: GSAPTween | GSAPTimeline | null = null;
+    let children: HTMLElement,
+        chevron: HTMLElement,
+        collapsableParent: HTMLElement;
+    let activeAnimation: GSAPTween | GSAPTimeline;
 
     function getCollectionsLength(collection: ParentCollection) {
         let length = 0;
@@ -37,12 +37,12 @@
     let maxWidth: number = 0;
 
     function toggleCollection() {
-        if(collapsed && chevron) {
+        if(collapsed) {
             activeAnimation?.kill();
             activeAnimation = expandCollection(children, maxWidth);
             animateChevronOpened(chevron);
             collapsed = false;
-        } else if(!collapsed && chevron && collapsableParent) {
+        } else {
             activeAnimation?.kill();
             activeAnimation = collapseCollection(collapsableParent, children, maxWidth)
             animateChevronClosed(chevron);
@@ -135,7 +135,7 @@
     }
 
     .collections-count {
-        font-weight: 600;
+        font-size: 17px;
         color: grey;
     }
 </style>

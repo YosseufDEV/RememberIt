@@ -49,6 +49,10 @@
 </div>
 
 <style>
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0) !important;
+        width: 69px;
+    }
     div {
         overflow-y: scroll;
         padding: 0px 25px;
