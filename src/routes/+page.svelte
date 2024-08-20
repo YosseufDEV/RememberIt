@@ -4,6 +4,15 @@
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
+    import { active_collection } from './stores/active_collection_store';
+    import { active_parent } from './stores/active-parent-store';
+    import { getParentCollectionById } from '../database';
+
+    async function selectFirstParent() {
+        let firstParent = await getParentCollectionById(1);
+        active_collection.set(firstParent);
+        active_parent.set(firstParent);
+    }
 
     function handleKeyDown(e: KeyboardEvent) {
         console.log(e);
@@ -13,6 +22,7 @@
 <svelte:window on:keydown={handleKeyDown}/>
 
 <div class="container">
+    {#await selectFirstParent()}{/await}
     <CommandBar />
     <ParentsSidebar />
     <ChildrenSidebar />

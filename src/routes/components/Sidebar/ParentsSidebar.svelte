@@ -20,8 +20,6 @@
 
     $: parentCollections = [] as ParentCollection[];
 
-    // BUG: Would throw an error when the selected element is not a parent
-
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getParentCollectionById(id)
         active_collection.set(parent)

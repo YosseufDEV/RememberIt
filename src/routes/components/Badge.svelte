@@ -5,7 +5,7 @@
 </script>
 
 <div class="container" style={`background: ${reason.color}; box-shadow: 0 0 50px ${reason.color}a5;`}>
-    <p>{reason.label}</p> 
+    <p class="label">{reason.label}</p> 
 </div>
 
 <style>
@@ -18,6 +18,9 @@
         margin: 0 2px;
         padding: 3px 12px;
         color: white;
+    }
+
+    .label {
         font-weight: 500;
     }
 

@@ -7,25 +7,21 @@
 
     let get_active_parent = get(active_parent);
     // TODO: Update THIS 
-    $: activeParent = get_active_parent ? get_active_parent : { title: "", id: -1, child_collections: [], nested_parent_collections: [] };
+    $: activeParent = get_active_parent ? get_active_parent : { title: "", id: 0, child_collections: [], nested_parent_collections: [] };
     active_parent.subscribe((parent) => activeParent = parent);
 
 </script>
 
 <div class="container">
     {#each activeParent.child_collections as childCollection (childCollection.id)}
-    <ChildrenSidebarItem collection={childCollection} />
+        <ChildrenSidebarItem collection={childCollection} />
     {/each}
-    <!-- FIX: Clicking on any nested child will change parent -->
     <NestedChildrenSidebarView collection={activeParent}/>
-    <!-- {#each activeParent.nested_parent_collections as childCollection (childCollection.id)} -->
-    <!--     <SidebarItemChild collection={childCollection} /> -->
-    <!-- {/each} -->
-    <!-- <AddCollectionForm on:addCollection={handleCollectionSubmit} /> -->
 </div>
 
 <style>
     .container {
+        padding: 0px 10px;
         background: rgba(0, 0, 0, 0.89);
         width: 35%;
         height: 100%;

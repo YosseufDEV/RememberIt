@@ -9,21 +9,16 @@
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
 
+    // TODO: Intorduce reactivity 
     async function addQuestionToCurrentCollection(e: CustomEvent) {
         if('parent_collection_id' in activeCollection) {
-            type SumbitedQuestion = {
-                id: number,
-                question_number: number,
-                reason: number,
-            }
-                
-            const question: SumbitedQuestion = e.detail;
+            const question = e.detail;
+
             let notDuplicate = true;
 
             activeCollection.questions.forEach((q: Question) => {
-                if(q.question_number == question.question_number) {
+                if(q.question_number == question.question_number)
                     notDuplicate = false;
-                }
             })
 
             // TODO: Stack Reasons 
