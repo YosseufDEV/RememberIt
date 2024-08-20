@@ -1,10 +1,9 @@
 <script lang="ts">
+    import type { ParentCollection } from "../../typescript/types";
     import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
     import { active_parent } from "../../stores/active-parent-store";
-    import type { ParentCollection } from "../../typescript/types";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
-
 
     export let collection: ParentCollection, handleClick: any;
 
@@ -51,18 +50,11 @@
         }
     }
 
-    // TODO: Optimize this function as it checks for the variable n times every time an element is clicked
-    active_parent.subscribe(col => {
-        if(col && col.id == collection.id) {
-            selected = true;
-        } else {
-            selected = false;
-        }
-    })
+    active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
 
 </script>
 
-<div bind:clientWidth={maxWidth} class="main-container"> 
+<div bind:clientWidth={maxWidth} class="div-container"> 
     <div class="collection-container" 
          class:children-doesnt-have-nested={!hasNestedParents && !isNested} 
          class:has-nested-parents={hasNestedParents}
@@ -74,7 +66,9 @@
         {/if}
         <div on:click={handleClick} class="container" >
             <p class="item" class:selected={selected}>{collection.title}</p>
-            <p class="collections-count">{getCollectionsLength(collection)}</p>
+            <div class="collections-count-container">
+                <p class="collections-count">{getCollectionsLength(collection)}</p>
+            </div>
         </div>
     </div>
     <div class="children" bind:this={children}>
@@ -82,12 +76,13 @@
     </div>
 </div>
 <style> 
-    .main-container {
+    .div-container {
         width: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
     }
+
     .container {
         overflow: hidden;
         display: grid;
@@ -110,32 +105,37 @@
 
     .collection-container {
         overflow: hidden;
-        width: 100%;
         display: grid;
         grid-column-gap: 10px;
         grid-template-columns: 1fr auto;
     }
-    .collection-container p {
-        background: inherit;
-    }
+
     .item {
         font-size: 20px;
     }
+
     .item:hover {
         color: red;
     }
+
     .selected {
         color: indianred;
     }
+
     .children {
         z-index: 0;
         position: relative;
         margin-left: 15px;
     }
 
+    .collections-count-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .collections-count {
-        margin-left: 15px;
-        font-weight: 500;
+        font-weight: 600;
         color: grey;
     }
 </style>

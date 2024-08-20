@@ -4,7 +4,7 @@
     export let reason: Reason;
 </script>
 
-<div class="container" style={`background: ${reason.color}`}>
+<div class="container" style={`background: ${reason.color}; box-shadow: 0 0 50px ${reason.color}a5;`}>
     <p>{reason.label}</p> 
 </div>
 

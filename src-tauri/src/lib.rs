@@ -38,7 +38,8 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
-            // let _ = apply_micas(&window, Some(true);
+            // let _ = apply_mica(&window, Some(true));
+            // let _ = apply_tabbed(&window, Some(true));
             let _ = apply_acrylic(&window, Some((0,0,0,10)));
             Ok(())
         })

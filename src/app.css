@@ -1,17 +1,16 @@
-html {
+html, body {
     background: transparent;
-    font-family: system-ui, 'Segoe UI Variable', 'Segoue Arabic UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: system-ui, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    overflow: hidden;
     user-select: none; /* standard syntax */
     -webkit-user-select: none; /* webkit (safari, chrome) browsers */
     -moz-user-select: none; /* mozilla browsers */
     -khtml-user-select: none; /* webkit (konqueror) browsers */
     -ms-user-select: none; /* IE10+ */
-
+    color-scheme: dark;
 }
 
-h1, h2, h3, p {
-    font-family: system-ui, 'Segoe UI Variable', 'Segoue Arabic UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    user-select: none; /* standard syntax */
+h1, h2, h3 {
     color: white;
 }
 

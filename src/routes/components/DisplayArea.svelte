@@ -55,6 +55,7 @@
 
 <style>
     div {
+        overflow-y: scroll;
         padding: 0px 25px;
         background: rgba(0, 0, 0, 0.7);
         width: 100%;
