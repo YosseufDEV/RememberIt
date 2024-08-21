@@ -1,8 +1,11 @@
 <script lang="ts">
-    import type { Reason } from "../types";
+    import type { Reason } from "../typescript/types";
     import Badge from "./Badge.svelte";
 
     export let number: number, reasons: Reason[];
+
+    $: reasons = reasons;
+
 </script>
 
 <div class="container">

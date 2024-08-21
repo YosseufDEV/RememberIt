@@ -2,14 +2,16 @@
     import { onMount } from 'svelte'
 
     import '../app.css'
+    import { active_collection } from './stores/active_collection_store';
+    import { active_parent } from './stores/active-parent-store';
+    import { getParentCollectionById } from '../database';
     import DisplayArea from "./components/DisplayArea.svelte";
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
-    import { active_collection } from './stores/active_collection_store';
-    import { active_parent } from './stores/active-parent-store';
-    import { getParentCollectionById } from '../database';
-
+    import { DATABASE } from './typescript/Database/CachedDatabase';
+    
+    let reasons;
     $: isCommandBarVisible = false;
     let modifierKeys = [],
         primaryKeys = []; 
@@ -30,6 +32,11 @@
             isCommandBarVisible = !isCommandBarVisible;
         }
     }
+
+    DATABASE.subscribe((db) => {
+        reasons = db.tags 
+    })
+
 </script>
 
 <svelte:window on:keydown={handleKeyDown}/>

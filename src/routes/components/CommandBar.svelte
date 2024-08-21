@@ -5,7 +5,7 @@
     {#if isVisible}
         <div class="container" style={`display: ${isVisible};`}>
             <div class="command-bar">
-                Search
+                <h1>New Collection</h1>
             </div>
         </div>
     {/if}
@@ -26,12 +26,12 @@
     }
 
     .command-bar {
-        border-radius: 25px;
+        border-radius: 15px;
         z-index: 100000;
         padding: 15px;
-        background: rgba(50,50,50, 0.5);
+        background: rgba(50,50,50, 0.85);
         color: white;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(20px);
         height: 450px;
         width: 750px;
         margin: auto;

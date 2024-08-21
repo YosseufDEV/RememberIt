@@ -7,18 +7,21 @@
              getAllReasons, 
              getParentCollectionById, 
              insertReason } from "../../../database"
-    import type { ParentCollection } from "../../typescript/types";
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent } from "../../stores/active-parent-store";
+    import type { ParentCollection, Reason } from "../../typescript/types";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
     import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
     import AddLabelForm from "../Forms/AddLabelForm.svelte";
     import AddNestedParent from "../Forms/AddNestedParent.svelte";
     import TagSidebarItem from "./TagSidebarItem.svelte";
+    import { DATABASE } from "../../typescript/Database/CachedDatabase";
+    import TagsView from "../Views/ParentSidebar/TagsView.svelte";
 
 
     $: parentCollections = [] as ParentCollection[];
+    let reasons: Reason[];
 
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getParentCollectionById(id)
@@ -49,6 +52,12 @@
     }
 
     async function handleLabelSubmit(e: CustomEvent) {
+        let oldDB = get(DATABASE);
+        let reason: Reason = e.detail;
+
+        oldDB.tags.push({ id: reason.id, label: reason.label, color: reason.color })
+        DATABASE.set(oldDB);
+
         insertReason(e.detail.label, e.detail.color);
     }
 
@@ -56,6 +65,11 @@
         // true is for getting all "UNNESTED" parents (first level)
         parentCollections = await getAllParentCollections(true);
     }
+
+    DATABASE.subscribe((db) => {
+        reasons = db.tags 
+    })
+
 
 
 </script>
@@ -70,12 +84,7 @@
     <AddCollectionForm on:addCollection={handleCollectionSubmit} />
     <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
     <AddLabelForm on:addCollection={handleLabelSubmit}/>
-    {#await getAllReasons()}
-        {:then reasons}
-            {#each reasons as reason}
-                <TagSidebarItem tag={reason}/>
-            {/each}
-    {/await}
+    <TagsView />
 </div>
 
 <style>
