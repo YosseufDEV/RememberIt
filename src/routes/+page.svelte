@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from 'svelte'
+
     import '../app.css'
     import DisplayArea from "./components/DisplayArea.svelte";
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
@@ -8,22 +10,32 @@
     import { active_parent } from './stores/active-parent-store';
     import { getParentCollectionById } from '../database';
 
+    $: isCommandBarVisible = false;
+    let modifierKeys = [],
+        primaryKeys = []; 
+
     async function selectFirstParent() {
         let firstParent = await getParentCollectionById(1);
         active_collection.set(firstParent);
         active_parent.set(firstParent);
     }
 
+    onMount(async () => {
+        await selectFirstParent();
+    })
+
+    // TODO: Make the shortcuts more dynamic!
     function handleKeyDown(e: KeyboardEvent) {
-        console.log(e);
+        if (e.ctrlKey && e.keyCode == 84) { //CTRL+ALT+F4
+            isCommandBarVisible = !isCommandBarVisible;
+        }
     }
 </script>
 
 <svelte:window on:keydown={handleKeyDown}/>
 
 <div class="container">
-    {#await selectFirstParent()}{/await}
-    <CommandBar />
+    <CommandBar isVisible={isCommandBarVisible}/>
     <ParentsSidebar />
     <ChildrenSidebar />
     <DisplayArea />

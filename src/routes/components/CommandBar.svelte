@@ -1,19 +1,14 @@
-<script>
-    let isVisible = "none";
-    function ToggleCommandBar() {
-        console.log(isVisible);
-        if(isVisible == "none") {
-            isVisible = "all"
-        } else {
-            isVisible = "none"
-        }
-    }
-    // ToggleCommandBar();
+<script lang="ts">
+    export let isVisible: boolean;
 </script>
-<div class="container" style={`display: ${isVisible};`}>
-    <div class="command-bar">
-        Search
-    </div>
+<div>
+    {#if isVisible}
+        <div class="container" style={`display: ${isVisible};`}>
+            <div class="command-bar">
+                Search
+            </div>
+        </div>
+    {/if}
 </div>
 <style>
     .container {
@@ -36,7 +31,7 @@
         padding: 15px;
         background: rgba(50,50,50, 0.5);
         color: white;
-        backdrop-filter: blur(150px);
+        backdrop-filter: blur(10px);
         height: 450px;
         width: 750px;
         margin: auto;

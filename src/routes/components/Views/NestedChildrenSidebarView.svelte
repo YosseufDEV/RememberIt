@@ -18,7 +18,7 @@
 
 <style>
     .collection-title {
-        font-size: 25px;
+        font-size: 22px;
         font-weight: 500;
         margin-top: 20px;
         margin-bottom: 10px;

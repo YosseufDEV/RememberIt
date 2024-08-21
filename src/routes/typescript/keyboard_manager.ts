@@ -3,10 +3,9 @@ export enum ReservedKey {
 }
 
 export enum ModifierKey {
-    RIGHT_SHIFT = "right_shift",
-    LEFT_SHIFT = "left_shift",
-    ALT = "alt",
-    CTRL = "ctrl",
+    SHIFT = "shiftKey",
+    ALT = "altKey",
+    CTRL = "ctlrKey",
 }
 
 export enum ApplicationAction  {
@@ -35,6 +34,17 @@ let shortcuts: ApplicationShortcut[] = [
     { applicationAction: ApplicationAction.OPEN_COMMAND_BAR, modifierKey: [ModifierKey.CTRL], primaryKey: ["t"]},
     { applicationAction: ApplicationAction.TEST, modifierKey: [ModifierKey.CTRL], primaryKey: ["c"]}
 ]
+
+function getShortcutFromKeyboardEvent(e: KeyboardEvent) {
+    let shortcut: KeyboardShortcut = { modifierKey: [], primaryKey: [] };
+    if(e.ctrlKey) {
+        shortcut.modifierKey.push(ModifierKey.CTRL)
+    } else if(e.shiftKey) {
+        shortcut.modifierKey.push(ModifierKey.SHIFT)
+    } else if(e.altKey) {
+        shortcut.modifierKey.push(ModifierKey.ALT); 
+    }
+}
 
 export function getShortcutAction(shortcut: KeyboardShortcut): ApplicationAction {
     console.log(shortcuts);
