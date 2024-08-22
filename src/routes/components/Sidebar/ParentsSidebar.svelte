@@ -66,8 +66,8 @@
 
 <div class="container">
     <div class="tags-icon-container">
-        <Notebook size={30}/>
-        <p class="tags-text">Tags</p>
+        <Notebook size={33}/>
+        <p class="tags-text">Questions</p>
     </div>
     <div class="collections-container">
         {#each parentCollections as collection (collection.id)}
@@ -88,7 +88,7 @@
         align-items: center;
         justify-content: left;
         margin-top: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     .tags-icon-container p {
         margin-left: 10px;

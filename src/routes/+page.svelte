@@ -10,6 +10,7 @@
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
     import { DATABASE } from './typescript/Database/CachedDatabase';
+    import StatusBar from './components/StatusBar.svelte';
     
     let reasons;
     $: isCommandBarVisible = false;
@@ -38,10 +39,13 @@
 <svelte:window on:keydown={handleKeyDown}/>
 
 <div class="container">
+    <StatusBar />
     <CommandBar isVisible={isCommandBarVisible}/>
-    <ParentsSidebar />
-    <ChildrenSidebar />
-    <DisplayArea />
+    <div class="main-view-container">
+        <ParentsSidebar />
+        <ChildrenSidebar />
+        <DisplayArea />
+    </div>
 </div>
 
 <style>
@@ -52,6 +56,12 @@
         right: 0;
         bottom: 0;
         background: rgba(200, 200, 200, 0);
+        display: flex;
+        flex-direction: column;
+    }
+    .main-view-container {
+        width : 100%;
+        height: 100%;
         display: flex;
         flex-direction: row;
     }

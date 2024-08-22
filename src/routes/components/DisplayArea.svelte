@@ -44,24 +44,27 @@
 
 </script>
 
-<div>
-    {#if 'parent_collection_id' in activeCollection}
-        <ChildCollectionView childCollection={activeCollection} />
+<div class="main-container">
+    <div class="container">
+        {#if 'parent_collection_id' in activeCollection}
+            <ChildCollectionView childCollection={activeCollection} />
         {:else if activeCollection.id > 0}
             <ParentCollectionView parentCollection={activeCollection}/>
-    {/if}
-    <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
+        {/if}
+        <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
+    </div>
 </div>
 
 <style>
-    ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0) !important;
-        width: 69px;
-    }
-    div {
-        overflow-y: scroll;
-        padding: 0px 25px;
+    .main-container {
+        padding: 50px 0;
         background: rgba(0, 0, 0, 0.7);
+        width: 100%;
+        height: 100%;
+    }
+    .container {
+        padding-left: 25px;
+        overflow-y: scroll;
         width: 100%;
         height: 100%;
     }

@@ -13,7 +13,7 @@
       {
         "title": "rememberit",
         "transparent": true,
-        "decorations": true,
+        "decorations": false,
         "width": 1000,
         "height": 600
       }

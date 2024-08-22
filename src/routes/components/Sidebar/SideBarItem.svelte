@@ -136,8 +136,8 @@
 
     .collections-count-container {
         display: flex;
+        flex-direction: row;
         align-items: center;
-        justify-content: center;
     }
 
     .collections-count {
