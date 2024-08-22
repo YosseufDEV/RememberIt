@@ -6,6 +6,8 @@
     import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
     import { getQuestionByQuestionNumber, getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
     import { active_collection } from "../stores/active_collection_store";
+    import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
+    import { get } from "svelte/store";
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
 
@@ -27,11 +29,14 @@
                 insertQuestionByCollectionId(question.question_number, activeCollection.id).then(async q => {
                     await insertQuestionReason(q.id, question.reason)
                 })
-                activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
             } else {
                 const questionObj = await getQuestionByQuestionNumber(activeCollection.id, e.detail.question_number)
                 await insertQuestionReason(questionObj.id, question.reason);
             }
+            activeCollection.questions = await getQuestionsByCollectionId(activeCollection.id);
+            let t = get(TEMP_DATABASE);
+            t.questions.push(question);
+            TEMP_DATABASE.set(t);
         }
     }
 
@@ -43,7 +48,7 @@
     {#if 'parent_collection_id' in activeCollection}
         <ChildCollectionView childCollection={activeCollection} />
         {:else if activeCollection.id > 0}
-        <ParentCollectionView parentCollection={activeCollection}/>
+            <ParentCollectionView parentCollection={activeCollection}/>
     {/if}
     <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
 </div>

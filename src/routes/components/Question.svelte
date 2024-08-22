@@ -1,18 +1,36 @@
 <script lang="ts">
-    import type { Reason } from "../typescript/types";
+    import { get } from "svelte/store";
+    import { onMount } from "svelte";
+
+    import type { Question } from "../typescript/types";
+    import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
     import Badge from "./Badge.svelte";
+    import { newlyAddedQuestionAnimation } from "./Animations/QuestionLifecylceAnimations";
 
-    export let number: number, reasons: Reason[];
+    let questionRef: HTMLElement;
 
-    $: reasons = reasons;
+    export let question: Question;
 
+    onMount(() => {
+        let tmp = get(TEMP_DATABASE);
+
+        tmp.questions.forEach((tmp_question, i) => {
+            if(tmp_question.question_number == question.question_number && tmp_question.collection_id == tmp_question.collection_id) {
+                // INFO :Remove Question from temp!;
+                newlyAddedQuestionAnimation(questionRef);
+                tmp.questions = tmp.questions.filter((_, index) => index != i)  
+            }
+        })
+
+        TEMP_DATABASE.set(tmp);
+    })
 </script>
 
-<div class="container">
+<div class="container" bind:this={questionRef}>
     <div class="number-container">
-        <p>{number}</p>
+        <p>{question.question_number}</p>
     </div>
-    {#each reasons as reason}
+    {#each question.reasons as reason}
         <Badge reason={reason}/>
     {/each}
 </div>

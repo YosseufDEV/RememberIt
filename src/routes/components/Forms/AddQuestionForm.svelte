@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { getAllReasons } from "../../../database";
     import { DATABASE } from "../../typescript/Database/CachedDatabase";
-    import { type Question, type Reason } from "../../typescript/types";
+    import { type Reason } from "../../typescript/types";
     import { createEventDispatcher } from "svelte";
 
+    const dispatch = createEventDispatcher();
+
     let reasons: Reason[] = [];
-    let dispatch = createEventDispatcher();
     let questionNumber: number = 25;
     let reason: string = "";
 

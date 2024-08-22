@@ -33,10 +33,6 @@
         }
     }
 
-    DATABASE.subscribe((db) => {
-        reasons = db.tags 
-    })
-
 </script>
 
 <svelte:window on:keydown={handleKeyDown}/>

@@ -32,7 +32,7 @@
 
     // Constant Flags
     const hasNestedParents = collection.nested_parent_collections.length > 0,
-          isNested = collection.parent_id == null;
+          isNested = collection.parent_id != null;
 
     let maxWidth: number = 0;
 
@@ -56,8 +56,9 @@
 
 <div bind:clientWidth={maxWidth} class="div-container"> 
     <div class="collection-container" 
-         class:children-doesnt-have-nested={!hasNestedParents && !isNested} 
+         class:children-doesnt-have-nested={!hasNestedParents && isNested} 
          class:has-nested-parents={hasNestedParents}
+         class:doesnt-have-nested-parents={!isNested && !hasNestedParents}
          bind:this={collapsableParent}>
         {#if hasNestedParents}
             <div on:click={toggleCollection} class="chevron-container">
@@ -97,6 +98,11 @@
         color: green;
         font-size: 95px;
         margin-left: 35px;
+    }
+
+    .doesnt-have-nested-parents {
+        /* INFO: Hard codded value to make text align with ones that has an arrow*/
+        margin-left: 34px;
     }
 
     .chevron-container {
