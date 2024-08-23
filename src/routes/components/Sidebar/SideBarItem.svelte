@@ -66,7 +66,8 @@
             </div>
         {/if}
         <div on:click={handleClick} class="container" >
-            <p class="item" class:selected={selected}>{collection.title}</p>
+            <!-- TODO: !! REMOVE THIS IN RELEASE !! -->
+            <p class="item" class:selected={selected}>{collection.title ? collection.title : "غير مسمى"}</p>
             <div class="collections-count-container">
                 <p class="collections-count">{getCollectionsLength(collection)}</p>
             </div>

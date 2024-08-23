@@ -9,7 +9,6 @@
     import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
-    import { DATABASE } from './typescript/Database/CachedDatabase';
     import StatusBar from './components/StatusBar.svelte';
     
     let reasons;

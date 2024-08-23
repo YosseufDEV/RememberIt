@@ -8,6 +8,7 @@
     import { active_collection } from "../stores/active_collection_store";
     import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
     import { get } from "svelte/store";
+    import DropZone from "./DragAndDrop/DropZone.svelte";
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
 
@@ -40,32 +41,56 @@
         }
     }
 
+    function handleDraggableDrop() {
+        console.log("dropped item");
+    }
+
     active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>
 
 <div class="main-container">
-    <div class="container">
-        {#if 'parent_collection_id' in activeCollection}
-            <ChildCollectionView childCollection={activeCollection} />
-        {:else if activeCollection.id > 0}
-            <ParentCollectionView parentCollection={activeCollection}/>
-        {/if}
-        <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
-    </div>
+    <DropZone on:dropevent={handleDraggableDrop} >
+        <div class="container">
+            {#if 'parent_collection_id' in activeCollection}
+                <ChildCollectionView childCollection={activeCollection} />
+            {:else if activeCollection.id > 0}
+                <ParentCollectionView parentCollection={activeCollection}/>
+            {/if}
+            <AddQuestionForm on:addQuestion={addQuestionToCurrentCollection}/>
+        </div>
+    </DropZone>
 </div>
 
 <style>
+    /* TODO: Make the scrollbar interactive to clicking and dragging*/
+    ::-webkit-scrollbar {
+        width: 2px;
+        padding: 5px;
+        margin-right: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0);
+        margin-right: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #9f9f9f;
+        margin-right: 5px;
+        border-radius: 500px;
+    }
+
     .main-container {
-        padding: 50px 0;
         background: rgba(0, 0, 0, 0.7);
         width: 100%;
-        height: 100%;
+        padding-top: 50px;
+        padding-bottom: 10px;
+        padding-left: 25px;
     }
     .container {
-        padding-left: 25px;
         overflow-y: scroll;
-        width: 100%;
+        width: calc(100% - 7px);
         height: 100%;
     }
 </style>
