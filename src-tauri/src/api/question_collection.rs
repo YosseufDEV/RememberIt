@@ -83,7 +83,7 @@ pub fn get_all_collections() -> Vec<ReturnedQuestionsCollection> {
         let complete_collection = ReturnedQuestionsCollection {
             id: collection.id,
             title: collection.title.clone(),
-            parent_collection_id: collection.id,
+            parent_collection_id: collection.parent_collection_id,
             questions
         };
         complete_collections.push(complete_collection)

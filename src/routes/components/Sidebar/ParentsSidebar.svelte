@@ -10,8 +10,8 @@
              getParentCollectionById, 
              insertReason } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
-    import { active_parent } from "../../stores/active-parent-store";
-    import { DATABASE, PARENTS_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { active_parent, active_parent_index } from "../../stores/active-parent-store";
+    import { DATABASE, PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
 
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
@@ -27,14 +27,20 @@
 
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getParentCollectionById(id)
+        const index = parentCollections.findIndex((pCol) => pCol.id == parent.id);
         active_collection.set(parent)
         active_parent.set(parent)
+        active_parent_index.set(index);
     }
 
     async function handleCollectionSubmit(e: CustomEvent) {
         let parent = get(active_collection);
         if(parent) {
-            createCollection(e.detail.title, parent.id);
+            let c = await createCollection(e.detail.title, parent.id);
+            c.questions = [];
+            let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
+            oldDB.push(c);
+            QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
         }
     }
 
@@ -56,8 +62,7 @@
             parent.child_collections = []
             parent.nested_parent_collections = []
             const oldDB = parentCollections; 
-            oldDB.filter((pCol) => pCol.id == activeParent.id)[0]
-                  .nested_parent_collections.push(parent);
+            oldDB[get(active_parent_index)].nested_parent_collections.push(parent);
             PARENTS_SLICE_DATABASE.set(oldDB);
         }
     }
