@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { TextBox, Button } from "fluent-svelte"
 
     let dispatch = createEventDispatcher();
     let title: string = "";
@@ -15,7 +16,7 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    <input placeholder="Title" bind:value={title} type="text">
-    <button>Add</button>
+    <TextBox placeholder="Title" bind:value={title} type="text"/>
+    <Button variant="accent">Add</Button>
 </form>
 

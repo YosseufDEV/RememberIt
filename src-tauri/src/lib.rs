@@ -32,6 +32,7 @@ pub fn run() {
                 crate::question::get_question_by_question_number,
                 crate::reason::insert_reason,
                 crate::reason::get_reasons,
+                crate::reason::get_reason_by_id,
                 crate::question_reason::insert_question_reason,
                 crate::question_reason::get_question_reasons_by_id,
         ])

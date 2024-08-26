@@ -12,17 +12,17 @@
     export let question: Question;
 
     onMount(() => {
-        let tmp = get(TEMP_DATABASE);
-
-        tmp.questions.forEach((tmp_question, i) => {
-            if(tmp_question.question_number == question.question_number && tmp_question.collection_id == tmp_question.collection_id) {
-                // INFO :Remove Question from temp!;
-                newlyAddedQuestionAnimation(questionRef);
-                tmp.questions = tmp.questions.filter((_, index) => index != i)  
-            }
-        })
-
-        TEMP_DATABASE.set(tmp);
+        // let tmp = get(TEMP_DATABASE);
+        //
+        // tmp.questions.forEach((tmp_question, i) => {
+        //     if(tmp_question.question_number == question.question_number && tmp_question.collection_id == tmp_question.collection_id) {
+        //         // INFO :Remove Question from temp!;
+        //         newlyAddedQuestionAnimation(questionRef);
+        //         tmp.questions = tmp.questions.filter((_, index) => index != i)  
+        //     }
+        // })
+        //
+        // TEMP_DATABASE.set(tmp);
     })
 </script>
 
@@ -37,6 +37,7 @@
 
 <style>
     .container {
+        height: 33px;
         width: fit-content;
         background: rgba(125, 125, 125, 0.5);
         display: flex;

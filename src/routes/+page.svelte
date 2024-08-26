@@ -10,6 +10,7 @@
     import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
     import StatusBar from './components/StatusBar.svelte';
+    import "fluent-svelte/theme.css";
     
     let reasons;
     $: isCommandBarVisible = false;
@@ -17,9 +18,9 @@
         primaryKeys = []; 
 
     async function selectFirstParent() {
-        let firstParent = await getParentCollectionById(1);
-        active_collection.set(firstParent);
-        active_parent.set(firstParent);
+        // let firstParent = await getParentCollectionById(1);
+        // active_collection.set(firstParent);
+        // active_parent.set(firstParent);
     }
 
     onMount(async () => {

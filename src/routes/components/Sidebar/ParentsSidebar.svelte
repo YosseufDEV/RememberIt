@@ -1,8 +1,9 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { get } from "svelte/store";
 
+
     import type { ParentCollection, Reason } from "../../typescript/types";
-    import { DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { createCollection, createNestedParentCollection, 
              createParentCollection, 
              getAllParentCollections, 
@@ -10,6 +11,7 @@
              insertReason } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent } from "../../stores/active-parent-store";
+    import { DATABASE, PARENTS_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
 
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
@@ -17,11 +19,10 @@
     import AddLabelForm from "../Forms/AddLabelForm.svelte";
     import AddNestedParent from "../Forms/AddNestedParent.svelte";
     import TagsView from "../Views/ParentSidebar/TagsView.svelte";
-    import { onMount } from "svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
 
 
-    $: parentCollections = [] as ParentCollection[];
+    $: parentCollections = get(PARENTS_SLICE_DATABASE);
     let reasons: Reason[];
 
     async function handleParnetClick(e: MouseEvent, id: number) {
@@ -38,75 +39,84 @@
     }
 
     async function handleParentCollectionSubmit(e: CustomEvent) {
-        createParentCollection(e.detail.title);
+        let parent = await createParentCollection(e.detail.title);
+        parent.child_collections = []
+        parent.nested_parent_collections = []
+        console.log({parent});
+
+        const oldDB = parentCollections;
+        oldDB.push(parent);
+        PARENTS_SLICE_DATABASE.set(oldDB);
     }
 
     async function handleNestedParentCollectionSubmit(e: CustomEvent) {
         let activeParent = get(active_parent)
-        if(active_parent)
-            createNestedParentCollection(e.detail.title, activeParent.id);
+        if(active_parent) {
+            let parent = await createNestedParentCollection(e.detail.title, activeParent.id);
+            parent.child_collections = []
+            parent.nested_parent_collections = []
+            const oldDB = parentCollections; 
+            oldDB.filter((pCol) => pCol.id == activeParent.id)[0]
+                  .nested_parent_collections.push(parent);
+            PARENTS_SLICE_DATABASE.set(oldDB);
+        }
     }
 
-    async function handleLabelSubmit(e: CustomEvent) {
-        let oldDB = get(DATABASE);
-        let reason: Reason = e.detail;
-
-        oldDB.tags.push({ id: reason.id, label: reason.label, color: reason.color })
-        DATABASE.set(oldDB);
-        TAGS_SLICE_DATABASE.set(oldDB.tags)
-
-        insertReason(e.detail.label, e.detail.color);
-    }
-
-    onMount(async () => {
-        parentCollections = await getAllParentCollections(true);
+    PARENTS_SLICE_DATABASE.subscribe((pCol) => {
+        parentCollections = pCol;
     })
 
 </script>
 
-<div class="container">
-    <div class="tags-icon-container">
-        <Notebook size={33}/>
-        <p class="tags-text">Questions</p>
+<div class="main-container">
+    <div class="container">
+        <div class="question-icon-container">
+            <Notebook size={33}/>
+            <p class="question-text">Questions</p>
+        </div>
+        <div class="collections-container">
+            {#each parentCollections as collection (collection.id)}
+                <SideBarItem handleClick={(e) => 
+                    handleParnetClick(e, collection.id)} collection={collection} />
+            {/each}
+        </div>
+        <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
+        <AddCollectionForm on:addCollection={handleCollectionSubmit} />
+        <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
+        <AddLabelForm />
+        <TagsView />
     </div>
-    <div class="collections-container">
-        {#each parentCollections as collection (collection.id)}
-            <SideBarItem handleClick={(e) => 
-                handleParnetClick(e, collection.id)} collection={collection} />
-        {/each}
-    </div>
-    <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
-    <AddCollectionForm on:addCollection={handleCollectionSubmit} />
-    <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
-    <AddLabelForm on:addCollection={handleLabelSubmit}/>
-    <TagsView />
 </div>
 
 <style>
-    .tags-icon-container {
-        display: flex;
-        align-items: center;
-        justify-content: left;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-    .tags-icon-container p {
-        margin-left: 10px;
-        font-size: 22px;
+    .main-container {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 40px 7px;
+        padding-bottom: 10px;
+        min-width: 21%;
+        display: flex; 
+        flex-direction: column;
     }
     
     .container {
-        background: rgba(0, 0, 0, 0.8);
-        padding: 0px 10px;
-        width: 45%;
-        height: 100%;
-        display: flex; 
-        flex-direction: column;
-        align-items: right;
+        padding: 0 12px;
+        overflow-y: scroll;
     }
 
     .collections-container {
         margin-left: 15px;
+        margin-bottom: 20px;
     }
 
+    .question-icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        margin-bottom: 15px;
+    }
+
+    .question-icon-container p {
+        margin-left: 10px;
+        font-size: 22px;
+    }
 </style>

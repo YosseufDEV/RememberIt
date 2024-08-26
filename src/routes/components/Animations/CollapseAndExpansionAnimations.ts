@@ -22,7 +22,7 @@ export function expandCollection(children: HTMLElement, maxWidth: number) {
         .from(children, 
             { 
                 top: `-${maxWidth}px`, 
-                opacity: 0, 
+                autoAlpha: 0, 
                 duration: ANIMATION_DURATION, 
                 height: 0,
                 position: "relative", 
@@ -32,11 +32,11 @@ export function expandCollection(children: HTMLElement, maxWidth: number) {
             { 
                 height: "auto",
                 top: "0px", 
-                opacity: 1, 
+                autoAlpha: 1, 
                 position: "relative", 
                 duration: ANIMATION_DURATION, 
                 zIndex: 1,
-                ease: "power2.out"
+                ease: "power4.out"
         }, "<");
     return timeline;
 }
@@ -50,8 +50,8 @@ export function collapseCollection(collapsableParent: HTMLElement, children: HTM
                 top: `-${maxWidth}px`, 
                 duration: ANIMATION_DURATION, 
                 zIndex: -1,
-                ease: "power2.in",
-                opacity: 0 
+                ease: "power4.in",
+                autoAlpha: 0 
             })
         .to(children, {
             delay: 0.2,

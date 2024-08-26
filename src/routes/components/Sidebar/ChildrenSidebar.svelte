@@ -14,16 +14,17 @@
 
 <div class="container">
     {#each activeParent.child_collections as childCollection (childCollection.id)}
-        <ChildrenSidebarItem collection={childCollection} />
+        <ChildrenSidebarItem collection={childCollection}/>
     {/each}
     <NestedChildrenSidebarView collection={activeParent}/>
 </div>
 
 <style>
     .container {
-        padding: 0px 10px;
+        padding: 40px 0px;
         background: rgba(0, 0, 0, 0.89);
-        width: 35%;
+        direction: ltr;
+        min-width: 25%;
         height: 100%;
         display: flex; 
         flex-direction: column;

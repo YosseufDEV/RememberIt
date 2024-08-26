@@ -1,11 +1,21 @@
 <script lang="ts">
     import type { Reason } from "../typescript/types";
+    import { removeBadgeAnimation } from "./Animations/BadgeAnimations";
 
     export let reason: Reason;
+    let badgeRef: HTMLElement, strikeThroughRef: HTMLElement;
+
+    function handleDoubleClick(e: MouseEvent) {
+        removeBadgeAnimation(badgeRef, strikeThroughRef);
+        console.log('Double Clicked');
+    }
+
 </script>
 
-<div class="container" style={`background: ${reason.color}; box-shadow: 0 0 50px ${reason.color}a5;`}>
+<div class="container" on:dblclick={handleDoubleClick} bind:this={badgeRef}
+     style={`background: ${reason.color}; box-shadow: 0 0 50px ${reason.color}a5;`}>
     <p class="label">{reason.label}</p> 
+    <div bind:this={strikeThroughRef}/>
 </div>
 
 <style>
@@ -23,5 +33,4 @@
     .label {
         font-weight: 500;
     }
-
 </style>

@@ -1,11 +1,14 @@
 <script lang="ts">
+    import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
+
     export let isVisible: boolean;
 </script>
 <div>
     {#if isVisible}
         <div class="container" style={`display: ${isVisible};`}>
             <div class="command-bar">
-                <h1>New Collection</h1>
+                <h1>New Question</h1>
+                <AddQuestionForm />
             </div>
         </div>
     {/if}

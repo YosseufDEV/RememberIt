@@ -1,19 +1,29 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import generateColor from "../../typescript/color_generator";
+    import { get } from "svelte/store";
     import colors from "$lib/assets/colors/colors.json"
 
-    let dispatch = createEventDispatcher();
+    import { Button, TextBox } from "fluent-svelte";
+    import type { Reason } from "../../typescript/types";
+    import { insertReason } from "../../../database";
+    import { DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import generateColor from "../../typescript/color_generator";
+
     let label: string = "";
 
-    function handleSubmit() {
-        dispatch("addCollection", { label, color: generateColor(colors) });
+    function handleSubmit(e: SubmitEvent) {
+        let oldDB = get(DATABASE);
+
+        insertReason(label, generateColor(colors)).then((reason) => {
+            oldDB.tags.push({ id: reason.id, label: reason.label, color: reason.color })
+            DATABASE.set(oldDB);
+            TAGS_SLICE_DATABASE.set(oldDB.tags)
+        });
     }
 
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    <input placeholder="Add Label" bind:value={label} type="text">
-    <button>Add</button>
+    <TextBox placeholder="Add Label" bind:value={label} type="text"/>
+    <Button variant="accent">Add</Button>
 </form>
 

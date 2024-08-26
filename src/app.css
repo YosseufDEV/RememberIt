@@ -28,3 +28,37 @@ p, h1, h2, h3 {
 p {
     font-size: 20px;
 }
+
+/* TODO: Make the scrollbar interactive to clicking and dragging*/
+::-webkit-scrollbar {
+    width: 2px;
+    padding: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+    margin-right: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9f9f9f;
+    margin-right: 5px;
+    border-radius: 500px;
+}
+
+form {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.text-box-container {
+    max-width: 250px;
+}
+
+.combo-box-button {
+    min-width: 100px;
+}
+
+button {
+    margin-left: 10px;
+}

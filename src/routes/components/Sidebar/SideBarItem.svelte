@@ -26,13 +26,14 @@
         return length;
     } 
 
+
     // Changable Flags
+    $: hasNestedParents = collection.nested_parent_collections.length > 0;
     let selected = false,
         collapsed=false;
 
     // Constant Flags
-    const hasNestedParents = collection.nested_parent_collections.length > 0,
-          isNested = collection.parent_id != null;
+    const isNested = collection.parent_id != null;
 
     let maxWidth: number = 0;
 
@@ -77,6 +78,7 @@
         <SidebarNestedItems collection={collection}/>
     </div>
 </div>
+
 <style> 
     .div-container {
         width: 100%;

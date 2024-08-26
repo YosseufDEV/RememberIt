@@ -28,7 +28,7 @@ pub struct ReturnedParentCollection {
     pub parent_id: Option<i32>,
     pub title: String,
     pub child_collections: Vec<ReturnedQuestionsCollection>,
-    pub nested_parent_collections: Box<Vec<ReturnedParentCollection>>
+    pub nested_parent_collections: Vec<ReturnedParentCollection>
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize, Associations)]

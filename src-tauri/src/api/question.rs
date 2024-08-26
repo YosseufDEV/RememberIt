@@ -32,7 +32,7 @@ pub fn get_questions_by_collection_id(col_id: i32) -> Vec<ReturnedQuestion> {
     let mut complete_questions: Vec<ReturnedQuestion> = Vec::new();
 
     let questions: Vec<Question> = dsl::question
-                                    .filter(dsl::collection_id.to_owned().eq(col_id))
+                                    .filter(dsl::collection_id.eq(col_id))
                                     .select(Question::as_select()).load(connection)
                                     .expect("Failed to fetch questions for collection");
     for question in questions.iter() {

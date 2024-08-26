@@ -54,7 +54,7 @@ fn get_parent_collection_nested_collections_by_id(connection: &mut SqliteConnect
             parent_id: collection.parent_id,
             title: collection.title.clone(),
             child_collections: questions_collection,
-            nested_parent_collections: Box::new(get_parent_collection_nested_collections_by_id(connection, collection.id))
+            nested_parent_collections: get_parent_collection_nested_collections_by_id(connection, collection.id) 
         };
         complete_nested_collections.push(complete_parent);
     }
@@ -68,7 +68,7 @@ pub fn get_parent_collection_by_id(p_id: i32) -> ReturnedParentCollection {
     let connection = &mut establish_connection();
 
     let collection: ParentCollection = parent_collection
-                        .filter(id.to_owned().eq(p_id))
+                        .filter(id.eq(p_id))
                         .first(connection)
                         .expect("Failed to fetch parent collection");
     let child_collections = get_collections_by_parent_id(p_id);
@@ -78,7 +78,7 @@ pub fn get_parent_collection_by_id(p_id: i32) -> ReturnedParentCollection {
         id: collection.id,
         parent_id: collection.parent_id,
         title: collection.title,
-        nested_parent_collections: Box::new(nested_collections),
+        nested_parent_collections: nested_collections,
         child_collections
     }
 }
@@ -102,7 +102,7 @@ pub fn get_all_unnested_parents() -> Vec<ReturnedParentCollection> {
         let whole_collection = ReturnedParentCollection {
             id: collection.id,
             parent_id: collection.parent_id,
-            nested_parent_collections: Box::new(nested_collections),
+            nested_parent_collections: nested_collections,
             title: collection.title.clone(),
             child_collections: questions_collection,
         };
@@ -129,7 +129,7 @@ pub fn get_all_parent_collections() -> Vec<ReturnedParentCollection> {
         let whole_collection = ReturnedParentCollection {
             id: collection.id,
             parent_id: collection.parent_id,
-            nested_parent_collections: Box::new(nested_collections),
+            nested_parent_collections: nested_collections,
             title: collection.title.clone(),
             child_collections: questions_collection,
         };

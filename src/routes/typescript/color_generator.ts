@@ -75,8 +75,10 @@ function generateColor(colors: Color[]): string {
 
     if(selector != 'hex') {
         color = colors[randomIndex][selector][index];
+    } else {
+        color = colors[randomIndex]['hex'];
     }
-    color = colors[randomIndex]['hex'];
+
     let colorAsRgb = hexToRgb(color);
     let isGreyish: boolean = (colorAsRgb[0] == colorAsRgb[1] && colorAsRgb[1] == colorAsRgb[2]);
 

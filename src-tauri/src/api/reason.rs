@@ -29,3 +29,14 @@ pub fn get_reasons() -> Vec<Reason> {
                     .load(connection)
                     .expect("Failed to Get Reasons")
 }
+
+#[tauri::command]
+pub fn get_reason_by_id(reason_id: i32) -> Vec<Reason> {
+    let connection = &mut establish_connection();
+
+    reason::dsl::reason
+                    .select(Reason::as_select())
+                    .filter(reason::id.eq(reason_id))
+                    .load(connection)
+                    .expect("Failed to Get Reasons")
+}
