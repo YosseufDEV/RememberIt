@@ -121,6 +121,7 @@
 
     .item {
         font-size: 20px;
+        width: fit-content;
     }
 
     .item:hover {

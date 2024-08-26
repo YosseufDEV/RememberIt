@@ -1,15 +1,15 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
+    import { PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { active_parent, active_parent_index } from "../../stores/active-parent-store";
     import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
     import ChildrenSidebarItem from "./ChildrenSidebarItem.svelte";
-    import { PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import type { ParentCollection, QuestionsCollection } from "../../typescript/types";
 
     const activeParentIndex = get(active_parent_index);
     let parents = get(PARENTS_SLICE_DATABASE);
 
+    // TODO: Make this better
     $: activeParentCollection = activeParentIndex ? parents[activeParentIndex] : {
         id: -1,
         child_collections: [],
@@ -35,7 +35,7 @@
 
 <style>
     .container {
-        padding: 40px 0px;
+        padding: 40px 10px;
         background: rgba(0, 0, 0, 0.89);
         direction: ltr;
         min-width: 25%;

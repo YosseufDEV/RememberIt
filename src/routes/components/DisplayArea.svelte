@@ -11,17 +11,22 @@
     import DropZone from "./DragAndDrop/DropZone.svelte";
 
     $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
+    let ref: HTMLElement;
 
     function handleDraggableDrop() {
         console.log("dropped item");
+    }
+
+    function handleHoverEnter() {
+        ref.style.background = 'blue'; 
     }
 
     active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>
 
-<div class="main-container">
-    <DropZone on:dropevent={handleDraggableDrop} >
+<div class="main-container" bind:this={ref}>
+    <DropZone on:dropevent={handleDraggableDrop} on:hoverenter={handleHoverEnter} >
         <div class="container">
             {#if 'parent_collection_id' in activeCollection}
                 <ChildCollectionView childCollection={activeCollection} />
