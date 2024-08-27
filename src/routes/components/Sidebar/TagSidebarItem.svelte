@@ -1,13 +1,13 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
+    import type { QuestionsCollection, Tag } from "../../typescript/types";
     import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import type { QuestionsCollection, Reason } from "../../typescript/types";
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
-    import Draggable from "../DragAndDrop/Draggable.svelte";
     import { onMount } from "svelte";
+    import Draggable from "../DragAndDrop/Draggable.svelte";
     
-    export let tag: Reason;
+    export let tag: Tag;
 
     let tagContainerRef: HTMLElement;
     let tagCircleRef: HTMLElement;
@@ -27,7 +27,7 @@
         questionsCollections.forEach((collection) => {
             let questions = collection.questions;
             questions.forEach((q) => {
-                length += q.reasons.filter((r) => r.id == tag.id).length;
+                length += q.tags.filter((r) => r.id == tag.id).length;
             })
         })
         return length;

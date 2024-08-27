@@ -5,13 +5,13 @@ use crate::models::*;
 use crate::api::question::get_questions_by_collection_id;
 
 #[tauri::command]
-pub fn create_collection(title: String, parent_collection_id: i32) -> QuestionsCollection {
+pub fn create_questions_collection(title: String, parent_id: i32) -> QuestionsCollection {
     use crate::schema::questions_collection;
 
     let conn = &mut establish_connection();
 
     let collection = NewQuestionsCollection {
-        parent_collection_id,
+        parent_id,
         title
     };
 
@@ -23,45 +23,43 @@ pub fn create_collection(title: String, parent_collection_id: i32) -> QuestionsC
 }
 
 #[tauri::command]
-pub fn get_collection_by_id(col_id: i32) -> ReturnedQuestionsCollection {
+pub fn get_questions_collection_by_id(col_id: i32) -> CompleteQuestionsCollection {
     use crate::schema::questions_collection::dsl::*;
-    use crate::schema::question::dsl::{question, collection_id};
 
     let connection = &mut establish_connection();
 
     let collection: QuestionsCollection = questions_collection.filter(id.eq(col_id))
                                                               .first(connection)
                                                               .expect("Failed to insert collection");
-    let questions: Vec<ReturnedQuestion> = get_questions_by_collection_id(collection.id);
+    let questions: Vec<CompleteQuestion> = get_questions_by_collection_id(collection.id);
 
-    ReturnedQuestionsCollection {
+    CompleteQuestionsCollection {
         title: collection.title,
         id: collection.id,
-        parent_collection_id: collection.parent_collection_id, 
+        parent_id: collection.parent_id, 
         questions
     }
 }
 
 #[tauri::command]
-pub fn get_collections_by_parent_id(par_id: i32) -> Vec<ReturnedQuestionsCollection> {
+pub fn get_collections_by_parent_id(par_id: i32) -> Vec<CompleteQuestionsCollection> {
     use crate::schema::questions_collection::dsl::*;
-    use crate::schema::question::dsl::{question, collection_id};
 
     let connection = &mut establish_connection();
     let mut collections_vec = Vec::new();
 
     let collections: Vec<QuestionsCollection> = questions_collection
-                                                .filter(parent_collection_id.eq(par_id))
+                                                .filter(parent_id.eq(par_id))
                                                 .select(QuestionsCollection::as_select())
                                                 .load(connection)
                                                 .expect("Failed to insert collection");
     for collection in collections.iter() {
-        let selected_questions: Vec<ReturnedQuestion> = get_questions_by_collection_id(collection.id);
-        let whole_collection = ReturnedQuestionsCollection {
+        let selected_questions: Vec<CompleteQuestion> = get_questions_by_collection_id(collection.id);
+        let whole_collection = CompleteQuestionsCollection {
             id: collection.id,
             title: collection.title.clone(),
             questions: selected_questions,
-            parent_collection_id: par_id
+            parent_id: par_id
         };
         collections_vec.push(whole_collection);
     }
@@ -69,21 +67,21 @@ pub fn get_collections_by_parent_id(par_id: i32) -> Vec<ReturnedQuestionsCollect
 }
 
 #[tauri::command]
-pub fn get_all_collections() -> Vec<ReturnedQuestionsCollection> {
+pub fn get_all_questions_collections() -> Vec<CompleteQuestionsCollection> {
     use crate::schema::questions_collection::dsl::*;
 
     let connection = &mut establish_connection();
-    let mut complete_collections: Vec<ReturnedQuestionsCollection> = Vec::new();
+    let mut complete_collections: Vec<CompleteQuestionsCollection> = Vec::new();
     let selected_collections = questions_collection
                         .select(QuestionsCollection::as_select())
                         .load(connection)
                         .expect("Failed to select collections");
     for collection in selected_collections.iter() {
-        let questions: Vec<ReturnedQuestion> = get_questions_by_collection_id(collection.id);
-        let complete_collection = ReturnedQuestionsCollection {
+        let questions: Vec<CompleteQuestion> = get_questions_by_collection_id(collection.id);
+        let complete_collection = CompleteQuestionsCollection {
             id: collection.id,
             title: collection.title.clone(),
-            parent_collection_id: collection.parent_collection_id,
+            parent_id: collection.parent_id,
             questions
         };
         complete_collections.push(complete_collection)

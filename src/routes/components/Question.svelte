@@ -4,8 +4,8 @@
 
     import type { Question } from "../typescript/types";
     import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
-    import Badge from "./Badge.svelte";
     import { newlyAddedQuestionAnimation } from "./Animations/QuestionLifecylceAnimations";
+    import Badge from "./Badge.svelte";
 
     let questionRef: HTMLElement;
 
@@ -28,10 +28,10 @@
 
 <div class="container" bind:this={questionRef}>
     <div class="number-container">
-        <p>{question.question_number}</p>
+        <p>{question.questionNumber}</p>
     </div>
-    {#each question.reasons as reason}
-        <Badge reason={reason}/>
+    {#each question.tags as tag}
+        <Badge tag={tag}/>
     {/each}
 </div>
 
@@ -47,6 +47,7 @@
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         overflow: hidden;
     }
+
     .number-container {
         color: white;
         border-radius: 10px;

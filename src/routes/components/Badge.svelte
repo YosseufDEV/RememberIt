@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { Reason } from "../typescript/types";
+    import type { Tag } from "../typescript/types";
     import { removeBadgeAnimation } from "./Animations/BadgeAnimations";
 
-    export let reason: Reason;
+    export let tag: Tag;
     let badgeRef: HTMLElement, strikeThroughRef: HTMLElement;
 
     function handleDoubleClick(e: MouseEvent) {
@@ -13,8 +13,8 @@
 </script>
 
 <div class="container" on:dblclick={handleDoubleClick} bind:this={badgeRef}
-     style={`background: ${reason.color}; box-shadow: 0 0 50px ${reason.color}a5;`}>
-    <p class="label">{reason.label}</p> 
+     style={`background: ${tag.color}; box-shadow: 0 0 50px ${tag.color}a5;`}>
+    <p class="label">{tag.label}</p> 
     <div bind:this={strikeThroughRef}/>
 </div>
 

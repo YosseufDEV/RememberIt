@@ -2,76 +2,77 @@ use diesel::prelude::*;
 use serde::Serialize;
 
 #[derive(Queryable, Identifiable, Selectable, Serialize)]
-#[diesel(table_name = crate::schema::parent_collection)]
-pub struct ParentCollection {
+#[diesel(table_name = crate::schema::collection)]
+#[serde(rename_all = "camelCase")]
+pub struct Collection {
     pub id: i32,
     pub parent_id: Option<i32>,
     pub title: String,
 }
 
 #[derive(Insertable)]
-#[diesel(table_name = crate::schema::parent_collection)]
-pub struct NewParentCollection {
+#[diesel(table_name = crate::schema::collection)]
+pub struct NewCollection {
     pub title: String,
-}
-
-#[derive(Insertable)]
-#[diesel(table_name = crate::schema::parent_collection)]
-pub struct NewNestedParentCollection {
-    pub title: String,
-    pub parent_id: i32,
+    pub parent_id: Option<i32>,
 }
 
 #[derive(Serialize)]
-pub struct ReturnedParentCollection {
+#[serde(rename_all = "camelCase")]
+pub struct CompleteCollection {
     pub id: i32,
     pub parent_id: Option<i32>,
     pub title: String,
-    pub child_collections: Vec<ReturnedQuestionsCollection>,
-    pub nested_parent_collections: Vec<ReturnedParentCollection>
+    pub questions_collections: Vec<CompleteQuestionsCollection>,
+    pub sub_collections: Vec<CompleteCollection>
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize, Associations)]
 #[diesel(table_name = crate::schema::questions_collection)]
-#[diesel(belongs_to(ParentCollection, foreign_key = parent_collection_id))]
+#[diesel(belongs_to(Collection, foreign_key = parent_id))]
+#[serde(rename_all = "camelCase")]
 pub struct QuestionsCollection {
     pub id: i32,
-    pub parent_collection_id: i32,
+    pub parent_id: i32,
     pub title: String,
 }
 
 
 #[derive(Serialize)]
-pub struct ReturnedQuestionsCollection {
+#[serde(rename_all = "camelCase")]
+pub struct CompleteQuestionsCollection {
     pub id: i32,
-    pub parent_collection_id: i32,
+    pub parent_id: i32,
     pub title: String,
-    pub questions: Vec<ReturnedQuestion>,
+    pub questions: Vec<CompleteQuestion>,
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = crate::schema::questions_collection)]
 pub struct NewQuestionsCollection {
-    pub parent_collection_id: i32,
     pub title: String,
+    pub parent_id: i32,
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize)]
-#[diesel(table_name = crate::schema::reason)]
-pub struct Reason {
+#[serde(rename_all = "camelCase")]
+#[diesel(table_name = crate::schema::tag)]
+pub struct Tag {
     pub id: i32,
     pub color: String,
     pub label: String,
 }
 
 #[derive(Insertable, Serialize)]
-#[diesel(table_name = crate::schema::reason)]
-pub struct NewReason {
+#[serde(rename_all = "camelCase")]
+#[diesel(table_name = crate::schema::tag)]
+pub struct NewTag {
     pub label: String,
     pub color: String,
 }
 
 #[derive(Queryable, Associations, Identifiable, Selectable, Serialize)]
+#[serde(rename_all = "camelCase")]
 #[diesel(belongs_to(QuestionsCollection, foreign_key = collection_id))]
 #[diesel(table_name = crate::schema::question)]
 pub struct Question {
@@ -88,20 +89,21 @@ pub struct NewQuestion {
 }
 
 #[derive(Serialize)]
-pub struct ReturnedQuestion {
+#[serde(rename_all = "camelCase")]
+pub struct CompleteQuestion {
     pub id: i32,
     pub question_number: i32,
     pub collection_id: i32,
-    pub reasons: Vec<Reason>
+    pub tags: Vec<Tag>
 }
 
 #[derive(Identifiable, Insertable, Selectable, Queryable, Associations)]
-#[diesel(belongs_to(Reason))]
+#[diesel(belongs_to(Tag))]
 #[diesel(belongs_to(Question))]
-#[diesel(primary_key(question_id, reason_id))]
-#[diesel(table_name = crate::schema::question_reason)]
+#[diesel(primary_key(question_id, tag_id))]
+#[diesel(table_name = crate::schema::question_tag)]
 // FIX: Question can't have 2 of the same reason
-pub struct QuestionReason {
+pub struct QuestionTag {
     pub question_id: i32,
-    pub reason_id: i32,
+    pub tag_id: i32,
 }

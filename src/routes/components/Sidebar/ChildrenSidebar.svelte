@@ -13,25 +13,26 @@
     // TODO: Make this better
     $: activeParentCollection = activeParentIndex ? parents[activeParentIndex] : {
         id: -1,
-        child_collections: [],
-        nested_parent_collections: [],
+        questionsCollections: [],
+        subCollections: [],
     };
 
-    active_parent.subscribe((activeParent) => activeParent ? activeParentCollection = activeParent : null);
 
     QUESTION_COLLECTION_SLICE_DATABASE.subscribe((col) => {
         if(activeParentCollection) {
-            activeParentCollection.child_collections = col.filter((c) => c.parent_collection_id == activeParentCollection.id)
+            activeParentCollection.questionsCollections = col.filter((c) => c.parentId == activeParentCollection.id)
         }
     })
+
+    active_parent.subscribe((activeParent) => activeParent ? activeParentCollection = activeParent : null);
 
 </script>
 
 <div class="container">
-    {#each activeParentCollection.child_collections as childCollection (childCollection.id)}
+    {#each activeParentCollection.questionsCollections as childCollection (childCollection.id)}
         <ChildrenSidebarItem collection={childCollection}/>
     {/each}
-    <NestedChildrenSidebarView nestedParentTitle={activeParentCollection.title} collection={activeParentCollection} />
+    <!-- <NestedChildrenSidebarView nestedTitle={activeParentCollection.title} collection={activeParentCollection} /> -->
 </div>
 
 <style>

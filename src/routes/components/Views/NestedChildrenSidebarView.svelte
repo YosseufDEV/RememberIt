@@ -1,25 +1,25 @@
 <script lang="ts">
     import Seperator from "$lib/GenericComponents/Seperator.svelte";
-    import type { ParentCollection } from "../../typescript/types";
+    import type { Collection } from "../../typescript/types";
     import ChildrenSidebarItem from "../Sidebar/ChildrenSidebarItem.svelte";
 
-    export let collection: ParentCollection, nestedParentTitle: string = "Zinko";
+    export let collection: Collection, nestedTitle: string = "Zinko";
 </script>
 
 <div>
-    {#each collection.nested_parent_collections  as nested_collection (nested_collection.id)}
+    {#each collection.subCollections  as nested_collection (nested_collection.id)}
         <div class="container">
             <div class="title-container">
-                {#if nested_collection.child_collections.length > 0}
+                {#if nested_collection.questionsCollections.length > 0}
                     <h2 class="collection-title">{nested_collection.title}</h2>
-                    <h4 class="parent-title">{nestedParentTitle}</h4>
+                    <h4 class="parent-title">{nestedTitle}</h4>
                 {/if}
             </div>
-            {#each nested_collection.child_collections  as child_collection (child_collection.id)}
+            {#each nested_collection.questionsCollections  as child_collection (child_collection.id)}
                 <ChildrenSidebarItem collection={child_collection}/>
             {/each}
         </div>
-        <svelte:self collection={nested_collection} nestedParentTitle={nested_collection.title}/>
+        <svelte:self collection={nested_collection} nestedTitle={nested_collection.title}/>
     {/each}
 </div>
 

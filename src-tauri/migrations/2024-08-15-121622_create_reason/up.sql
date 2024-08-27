@@ -1,6 +1,0 @@
--- Your SQL goes here
-CREATE TABLE reason (
-    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    color TEXT NOT NULL,
-    label TEXT NOT NULL
-);

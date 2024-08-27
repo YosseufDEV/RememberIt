@@ -1,25 +1,25 @@
 <script lang="ts">
-    import type { ParentCollection } from "../../typescript/types";
+    import type { Collection } from "../../typescript/types";
     import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
     import { active_parent } from "../../stores/active-parent-store";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
 
-    export let collection: ParentCollection, handleClick: any;
+    export let collection: Collection, handleClick: any;
 
     let children: HTMLElement,
         chevron: HTMLElement,
-        collapsableParent: HTMLElement;
+        collapsableCollection: HTMLElement;
     let activeAnimation: GSAPTween | GSAPTimeline;
 
-    function getCollectionsLength(collection: ParentCollection) {
+    function getCollectionsLength(collection: Collection) {
         let length = 0;
 
-        for(const childCollection of collection.child_collections) {
+        for(const childCollection of collection.questionsCollections) {
             length += childCollection.questions.length;
         }
 
-        for(const nestedCollection of collection.nested_parent_collections) {
+        for(const nestedCollection of collection.subCollections) {
             length+=getCollectionsLength(nestedCollection);
 
         }
@@ -28,12 +28,12 @@
 
 
     // Changable Flags
-    $: hasNestedParents = collection.nested_parent_collections.length > 0;
+    $: hasNested = collection.subCollections.length > 0;
     let selected = false,
         collapsed=false;
 
     // Constant Flags
-    const isNested = collection.parent_id != null;
+    const isNested = collection.parentId != null;
 
     let maxWidth: number = 0;
 
@@ -45,7 +45,7 @@
             collapsed = false;
         } else {
             activeAnimation?.kill();
-            activeAnimation = collapseCollection(collapsableParent, children, maxWidth)
+            activeAnimation = collapseCollection(collapsableCollection, children, maxWidth)
             animateChevronClosed(chevron);
             collapsed = true;
         }
@@ -57,11 +57,11 @@
 
 <div bind:clientWidth={maxWidth} class="div-container"> 
     <div class="collection-container" 
-         class:children-doesnt-have-nested={!hasNestedParents && isNested} 
-         class:has-nested-parents={hasNestedParents}
-         class:doesnt-have-nested-parents={!isNested && !hasNestedParents}
-         bind:this={collapsableParent}>
-        {#if hasNestedParents}
+         class:children-doesnt-have-nested={!hasNested && isNested} 
+         class:has-nested-parents={hasNested}
+         class:doesnt-have-nested-parents={!isNested && !hasNested}
+         bind:this={collapsableCollection}>
+        {#if hasNested}
             <div on:click={toggleCollection} class="chevron-container">
                 <ChevronDown fill={"#505050"} size={23} bind:ref={chevron}/>
             </div>

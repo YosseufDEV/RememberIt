@@ -1,7 +1,7 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    parent_collection (id) {
+    collection (id) {
         id -> Integer,
         parent_id -> Nullable<Integer>,
         title -> Text,
@@ -17,22 +17,22 @@ diesel::table! {
 }
 
 diesel::table! {
-    question_reason (question_id, reason_id) {
+    question_tag (question_id, tag_id) {
         question_id -> Integer,
-        reason_id -> Integer,
+        tag_id -> Integer,
     }
 }
 
 diesel::table! {
     questions_collection (id) {
         id -> Integer,
-        parent_collection_id -> Integer,
+        parent_id -> Integer,
         title -> Text,
     }
 }
 
 diesel::table! {
-    reason (id) {
+    tag (id) {
         id -> Integer,
         color -> Text,
         label -> Text,
@@ -40,14 +40,14 @@ diesel::table! {
 }
 
 diesel::joinable!(question -> questions_collection (collection_id));
-diesel::joinable!(question_reason -> question (question_id));
-diesel::joinable!(question_reason -> reason (reason_id));
-diesel::joinable!(questions_collection -> parent_collection (parent_collection_id));
+diesel::joinable!(question_tag -> question (question_id));
+diesel::joinable!(question_tag -> tag (tag_id));
+diesel::joinable!(questions_collection -> collection (parent_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
-    parent_collection,
+    collection,
     question,
-    question_reason,
+    question_tag,
     questions_collection,
-    reason,
+    tag,
 );

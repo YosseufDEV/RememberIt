@@ -1,85 +1,29 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { get } from "svelte/store";
 
 
-    import type { ParentCollection, Reason } from "../../typescript/types";
-    import { createCollection, createNestedParentCollection, 
-             createParentCollection, 
-             getAllParentCollections, 
-             getParentCollectionById, 
-             insertReason } from "../../../database"
+    import type { Tag } from "../../typescript/types";
+    import { getCollectionById } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
-    import { active_parent, active_parent_index } from "../../stores/active-parent-store";
-    import { ALL_PARENTS_SLICE_DATABASE, DATABASE, PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { active_parent } from "../../stores/active-parent-store";
+    import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
 
-    import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
-    import SideBarItem from "./SideBarItem.svelte";
     import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
-    import AddLabelForm from "../Forms/AddLabelForm.svelte";
+    import SideBarItem from "./SideBarItem.svelte";
     import AddNestedParent from "../Forms/AddNestedParent.svelte";
+    import AddLabelForm from "../Forms/AddLabelForm.svelte";
     import TagsView from "../Views/ParentSidebar/TagsView.svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
+    import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
 
 
     $: parentCollections = get(PARENTS_SLICE_DATABASE);
-    let reasons: Reason[];
+    let tags: Tag[];
 
     async function handleParnetClick(e: MouseEvent, id: number) {
-        const parent = await getParentCollectionById(id)
+        const parent = await getCollectionById(id)
         active_collection.set(parent)
         active_parent.set(parent)
-    }
-
-    async function handleCollectionSubmit(e: CustomEvent) {
-        let parent = get(active_collection);
-        if(parent) {
-            let c = await createCollection(e.detail.title, parent.id);
-            c.questions = [];
-            let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
-            oldDB.push(c);
-            QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
-        }
-    }
-
-    async function handleParentCollectionSubmit(e: CustomEvent) {
-        let parent = await createParentCollection(e.detail.title);
-        parent.child_collections = []
-        parent.nested_parent_collections = []
-        console.log({parent});
-
-        const oldDB = parentCollections;
-        oldDB.push(parent);
-        PARENTS_SLICE_DATABASE.set(oldDB);
-    }
-
-    async function handleNestedParentCollectionSubmit(e: CustomEvent) {
-        let parents = get(ALL_PARENTS_SLICE_DATABASE);
-        let activeParent = get(active_parent)
-        const index = parentCollections.findIndex((pCol) => pCol.id == activeParent.id);
-
-        if(active_parent) {
-            let parent = await createNestedParentCollection(e.detail.title, activeParent.id);
-            let parentId = activeParent.id;
-            let parentsId = [];
-            parent.child_collections = []
-            parent.nested_parent_collections = []
-
-            // TODO: Implement reactive nested parent rendering
-            // while(parentId != null) {
-            //     let tParent = parents.filter((p) => p.id == parentId)[0]; 
-            //     parentId = tParent.parent_id;
-            //     if(parentId != null) {
-            //         parentsId.push(parentId);
-            //     } else {
-            //         parentsId.push(tParent.id);
-            //     }
-            // }
-
-            const oldDB = parentCollections; 
-            oldDB[index].nested_parent_collections.push(parent);
-            PARENTS_SLICE_DATABASE.set(oldDB);
-        }
     }
 
     PARENTS_SLICE_DATABASE.subscribe((pCol) => {
@@ -100,9 +44,9 @@
                     handleParnetClick(e, collection.id)} collection={collection} />
             {/each}
         </div>
-        <AddParentCollectionForm on:addParentCollection={handleParentCollectionSubmit}/>
-        <AddCollectionForm on:addCollection={handleCollectionSubmit} />
-        <AddNestedParent on:addedNestedParent={handleNestedParentCollectionSubmit}/>
+        <AddCollectionForm />
+        <AddParentCollectionForm />
+        <AddNestedParent />
         <AddLabelForm />
         <TagsView />
     </div>

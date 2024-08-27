@@ -1,21 +1,33 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { TextBox, Button } from "fluent-svelte"
+    import { get } from "svelte/store";
 
-    let dispatch = createEventDispatcher();
+    import { createCollection } from "../../../database";
+    import { TextBox, Button } from "fluent-svelte"
+    import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+
     let title: string = "";
 
-    function handleSubmit() {
-        let titleObj = {
-            title: title
-        }
-
-        dispatch("addParentCollection", titleObj);
+    async function handleCollectionSubmit() {
+        let c = await createCollection(title);
+        c.questionsCollections = [];
+        let oldDB = get(PARENTS_SLICE_DATABASE);
+        oldDB.push(c);
+        PARENTS_SLICE_DATABASE.set(oldDB);
     }
 
+    // async function handleNestedCollectionSubmit(e: CustomEvent) {
+    //     let parent = await createCollection(e.detail.title);
+    //     parent.childCollections = []
+    //     parent.subCollections = []
+    //     console.log({parent});
+    //
+    //     const oldDB = parentCollections;
+    //     oldDB.push(parent);
+    //     PARENTS_SLICE_DATABASE.set(oldDB);
+    // }
 </script>
 
-<form class="form" on:submit|preventDefault={handleSubmit}>
+<form class="form" on:submit|preventDefault={handleCollectionSubmit}>
     <TextBox placeholder="Parent Title..." bind:value={title}/>
     <Button variant="accent">Add</Button>
 </form>

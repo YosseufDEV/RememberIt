@@ -1,22 +1,22 @@
 import { writable } from "svelte/store";
-import { getAllCollections, getAllParentCollections, getAllReasons } from "../../../database"
-import type { ParentCollection, QuestionsCollection, Reason } from "../types"
+import { getAllQuesitonsCollections, getAllCollections, getAllTags } from "../../../database"
+import type { Collection, QuestionsCollection, Tag } from "../types"
 
 interface Database {
-    parents: ParentCollection[],
-    unnestedParents: ParentCollection[],
-    tags: Reason[],
+    parents: Collection[],
+    unnesteds: Collection[],
+    tags: Tag[],
     questionCollections: QuestionsCollection[],
 }
 
 async function loadSQLITEDatabase(): Promise<Database> {
-    let unnestedParents = await getAllParentCollections(true);
-    let parents = await getAllParentCollections();
-    let tags = await getAllReasons();
-    let questionCollections = await getAllCollections();
+    let unnesteds = await getAllCollections(true);
+    let parents = await getAllCollections();
+    let tags = await getAllTags();
+    let questionCollections = await getAllQuesitonsCollections();
     return {
         parents,
-        unnestedParents,
+        unnesteds,
         tags,
         questionCollections
     }
@@ -24,7 +24,7 @@ async function loadSQLITEDatabase(): Promise<Database> {
 
 const db = await loadSQLITEDatabase();
 export const DATABASE = writable<Database>(db);
-export const TAGS_SLICE_DATABASE = writable<Reason[]>(db.tags);
-export const PARENTS_SLICE_DATABASE = writable<ParentCollection[]>(db.unnestedParents);
-export const ALL_PARENTS_SLICE_DATABASE = writable<ParentCollection[]>(db.parents);
+export const TAGS_SLICE_DATABASE = writable<Tag[]>(db.tags);
+export const PARENTS_SLICE_DATABASE = writable<Collection[]>(db.unnesteds);
+export const ALL_PARENTS_SLICE_DATABASE = writable<Collection[]>(db.parents);
 export const QUESTION_COLLECTION_SLICE_DATABASE = writable<QuestionsCollection[]>(db.questionCollections);

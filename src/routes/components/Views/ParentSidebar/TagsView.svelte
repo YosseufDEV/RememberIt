@@ -1,10 +1,10 @@
 <script lang="ts">
     import Tags from "$lib/assets/icons/Tags.svelte";
 import { TAGS_SLICE_DATABASE } from "../../../typescript/Database/CachedDatabase";
-    import type { Reason } from "../../../typescript/types"
+    import type { Tag } from "../../../typescript/types"
     import TagSidebarItem from "../../Sidebar/TagSidebarItem.svelte";
 
-    let reasons: Reason[] = [];
+    let reasons: Tag[] = [];
 
     TAGS_SLICE_DATABASE.subscribe((db) => {
         reasons = db;

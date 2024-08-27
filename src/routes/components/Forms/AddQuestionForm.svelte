@@ -2,39 +2,37 @@
     import { get } from "svelte/store";
 
     import { type Question } from "../../typescript/types";
-    import { ComboBox, Button, TextBox, Tooltip } from "fluent-svelte";
+    import { ComboBox, Button, TextBox } from "fluent-svelte";
     import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import { createEventDispatcher } from "svelte";
     import { active_collection } from "../../stores/active_collection_store";
-    import { getQuestionByQuestionNumber, getQuestionsByCollectionId, getReasonById, insertQuestionByCollectionId, insertQuestionReason } from "../../../database";
+    import { getQuestionByQuestionNumber, insertQuestionByCollectionId, insertQuestionTag } from "../../../database";
 
-    const dispatch = createEventDispatcher();
     const activeCollection = get(active_collection);
 
-    let reasons: { name: string, value: number }[] = [];
+    let tags: { name: string, value: number }[] = [];
     let questionNumber: number;
-    let reasonId: number = 1;
+    let tagId: number = 1;
 
     async function addQuestionToCurrentCollection() {
-        if('parent_collection_id' in activeCollection) {
+        if('questions' in activeCollection) {
             let notDuplicate = true;
 
             activeCollection.questions.forEach((q: Question) => {
-                if(q.question_number == questionNumber)
+                if(q.questionNumber == questionNumber)
                     notDuplicate = false;
             })
 
-            // TODO: Stack Reasons 
+            // TODO: Stack Tags 
             if(notDuplicate) {
                 insertQuestionByCollectionId(questionNumber, activeCollection.id).then(async q => {
-                    await insertQuestionReason(q.id, reasonId)
+                    await insertQuestionTag(q.id, tagId)
 
-                    let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == reasonId)[0]
+                    let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
                     let completeQuestion = {
                         id: q.id,
-                        question_number: q.question_number,
-                        collection_id: q.collection_id,
-                        reasons: [tag]
+                        questionNumber: q.questionNumber,
+                        collectionId: q.collectionId,
+                        tags: [tag]
                     }
 
                     console.log({completeQuestion})
@@ -53,12 +51,12 @@
                 })
             } else {
                 const question = await getQuestionByQuestionNumber(activeCollection.id, questionNumber)
-                await insertQuestionReason(question.id, reasonId);
+                await insertQuestionTag(question.id, tagId);
             }
             // INFO: For Question appear animation
-            // let t = get(TEMP_DATABASE);
+            // let t = get(TEMPDATABASE);
             // t.questions.push(question);
-            // TEMP_DATABASE.set(t);
+            // TEMPDATABASE.set(t);
         }
     }
 
@@ -67,7 +65,7 @@
     }
 
     DATABASE.subscribe((db) => {
-        reasons = db.tags.map((el) => (
+        tags = db.tags.map((el) => (
             {
                 value: el.id,
                 name: el.label,
@@ -78,6 +76,6 @@
 
 <form on:submit|preventDefault={handleSubmit}>
     <TextBox class="text-box" placeholder="Question Number" bind:value={questionNumber} type="number"/>
-    <ComboBox bind:value={reasonId} class="combo-box" items={reasons}/>
+    <ComboBox bind:value={tagId} class="combo-box" items={tags}/>
     <Button variant="accent">Add</Button>
 </form>

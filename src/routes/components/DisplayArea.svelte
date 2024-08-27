@@ -1,14 +1,13 @@
 <script lang="ts">  
-    import ParentCollectionView from "./Views/DisplayArea/ParentCollectionView.svelte";
-    import ChildCollectionView from "./Views/DisplayArea/ChildCollectionView.svelte";
+    import SuperCollectionView from "./Views/DisplayArea/SuperCollectionView.svelte";
+    import QuestionsCollectionView from "./Views/DisplayArea/QuestionsCollectionView.svelte";
 
-    import { get } from "svelte/store";
-    import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
+    import type { QuestionsCollection, Collection, Question } from "../typescript/types"
     import { active_collection } from "../stores/active_collection_store";
     import DropZone from "./DragAndDrop/DropZone.svelte";
     import { Button } from "fluent-svelte";
 
-    $: activeCollection = get(active_collection);
+    $: activeCollection = { id: -1, title: "UNTITLED" } as Collection | QuestionsCollection
     let ref: HTMLElement;
 
     function handleDraggableDrop() {
@@ -20,11 +19,10 @@
     }
 
     function filterCollection() {
-        // activeCollection.questions = 
-        //     activeCollection.questions.filter((q) => q.reaso
     }
 
-    active_collection.subscribe((collection) => activeCollection = collection);
+    active_collection.subscribe((collection) => {
+    activeCollection = collection});
 
 </script>
 
@@ -32,10 +30,10 @@
     <Button on:click={filterCollection}>Filter</Button>
     <DropZone on:dropevent={handleDraggableDrop} on:hoverenter={handleHoverEnter} >
         <div class="container">
-            {#if 'parent_collection_id' in activeCollection}
-                <ChildCollectionView childCollection={activeCollection} />
+            {#if 'questions' in activeCollection}
+                <QuestionsCollectionView questionsCollection={activeCollection} />
             {:else if activeCollection.id > 0}
-                <ParentCollectionView parentCollection={activeCollection}/>
+                <SuperCollectionView superCollection={activeCollection}/>
             {/if}
         </div>
     </DropZone>

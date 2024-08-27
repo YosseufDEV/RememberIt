@@ -1,21 +1,26 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { TextBox, Button } from "fluent-svelte"
+    import { get } from "svelte/store";
 
-    let dispatch = createEventDispatcher();
+    import { TextBox, Button } from "fluent-svelte"
+    import { active_collection } from "../../stores/active_collection_store";
+    import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { createQuestionsCollection } from "../../../database";
+
     let title: string = "";
 
-    function handleSubmit() {
-        let titleObj = {
-            title: title
+    async function handleCollectionSubmit() {
+        let parentCollection = get(active_collection);
+        if(parentCollection) {
+            let c = await createQuestionsCollection(title, parentCollection.id);
+            c.questions = [];
+            let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
+            oldDB.push(c);
+            QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
         }
-
-        dispatch("addCollection", titleObj);
     }
-
 </script>
 
-<form on:submit|preventDefault={handleSubmit}>
+<form on:submit|preventDefault={handleCollectionSubmit}>
     <TextBox placeholder="Title" bind:value={title} type="text"/>
     <Button variant="accent">Add</Button>
 </form>

@@ -1,29 +1,29 @@
-export interface Reason {
+export interface Tag {
     id: number,
     label: string,
     color: string,
 }
 
-export interface ParentCollection {
+export interface ICollection {
     id: number,
     title: string,
-    parent_id: number,
-    child_collections: QuestionsCollection[]
-    nested_parent_collections: ParentCollection[]
+    parentId: number,
 }
 
-export interface QuestionsCollection {
-    title: string,
-    id: number,
-    parent_collection_id: number,
+export interface Collection extends ICollection {
+    questionsCollections: QuestionsCollection[]
+    subCollections: Collection[]
+}
+
+export interface QuestionsCollection extends ICollection {
     questions: Question[]
 }
 
 export interface Question {
     id: number,
-    question_number: number,
-    collection_id: number,
-    reasons: Reason[],
+    questionNumber: number,
+    collectionId: number,
+    tags: Tag[],
 }
 
 export interface DropZone {
