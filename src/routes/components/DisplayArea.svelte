@@ -1,16 +1,14 @@
 <script lang="ts">  
-    import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
     import ParentCollectionView from "./Views/DisplayArea/ParentCollectionView.svelte";
     import ChildCollectionView from "./Views/DisplayArea/ChildCollectionView.svelte";
 
-    import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
-    import { getQuestionByQuestionNumber, getQuestionsByCollectionId, insertQuestionByCollectionId, insertQuestionReason } from "../../database";
-    import { active_collection } from "../stores/active_collection_store";
-    import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
     import { get } from "svelte/store";
+    import type { QuestionsCollection, ParentCollection, Question } from "../typescript/types"
+    import { active_collection } from "../stores/active_collection_store";
     import DropZone from "./DragAndDrop/DropZone.svelte";
+    import { Button } from "fluent-svelte";
 
-    $: activeCollection = { id: -1, title: "UNTITLED" } as ParentCollection | QuestionsCollection
+    $: activeCollection = get(active_collection);
     let ref: HTMLElement;
 
     function handleDraggableDrop() {
@@ -21,11 +19,17 @@
         ref.style.background = 'blue'; 
     }
 
+    function filterCollection() {
+        // activeCollection.questions = 
+        //     activeCollection.questions.filter((q) => q.reaso
+    }
+
     active_collection.subscribe((collection) => activeCollection = collection);
 
 </script>
 
 <div class="main-container" bind:this={ref}>
+    <Button on:click={filterCollection}>Filter</Button>
     <DropZone on:dropevent={handleDraggableDrop} on:hoverenter={handleHoverEnter} >
         <div class="container">
             {#if 'parent_collection_id' in activeCollection}

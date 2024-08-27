@@ -1,0 +1,106 @@
+<script lang="ts">
+    import { get } from "svelte/store";
+
+    import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import type { QuestionsCollection, Reason } from "../../typescript/types";
+    import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
+    import Draggable from "../DragAndDrop/Draggable.svelte";
+    import { onMount } from "svelte";
+    
+    export let tag: Reason;
+
+    let tagContainerRef: HTMLElement;
+    let tagCircleRef: HTMLElement;
+    let isDragged = false;
+
+
+    let mutateAnimation: GSAPTimeline | null;
+    $: tagCount = 0;
+
+    function handleDragStart() {
+        isDragged = true;
+    }
+
+    function getQuestionsWithTagCount() {
+        let length = 0;
+        let questionsCollections: QuestionsCollection[] = get(QUESTION_COLLECTION_SLICE_DATABASE);
+        questionsCollections.forEach((collection) => {
+            let questions = collection.questions;
+            questions.forEach((q) => {
+                length += q.reasons.filter((r) => r.id == tag.id).length;
+            })
+        })
+        return length;
+    }
+
+    function handleDragMove(e: CustomEvent) {
+        if(!mutateAnimation) {
+            mutateAnimation = mutateTagToBadgeAnimation(tagContainerRef, tagCircleRef);
+        }
+        if(isDragged) {
+            tagContainerRef.style['position'] = "absolute"
+            tagContainerRef.style['top'] = `${e.detail.y - 20}px`
+            tagContainerRef.style['left'] = `${e.detail.x - 20}px`
+        }
+    }
+
+    function handleDragStop() {
+        if(mutateAnimation) {
+            mutateAnimation.reverse().then((_) => mutateAnimation = null);
+        }
+        isDragged = false;
+        tagContainerRef.style['position'] = 'relative';
+        tagContainerRef.style['top'] = tagContainerRef.style['left'] = '0';
+    }
+
+    onMount(() => {
+        tagCount = getQuestionsWithTagCount();
+        QUESTION_COLLECTION_SLICE_DATABASE.subscribe((_) => {
+            tagCount = getQuestionsWithTagCount();
+        })
+    })
+</script>
+
+<Draggable draggableRef={tagContainerRef}
+           on:dragstart={handleDragStart} 
+           on:dragmove={handleDragMove} 
+           on:dragdrop={handleDragStop}>
+    <div class="container" bind:this={tagContainerRef}>
+        <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
+        <p>{tag.label}</p>
+        <!-- TODO : Hide this when dragging-->
+        <div class="questions-count-container">
+            <p class="questions-count">{tagCount}</p>
+        </div>
+    </div>
+</Draggable>
+
+<style>
+    .container {
+        display: flex;
+        align-items: center;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .color {
+        width: 11px;  
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: white;
+        margin-right: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 1.5);
+    }
+
+    .questions-count-container {
+        margin-right: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .questions-count {
+        font-size: 17px;
+        color: grey;
+    }
+</style>

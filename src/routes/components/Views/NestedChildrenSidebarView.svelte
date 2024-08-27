@@ -3,32 +3,42 @@
     import type { ParentCollection } from "../../typescript/types";
     import ChildrenSidebarItem from "../Sidebar/ChildrenSidebarItem.svelte";
 
-    export let collection: ParentCollection;
+    export let collection: ParentCollection, nestedParentTitle: string = "Zinko";
 </script>
 
 <div>
     {#each collection.nested_parent_collections  as nested_collection (nested_collection.id)}
         <div class="container">
-            {#if nested_collection.child_collections.length > 0}
-                <h2 class="collection-title">{nested_collection.title}</h2>
-            {/if}
+            <div class="title-container">
+                {#if nested_collection.child_collections.length > 0}
+                    <h2 class="collection-title">{nested_collection.title}</h2>
+                    <h4 class="parent-title">{nestedParentTitle}</h4>
+                {/if}
+            </div>
             {#each nested_collection.child_collections  as child_collection (child_collection.id)}
                 <ChildrenSidebarItem collection={child_collection}/>
             {/each}
         </div>
-        <Seperator color="#3e3e3e" />
-        <svelte:self collection={nested_collection}/>
+        <svelte:self collection={nested_collection} nestedParentTitle={nested_collection.title}/>
     {/each}
 </div>
 
 <style>
-    .container {
-        padding: 0 20px;
+    .title-container {
+        display: flex;
+        margin: 10px 0px;
+        flex-direction: row;
+        align-items: center;
     }
 
     .collection-title {
         font-size: 22px;
         font-weight: 500;
-        margin-bottom: 10px;
+    }
+    .parent-title {
+        margin: 0;
+        direction: rtl;
+        color: darkgrey;
+        margin-left: 10px;
     }
 </style>

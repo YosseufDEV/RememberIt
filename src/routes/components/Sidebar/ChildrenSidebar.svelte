@@ -5,6 +5,7 @@
     import { active_parent, active_parent_index } from "../../stores/active-parent-store";
     import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
     import ChildrenSidebarItem from "./ChildrenSidebarItem.svelte";
+    import Seperator from "$lib/GenericComponents/Seperator.svelte";
 
     const activeParentIndex = get(active_parent_index);
     let parents = get(PARENTS_SLICE_DATABASE);
@@ -30,11 +31,12 @@
     {#each activeParentCollection.child_collections as childCollection (childCollection.id)}
         <ChildrenSidebarItem collection={childCollection}/>
     {/each}
-    <NestedChildrenSidebarView collection={activeParentCollection}/>
+    <NestedChildrenSidebarView nestedParentTitle={activeParentCollection.title} collection={activeParentCollection} />
 </div>
 
 <style>
     .container {
+        overflow-y: scroll;
         padding: 40px 10px;
         background: rgba(0, 0, 0, 0.89);
         direction: ltr;

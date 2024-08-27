@@ -29,3 +29,16 @@ pub fn get_question_reasons_by_id(question_id: i32) -> Vec<Reason> {
             .load(connection)
             .expect("Failed to get question's reasons")
 }
+
+#[tauri::command]
+pub fn get_number_of_questions_with_reason(reason_id: i32) -> i64 {
+    use crate::schema::question_reason;
+
+    let connection = &mut establish_connection();
+
+    question_reason::table
+                      .filter(question_reason::reason_id.eq(reason_id))
+                      .count()
+                      .get_result(connection)
+                      .expect("failed to fetch reason count")
+}

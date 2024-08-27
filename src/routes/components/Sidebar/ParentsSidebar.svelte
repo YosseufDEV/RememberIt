@@ -11,7 +11,7 @@
              insertReason } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent, active_parent_index } from "../../stores/active-parent-store";
-    import { DATABASE, PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { ALL_PARENTS_SLICE_DATABASE, DATABASE, PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
 
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
@@ -27,10 +27,8 @@
 
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getParentCollectionById(id)
-        const index = parentCollections.findIndex((pCol) => pCol.id == parent.id);
         active_collection.set(parent)
         active_parent.set(parent)
-        active_parent_index.set(index);
     }
 
     async function handleCollectionSubmit(e: CustomEvent) {
@@ -56,13 +54,30 @@
     }
 
     async function handleNestedParentCollectionSubmit(e: CustomEvent) {
+        let parents = get(ALL_PARENTS_SLICE_DATABASE);
         let activeParent = get(active_parent)
+        const index = parentCollections.findIndex((pCol) => pCol.id == activeParent.id);
+
         if(active_parent) {
             let parent = await createNestedParentCollection(e.detail.title, activeParent.id);
+            let parentId = activeParent.id;
+            let parentsId = [];
             parent.child_collections = []
             parent.nested_parent_collections = []
+
+            // TODO: Implement reactive nested parent rendering
+            // while(parentId != null) {
+            //     let tParent = parents.filter((p) => p.id == parentId)[0]; 
+            //     parentId = tParent.parent_id;
+            //     if(parentId != null) {
+            //         parentsId.push(parentId);
+            //     } else {
+            //         parentsId.push(tParent.id);
+            //     }
+            // }
+
             const oldDB = parentCollections; 
-            oldDB[get(active_parent_index)].nested_parent_collections.push(parent);
+            oldDB[index].nested_parent_collections.push(parent);
             PARENTS_SLICE_DATABASE.set(oldDB);
         }
     }
@@ -96,7 +111,7 @@
 <style>
     .main-container {
         background: rgba(0, 0, 0, 0.8);
-        padding: 40px 7px;
+        padding: 40px 5px;
         padding-bottom: 10px;
         min-width: 21%;
         display: flex; 
@@ -104,7 +119,7 @@
     }
     
     .container {
-        padding: 0 12px;
+        padding: 0 5px;
         overflow-y: scroll;
     }
 
