@@ -1,13 +1,13 @@
 <script lang="ts">
     import { onMount } from 'svelte'
+    import StatusBar from '$lib/components/StatusBar.svelte';
 
     import '../app.css'
     import "fluent-svelte/theme.css";
-    import DisplayArea from "./components/DisplayArea.svelte";
-    import QuestionsCollectionsSidebar from "./components/Sidebar/QuestionsCollectionsSidebar.svelte"
-    import CommandBar from "./components/CommandBar.svelte";
-    import StatusBar from './components/StatusBar.svelte';
-    import CollectionsSidebar from './components/Sidebar/CollectionsSidebar.svelte';
+    import DisplayArea from "$lib/components/DisplayArea.svelte";
+    import QuestionsCollectionsSidebar from "$lib/components/Sidebar/QuestionsCollectionsSidebar.svelte"
+    import CommandBar from "$lib/components/CommandBar.svelte";
+    import CollectionsSidebar from '$lib/components/Sidebar/CollectionsSidebar.svelte';
     
     let reasons;
     $: isCommandBarVisible = false;
