@@ -1,0 +1,6 @@
+-- Your SQL goes here
+CREATE TABLE tag (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    color TEXT NOT NULL,
+    label TEXT NOT NULL
+);
