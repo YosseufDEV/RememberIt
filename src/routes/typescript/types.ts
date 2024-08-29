@@ -38,12 +38,14 @@ export enum DraggableItemType {
     TAG,
 }
 
+type callbackFunction = (itemMetadata: Object) => void;
+
 export interface DropZone {
     top: number,
     left: number,
     width: number,
     height: number,
-    hoverEnterCallback: Function,
-    hoverLeaveCallback: Function,
-    dropCallback: (itemMetadata: Object) => void;
+    hoverEnterCallback: callbackFunction,
+    hoverLeaveCallback: callbackFunction,
+    dropCallback: callbackFunction;
 }

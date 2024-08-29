@@ -16,8 +16,8 @@
             left: dropZoneRef.getBoundingClientRect().left,
             width: dropZoneRef.clientWidth,
             height: dropZoneRef.clientHeight,
-            hoverEnterCallback: handleHoverEnter,
-            hoverLeaveCallback: handleHoverLeave,
+            hoverEnterCallback: (itemMetadata) => handleHoverEnter(itemMetadata),
+            hoverLeaveCallback: (itemMetadata) => handleHoverLeave(itemMetadata),
             dropCallback: (itemMetadata) => handleDrop(itemMetadata)
         }
 
@@ -25,12 +25,13 @@
         DropZones.set(DROP_ZONES);
     }
 
-    function handleHoverEnter() {
-        dispatch("hoverenter")
+    // TODO: Make { item: ... } here not in Draggable Component
+    function handleHoverEnter(itemMetadata: Object) {
+        dispatch("hoverenter", itemMetadata)
     }
 
-    function handleHoverLeave() {
-        dispatch("hoverleave")
+    function handleHoverLeave(itemMetadata: Object) {
+        dispatch("hoverleave", itemMetadata)
     }
 
     function handleDrop(itemMetadata: Object) {

@@ -29,12 +29,12 @@
 
             if(s1 && s2) {
                 if(zone != hoveredDropZone) {
-                    zone.hoverEnterCallback();
+                    zone.hoverEnterCallback({ item: draggableItemMetadata });
                 }
                 return zone;
             }
             if(hoveredDropZone) {
-                hoveredDropZone.hoverLeaveCallback(); 
+                hoveredDropZone.hoverLeaveCallback({ item: draggableItemMetadata }); 
             }
         }
         return null;

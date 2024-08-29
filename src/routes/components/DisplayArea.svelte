@@ -1,26 +1,33 @@
 <script lang="ts">  
-    import SuperCollectionView from "./Views/DisplayArea/SuperCollectionView.svelte";
-    import QuestionsCollectionView from "./Views/DisplayArea/QuestionsCollectionView.svelte";
+    import { onMount } from "svelte";
 
     import { type QuestionsCollection, type Collection, type Question, CollectionType } from "../typescript/types"
     import { active_collection } from "../stores/active_collection_store";
+    import { colorOverlayAnimation, entranceAnimation, exitingAnimation } from "./Animations/DisplayAreaAnimations";
+    import SuperCollectionView from "./Views/DisplayArea/SuperCollectionView.svelte";
+    import QuestionsCollectionView from "./Views/DisplayArea/QuestionsCollectionView.svelte";
     import DropZone from "./DragAndDrop/DropZone.svelte";
-    import { Button } from "fluent-svelte";
-    import { onMount } from "svelte";
-    import { entranceAnimation, exitingAnimation } from "./Animations/DisplayAreaAnimations";
 
     $: activeCollection = null as (null | (Collection | QuestionsCollection))
-    let ref: HTMLElement;
-    let displayContainerRef: HTMLElement;
+    let mainContainerRef: HTMLElement,
+        displayContainerRef: HTMLElement,
+        hoverDivRef: HTMLElement;
+    let hoverAnimation: GSAPTimeline;
 
     function handleDraggableDrop(e: CustomEvent) {
         let item = e.detail.item;
 
         filterCollection(item.id);
+        handleHoverLeave();
     }
 
-    function handleHoverEnter() {
-        // ref.style.background = 'blue'; 
+    function handleHoverEnter(e: CustomEvent) {
+        let item = e.detail.item;
+        hoverAnimation = colorOverlayAnimation(hoverDivRef, item.color, 0.25);
+    }
+
+    function handleHoverLeave() {
+        hoverAnimation.reverse();
     }
 
     function getFilteredQuestions(col: QuestionsCollection, reasonId: number) {
@@ -94,8 +101,9 @@
 
 </script>
 
-<div class="main-container" bind:this={ref}>
-    <DropZone on:drop={handleDraggableDrop} on:hoverenter={handleHoverEnter} >
+<div class="main-container" bind:this={mainContainerRef}>
+    <div bind:this={hoverDivRef} class="hover-div"/>
+    <DropZone on:drop={handleDraggableDrop} on:hoverenter={handleHoverEnter} on:hoverleave={handleHoverLeave} >
         <div class="container" bind:this={displayContainerRef}>
             {#if activeCollection && 'questions' in activeCollection}
                 <QuestionsCollectionView questionsCollection={activeCollection} />
@@ -117,6 +125,14 @@
     .container {
         overflow-y: scroll;
         width: calc(100% - 5px);
+        height: 100%;
+    }
+    .hover-div {
+        position: absolute;
+        margin-top: -40px;
+        margin-left: -25px;
+        margin-bottom: -10px;
+        width: 100%;
         height: 100%;
     }
 </style>
