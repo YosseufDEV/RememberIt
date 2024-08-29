@@ -23,7 +23,7 @@
 
     function handleHoverEnter(e: CustomEvent) {
         let item = e.detail.item;
-        hoverAnimation = colorOverlayAnimation(hoverDivRef, item.color, 0.25);
+        hoverAnimation = colorOverlayAnimation(hoverDivRef, item.color, 0.20);
     }
 
     function handleHoverLeave() {

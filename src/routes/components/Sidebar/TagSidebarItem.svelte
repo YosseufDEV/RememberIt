@@ -2,7 +2,7 @@
     import { get } from "svelte/store";
     import { onMount } from "svelte";
 
-    import { DraggableItemType, type QuestionsCollection, type Tag } from "../../typescript/types";
+    import type { QuestionsCollection, Tag } from "../../typescript/types";
     import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
     import Draggable from "../DragAndDrop/Draggable.svelte";
@@ -11,6 +11,7 @@
 
     let tagContainerRef: HTMLElement;
     let tagCircleRef: HTMLElement;
+    let tagQuestionsCountRef: HTMLElement;
     let isDragged = false;
 
 
@@ -35,13 +36,13 @@
 
     function handleDragMove(e: CustomEvent) {
         if(!mutateAnimation) {
-            mutateAnimation = mutateTagToBadgeAnimation(tagContainerRef, tagCircleRef);
+            mutateAnimation = mutateTagToBadgeAnimation(tagContainerRef, tagCircleRef, tagQuestionsCountRef);
         }
     }
 
     function handleDragStop() {
         if(mutateAnimation) {
-            mutateAnimation.reverse().then((_) => mutateAnimation = null);
+            mutateAnimation.reverse().then(() => mutateAnimation = null);
         }
     }
 
@@ -62,7 +63,7 @@
         <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
         <p>{tag.label}</p>
         <!-- TODO : Hide this when dragging-->
-        <div class="questions-count-container">
+        <div class="questions-count-container" bind:this={tagQuestionsCountRef}>
             <p class="questions-count">{tagCount}</p>
         </div>
     </div>
