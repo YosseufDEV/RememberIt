@@ -4,19 +4,27 @@ export interface Tag {
     color: string,
 }
 
-export interface ICollection {
+export enum CollectionType {
+    COLLECTION,
+    QUESTION_COLLECTION
+}
+
+export interface GenericCollection {
     id: number,
     title: string,
     parentId: number,
+    identifiy(): CollectionType;
 }
 
-export interface Collection extends ICollection {
+export interface Collection extends GenericCollection {
     questionsCollections: QuestionsCollection[]
-    subCollections: Collection[]
+    subCollections: Collection[],
+    identifiy: () => CollectionType.COLLECTION
 }
 
-export interface QuestionsCollection extends ICollection {
+export interface QuestionsCollection extends GenericCollection {
     questions: Question[]
+    identifiy: () => CollectionType.QUESTION_COLLECTION
 }
 
 export interface Question {
@@ -26,6 +34,10 @@ export interface Question {
     tags: Tag[],
 }
 
+export enum DraggableItemType {
+    TAG,
+}
+
 export interface DropZone {
     top: number,
     left: number,
@@ -33,6 +45,5 @@ export interface DropZone {
     height: number,
     hoverEnterCallback: Function,
     hoverLeaveCallback: Function,
-    dropCallback: Function
+    dropCallback: (itemMetadata: Object) => void;
 }
-

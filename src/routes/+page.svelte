@@ -2,12 +2,12 @@
     import { onMount } from 'svelte'
 
     import '../app.css'
+    import "fluent-svelte/theme.css";
     import DisplayArea from "./components/DisplayArea.svelte";
-    import ParentsSidebar from "./components/Sidebar/ParentsSidebar.svelte"
-    import ChildrenSidebar from "./components/Sidebar/ChildrenSidebar.svelte"
+    import QuestionsCollectionsSidebar from "./components/Sidebar/QuestionsCollectionsSidebar.svelte"
     import CommandBar from "./components/CommandBar.svelte";
     import StatusBar from './components/StatusBar.svelte';
-    import "fluent-svelte/theme.css";
+    import CollectionsSidebar from './components/Sidebar/CollectionsSidebar.svelte';
     
     let reasons;
     $: isCommandBarVisible = false;
@@ -39,8 +39,8 @@
     <StatusBar />
     <CommandBar isVisible={isCommandBarVisible}/>
     <div class="main-view-container">
-        <ParentsSidebar />
-        <ChildrenSidebar />
+        <CollectionsSidebar />
+        <QuestionsCollectionsSidebar />
         <DisplayArea />
     </div>
 </div>

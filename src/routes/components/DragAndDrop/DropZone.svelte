@@ -18,7 +18,7 @@
             height: dropZoneRef.clientHeight,
             hoverEnterCallback: handleHoverEnter,
             hoverLeaveCallback: handleHoverLeave,
-            dropCallback: handleDrop
+            dropCallback: (itemMetadata) => handleDrop(itemMetadata)
         }
 
         DROP_ZONES.push(dropZone);
@@ -33,8 +33,8 @@
         dispatch("hoverleave")
     }
 
-    function handleDrop() {
-        dispatch("drop")
+    function handleDrop(itemMetadata: Object) {
+        dispatch("drop", itemMetadata)
     }
 
     onMount(() => {

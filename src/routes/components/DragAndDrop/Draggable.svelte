@@ -5,27 +5,18 @@
     import type { DropZone } from "../../typescript/types";
     import { DropZones } from "../../stores/drop-zones-store";
 
-    export let draggableRef: HTMLElement;
+    export let draggableRef: HTMLElement, draggableItemMetadata = {};
 
     let isDragged = false;
     let hoveredDropZone: DropZone | null = null;
     const dispatch = createEventDispatcher();
     
-    function handleDraggableMouseDown(e: MouseEvent) {
-        isDragged = true;
-        dispatch("dragstart");
-    }
-
     // TODO: Implement ZIndex & Sleep for this function (too expensive)
     function getDragZoneHoveringOn(e: MouseEvent) {
         let zones = get(DropZones);
-        let boundries = draggableRef.getBoundingClientRect();
 
         const draggableStartY = e.y;
         const draggableStartX = e.x;
-
-        const draggableEndY = e.y+boundries.height;
-        const draggableEndX = e.x+boundries.width;
 
         for(const zone of zones) {
             const zoneStartY = zone.top,
@@ -35,10 +26,6 @@
                 
             const s1 = draggableStartY >= zoneStartY && draggableStartY <= zoneEndY;
             const s2 = draggableStartX >= zoneStartX && draggableStartX <= zoneEndX;
-
-            // INFO: To handle hovering from the end
-            // const s3 = draggableEndY >= zoneStartY && draggableEndY <= zoneEndY;
-            // const s4 = draggableEndX >= zoneStartX && draggableEndX <= zoneEndX;
 
             if(s1 && s2) {
                 if(zone != hoveredDropZone) {
@@ -53,23 +40,35 @@
         return null;
     }
 
+    function handleDraggableMouseDown(e: MouseEvent) {
+        isDragged = true;
+        dispatch("dragstart");
+    }
+
     function handleDraggableMouseMove(e: MouseEvent) {
         if(isDragged) {
-            dispatch("dragmove", { x: e.x, y: e.y });
+            dispatch("dragmove");
             hoveredDropZone = getDragZoneHoveringOn(e)
+
+            draggableRef.style['position'] = "absolute"
+            draggableRef.style['top'] = `${e.y - 20}px`
+            draggableRef.style['left'] = `${e.x - 20}px`
         }
     }
 
-    function handleDraggableMouseUp(e: MouseEvent) {
+    function handleDraggableMouseUp() {
         isDragged = false;
         if(hoveredDropZone) {
-            hoveredDropZone.dropCallback(); 
+            hoveredDropZone.dropCallback({ item: draggableItemMetadata }); 
+            dispatch("dragdrop");
         }
-        dispatch("dragdrop");
+        draggableRef.style['position'] = 'relative';
+        draggableRef.style['top'] = draggableRef.style['left'] = '0';
     }
 
 </script>
 
+<svelte:window on:mousemove={handleDraggableMouseMove}/>
 <div on:mousedown={handleDraggableMouseDown}
      on:mousemove={handleDraggableMouseMove}
      on:mouseup={handleDraggableMouseUp}>

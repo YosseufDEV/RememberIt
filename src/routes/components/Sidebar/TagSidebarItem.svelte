@@ -1,10 +1,10 @@
 <script lang="ts">
     import { get } from "svelte/store";
+    import { onMount } from "svelte";
 
-    import type { QuestionsCollection, Tag } from "../../typescript/types";
+    import { DraggableItemType, type QuestionsCollection, type Tag } from "../../typescript/types";
     import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
-    import { onMount } from "svelte";
     import Draggable from "../DragAndDrop/Draggable.svelte";
     
     export let tag: Tag;
@@ -37,20 +37,12 @@
         if(!mutateAnimation) {
             mutateAnimation = mutateTagToBadgeAnimation(tagContainerRef, tagCircleRef);
         }
-        if(isDragged) {
-            tagContainerRef.style['position'] = "absolute"
-            tagContainerRef.style['top'] = `${e.detail.y - 20}px`
-            tagContainerRef.style['left'] = `${e.detail.x - 20}px`
-        }
     }
 
     function handleDragStop() {
         if(mutateAnimation) {
             mutateAnimation.reverse().then((_) => mutateAnimation = null);
         }
-        isDragged = false;
-        tagContainerRef.style['position'] = 'relative';
-        tagContainerRef.style['top'] = tagContainerRef.style['left'] = '0';
     }
 
     onMount(() => {
@@ -61,7 +53,8 @@
     })
 </script>
 
-<Draggable draggableRef={tagContainerRef}
+<Draggable bind:draggableItemMetadata={tag}
+           draggableRef={tagContainerRef}
            on:dragstart={handleDragStart} 
            on:dragmove={handleDragMove} 
            on:dragdrop={handleDragStop}>
@@ -81,6 +74,7 @@
         align-items: center;
         display: grid;
         grid-template-columns: auto 1fr auto;
+        z-index: 100000;
     }
 
     .color {
