@@ -36,6 +36,12 @@
         margin-left: 10px;
     }
 
+    .close-icon-container:hover {
+        background: darkgrey;
+        padding: 5px;
+        border-radius: 5px;
+        }
+
     .label {
         font-weight: 500;
     }

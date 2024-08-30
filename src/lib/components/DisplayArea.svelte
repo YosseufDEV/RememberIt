@@ -17,6 +17,7 @@
         hoverDivRef: HTMLElement;
     let hoverAnimation: GSAPTimeline;
 
+    // FIX: Filter Rules migrate on collection change!
     let filterRules = [] as TagItemMetadata[];
 
     function handleDraggableDrop(e: CustomEvent) {
@@ -24,7 +25,7 @@
         if(item.type == DraggableItemType.TAG) {
             handleHoverLeave(e);
             filterRules = [...filterRules, item];
-            filterCollection(item.id);
+            filterCollection([item.id]);
         }
 
     }
@@ -39,11 +40,10 @@
                 entranceAnimation(displayContainerRef)
                 activeCollection = structuredClone(unfilteredCollecition);
             })
-            debugger;
         } else {
-            for(const rule of filterRules) {
-                filterCollection(rule.id, unfilteredCollecition);
-            }
+            let flatRules = filterRules.map((el) => el.id);
+            console.log(flatRules);
+            filterCollection(flatRules, unfilteredCollecition);
         }
 
 
@@ -63,9 +63,11 @@
         }
     }
 
-    function getFilteredQuestions(col: QuestionsCollection, reasonId: number) {
+    function getFilteredQuestions(col: QuestionsCollection, reasonId: number[]) {
         let questions = col.questions 
-        let hasTags = (q: Question) => q.tags.filter((r) => r.id == reasonId).length > 0
+        let hasTags = (q: Question) => reasonId.every(id => 
+            q.tags.some(tag => tag.id === id)
+        );
         return questions.filter((q) => hasTags(q));
     }
 
@@ -74,7 +76,7 @@
     }
     
     // TODO: Intorduce FilterRules
-    function filterCollection(reasonId: number, startingCollection?: Collection | QuestionsCollection) {
+    function filterCollection(reasonId: number[], startingCollection?: Collection | QuestionsCollection) {
         const collection = startingCollection ? structuredClone(startingCollection) : activeCollection;
 
         setTimeout(() => {
@@ -99,6 +101,7 @@
                 let questions = getFilteredQuestions(collection, reasonId); 
                 exitingAnimation(displayContainerRef, () => {
                     (<QuestionsCollection>collection).questions = questions;
+                    activeCollection = collection;
                     entranceAnimation(displayContainerRef)
                 })
 
@@ -106,7 +109,7 @@
         }, 200)
     }
 
-    function filterSuperCollectionQuestions(collection: Collection, reasonId: number) {
+    function filterSuperCollectionQuestions(collection: Collection, reasonId: number[]) {
         const filteredQuestionsCollection = [];
         for(const questionsCollection of collection.questionsCollections) {
             const filteredQuestions = getFilteredQuestions(questionsCollection, reasonId);

@@ -25,7 +25,6 @@
         DropZones.set(DROP_ZONES);
     }
 
-    // TODO: Make { item: ... } here not in Draggable Component
     function handleHoverEnter(itemMetadata: Object) {
         dispatch("hoverenter", { item: itemMetadata })
     }
