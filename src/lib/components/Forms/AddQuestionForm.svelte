@@ -1,7 +1,7 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import { type Question } from "../../typescript/types";
+    import { type Question, type QuestionSpecificTag } from "../../typescript/types";
     import { ComboBox, Button, TextBox } from "fluent-svelte";
     import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { active_collection } from "../../stores/active_collection_store";
@@ -10,48 +10,55 @@
     const activeCollection = get(active_collection);
 
     let tags: { name: string, value: number }[] = [];
-    let questionNumber: number;
-    let tagId: number = 1;
+    let questionNumber: number,
+        explanation: string,
+        tagId: number = 1;
 
     async function addQuestionToCurrentCollection() {
         if('questions' in activeCollection) {
             let notDuplicate = true;
 
             activeCollection.questions.forEach((q: Question) => {
-                if(q.questionNumber == questionNumber)
+                if(q.questionNumber == questionNumber) {
                     notDuplicate = false;
+                }
             })
 
             // TODO: Stack Tags 
             if(notDuplicate) {
                 insertQuestionByCollectionId(questionNumber, activeCollection.id).then(async q => {
-                    await insertQuestionTag(q.id, tagId)
+                    await insertQuestionTag(q.id, tagId, explanation).then((qt) => {
+                        let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
 
-                    let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
-                    let completeQuestion = {
-                        id: q.id,
-                        questionNumber: q.questionNumber,
-                        collectionId: q.collectionId,
-                        tags: [tag]
-                    }
+                        let specificTag: QuestionSpecificTag = {
+                            id: tag.id,
+                            color: tag.color,
+                            label: tag.label,
+                            explanation: qt.explanation
+                        };
 
-                    console.log({completeQuestion})
-
-                    let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
-
-                    // BUG: Would throw an error when not inside a collection!
-                    oldDB = oldDB.map((col) => {
-                        if(col.id == activeCollection.id) {
-                            col.questions.push(completeQuestion);
+                        let completeQuestion = {
+                            id: q.id,
+                            questionNumber: q.questionNumber,
+                            collectionId: q.collectionId,
+                            tags: [specificTag]
                         }
-                        return col;
+
+                        let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
+
+                        // BUG: Would throw an error when not inside a collection!
+                        oldDB = oldDB.map((col) => {
+                            if(col.id == activeCollection.id) {
+                                col.questions.push(completeQuestion);
+                            }
+                            return col;
+                        })
+                        QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
                     })
-                    console.log(oldDB);
-                    QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
                 })
             } else {
                 const question = await getQuestionByQuestionNumber(activeCollection.id, questionNumber)
-                await insertQuestionTag(question.id, tagId);
+                await insertQuestionTag(question.id, tagId, explanation);
             }
             // INFO: For Question appear animation
             // let t = get(TEMPDATABASE);
@@ -75,7 +82,15 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    <TextBox class="text-box" placeholder="Question Number" bind:value={questionNumber} type="number"/>
-    <ComboBox bind:value={tagId} class="combo-box" items={tags}/>
-    <Button variant="accent">Add</Button>
+    <div>
+        <TextBox class="text-box" placeholder="Question Number" bind:value={questionNumber} type="number"/>
+        <TextBox class="text-box" placeholder="Explanation" bind:value={explanation} type="text"/>
+    </div>
+    <div>
+        <ComboBox bind:value={tagId} class="combo-box" items={tags}/>
+        <Button variant="accent">Add</Button>
+    </div>
 </form>
+
+<style>
+</style>

@@ -54,7 +54,7 @@ function whitePercentage(rgb: RGB): number {
     return (rgb[0]+rgb[1]+rgb[2])/(255*3)
 }
 
-function generateColor(colors: Color[]): string {
+export function generateColor(colors: Color[]): string {
 	const idk: number = getRandomInRange(0, 3);
     let index = -1;
     let selector = 'hex';
@@ -89,5 +89,28 @@ function generateColor(colors: Color[]): string {
     return color;
 }
 
-export default generateColor; 
+export function adjustColor(hex: string, percentage: number): string {
+  // Ensure the percentage is within the range of -100 to 100
+  percentage = Math.max(-100, Math.min(percentage, 100));
 
+  // Parse the hex color
+  let r = parseInt(hex.substring(1, 3), 16);
+  let g = parseInt(hex.substring(3, 5), 16);
+  let b = parseInt(hex.substring(5, 7), 16);
+
+  // Calculate the blend towards white (positive) or black (negative)
+  if (percentage > 0) {
+    r = Math.round(r + ((255 - r) * percentage) / 100);
+    g = Math.round(g + ((255 - g) * percentage) / 100);
+    b = Math.round(b + ((255 - b) * percentage) / 100);
+  } else {
+    r = Math.round(r * (1 + percentage / 100));
+    g = Math.round(g * (1 + percentage / 100));
+    b = Math.round(b * (1 + percentage / 100));
+  }
+
+  // Convert back to hex and ensure 2 digits
+  const toHex = (c: number) => c.toString(16).padStart(2, '0');
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}

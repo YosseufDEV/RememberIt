@@ -5,7 +5,7 @@
     import { Button, TextBox } from "fluent-svelte";
     import { insertTag } from "../../../database";
     import { DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import generateColor from "../../typescript/color_generator";
+    import { generateColor } from "../../typescript/color_generator";
 
     let label: string = "";
 

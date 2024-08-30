@@ -17,7 +17,7 @@
     .container {
         font-weight: bold;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 100000;
+        z-index: 100000000;
         position: absolute;
         top: 0;
         bottom: 0;

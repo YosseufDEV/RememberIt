@@ -17,9 +17,11 @@ diesel::table! {
 }
 
 diesel::table! {
-    question_tag (question_id, tag_id) {
+    question_tag (id) {
+        id -> Integer,
         question_id -> Integer,
         tag_id -> Integer,
+        explanation -> Nullable<Text>,
     }
 }
 

@@ -94,16 +94,34 @@ pub struct CompleteQuestion {
     pub id: i32,
     pub question_number: i32,
     pub collection_id: i32,
-    pub tags: Vec<Tag>
+    pub tags: Vec<QuestionSpecificTag>
 }
 
-#[derive(Identifiable, Insertable, Selectable, Queryable, Associations)]
+#[derive(Identifiable, Insertable, Selectable, Queryable, Associations, Serialize)]
 #[diesel(belongs_to(Tag))]
 #[diesel(belongs_to(Question))]
-#[diesel(primary_key(question_id, tag_id))]
 #[diesel(table_name = crate::schema::question_tag)]
 // FIX: Question can't have 2 of the same reason
 pub struct QuestionTag {
+    pub id: i32,
     pub question_id: i32,
     pub tag_id: i32,
+    pub explanation: Option<String>
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct QuestionSpecificTag {
+    pub id: i32,
+    pub color: String,
+    pub label: String,
+    pub explanation: Option<String>,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::question_tag)]
+pub struct NewQuestionTag {
+    pub question_id: i32,
+    pub tag_id: i32,
+    pub explanation: Option<String>
 }

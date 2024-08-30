@@ -4,6 +4,20 @@ export interface Tag {
     color: string,
 }
 
+export interface QuestionSpecificTag {
+    id: number,
+    label: string,
+    color: string,
+    explanation: string,
+}
+
+export interface QuestionTag {
+    id: number,
+    tagId: number,
+    questionId: number,
+    explanation: string,
+}
+
 export enum CollectionType {
     COLLECTION,
     QUESTION_COLLECTION
@@ -31,7 +45,7 @@ export interface Question {
     id: number,
     questionNumber: number,
     collectionId: number,
-    tags: Tag[],
+    tags: QuestionSpecificTag[],
 }
 
 export enum DraggableItemType {

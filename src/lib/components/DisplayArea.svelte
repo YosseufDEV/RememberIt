@@ -168,7 +168,11 @@
         padding-left: 25px;
     }
     .container {
+        overflow-x: visible;
         overflow-y: scroll;
+        /* HACK: to make the badge explanation appear even in overflow */
+        margin-left: -100px;
+        padding-left: 100px;
         width: calc(100% - 5px);
         height: 100%;
     }

@@ -45,7 +45,6 @@
         margin: 15px 0px;
         border-radius: 15px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-        overflow: hidden;
     }
 
     .number-container {

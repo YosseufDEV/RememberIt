@@ -104,7 +104,7 @@
     }
 
     .doesnt-have-nested-parents {
-        /* INFO: Hard codded value to make text align with ones that has an arrow*/
+        /* HACK: Hard codded value to make text align with ones that has an arrow*/
         margin-left: 34px;
     }
 
