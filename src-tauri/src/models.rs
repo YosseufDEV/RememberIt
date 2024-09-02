@@ -112,6 +112,7 @@ pub struct QuestionTag {
 #[serde(rename_all = "camelCase")]
 pub struct QuestionSpecificTag {
     pub question_tag_id: i32,
+    pub question_id: i32,
     pub id: i32,
     pub color: String,
     pub label: String,

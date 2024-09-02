@@ -14,6 +14,7 @@
     import { PARENTS_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase"
     import { active_collection } from '$lib/stores/active_collection_store';
     import { active_parent } from '$lib/stores/active-parent-store';
+    import SplashScreen from '$lib/Screens/SplashScreen.svelte';
     
     let reasons;
     $: isCommandBarVisible = false;
@@ -55,6 +56,7 @@
         <QuestionsCollectionsSidebar />
         <DisplayArea />
     </div>
+    <!-- <SplashScreen /> -->
 </div>
 
 <style>

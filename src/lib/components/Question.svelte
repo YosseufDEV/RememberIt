@@ -5,12 +5,15 @@
     import Badge from "./Badge.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { updateQuestionNumberById } from "../../database";
+    import { QUESTION_TAGS_COLLECTION_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase";
 
     let questionRef: HTMLElement;
     let questionNumberRef: HTMLElement;
     let tag = 'p';
 
     export let question: Question;
+
+    $: questionsTags = question.tags;
 
     async function handleQuestionNumberEdit(e: CustomEvent) {
         const newQuestionNumer = e.detail.newText;
@@ -19,17 +22,12 @@
     }
 
     onMount(() => {
-        // let tmp = get(TEMP_DATABASE);
-        //
-        // tmp.questions.forEach((tmp_question, i) => {
-        //     if(tmp_question.question_number == question.question_number && tmp_question.collection_id == tmp_question.collection_id) {
-        //         // INFO :Remove Question from temp!;
-        //         newlyAddedQuestionAnimation(questionRef);
-        //         tmp.questions = tmp.questions.filter((_, index) => index != i)  
-        //     }
-        // })
-        //
-        // TEMP_DATABASE.set(tmp);
+        QUESTION_TAGS_COLLECTION_SLICE_DATABASE.subscribe((col) => {
+            let specificTags = col.filter((q) => q.questionId == question.id);
+            if(specificTags.length != questionsTags.length) {
+                questionsTags = specificTags;
+            }
+        })
     })
 
 </script>
@@ -38,7 +36,7 @@
     <div class="number-container">
         <EditableText on:finishedEditing={handleQuestionNumberEdit} type="number" text={question.questionNumber.toString()} />
     </div>
-    {#each question.tags as tag}
+    {#each questionsTags as tag}
         <Badge questionId={question.id} tag={tag}/>
     {/each}
 </div>

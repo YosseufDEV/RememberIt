@@ -37,7 +37,6 @@
             let questions = collection.questions;
             questions.forEach((q) => {
                 length += q.tags.filter((r) => r.id == tag.id).length > 0 ? 1 : 0;
-                length += q.tags.filter((r) => r.id == tag.id).length;
             })
         })
         return length;

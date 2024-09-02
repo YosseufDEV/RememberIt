@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
-import { getAllQuesitonsCollections, getAllCollections, getAllTags } from "../../../database"
-import type { Collection, QuestionsCollection, Tag } from "../types"
+import { getAllQuesitonsCollections, getAllCollections, getAllTags, getAllQuestionsTags } from "../../../database"
+import type { Collection, QuestionsCollection, QuestionSpecificTag, Tag } from "../types"
 
 interface Database {
     parents: Collection[],
@@ -28,4 +28,4 @@ export const TAGS_SLICE_DATABASE = writable<Tag[]>(db.tags);
 export const PARENTS_SLICE_DATABASE = writable<Collection[]>(db.unnesteds);
 export const ALL_PARENTS_SLICE_DATABASE = writable<Collection[]>(db.parents);
 export const QUESTION_COLLECTION_SLICE_DATABASE = writable<QuestionsCollection[]>(db.questionCollections);
-console.log(db.questionCollections);
+export const QUESTION_TAGS_COLLECTION_SLICE_DATABASE = writable<QuestionSpecificTag[]>(await getAllQuestionsTags());

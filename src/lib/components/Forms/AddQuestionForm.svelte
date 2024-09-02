@@ -3,7 +3,7 @@
 
     import { type Question, type QuestionSpecificTag } from "../../typescript/types";
     import { ComboBox, Button, TextBox } from "fluent-svelte";
-    import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, QUESTION_TAGS_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { active_collection } from "../../stores/active_collection_store";
     import { getQuestionByQuestionNumber, insertQuestionByCollectionId, insertQuestionTag } from "../../../database";
 
@@ -31,6 +31,8 @@
 
                         let specificTag: QuestionSpecificTag = {
                             id: tag.id,
+                            questionId: qt.questionId,
+                            questionTagId: qt.id,
                             color: tag.color,
                             label: tag.label,
                             explanation: qt.explanation
@@ -57,19 +59,29 @@
                 })
             } else {
                 const question = await getQuestionByQuestionNumber(activeCollection.id, questionNumber)
-                await insertQuestionTag(question.id, tagId, explanation);
+                const qt = await insertQuestionTag(question.id, tagId, explanation);
+
+                let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
+
+                let specificTag: QuestionSpecificTag = {
+                    id: tag.id,
+                    questionId: question.id,
+                    questionTagId: qt.id,
+                    color: tag.color,
+                    label: tag.label,
+                    explanation: qt.explanation
+                };
+
+                let oldDB = get(QUESTION_TAGS_COLLECTION_SLICE_DATABASE);
+                oldDB.push(specificTag);
+                QUESTION_TAGS_COLLECTION_SLICE_DATABASE.set(oldDB);
             }
-            // INFO: For Question appear animation
-            // let t = get(TEMPDATABASE);
-            // t.questions.push(question);
-            // TEMPDATABASE.set(t);
         }
     }
 
     function handleSubmit() {
         addQuestionToCurrentCollection();
     }
-
     DATABASE.subscribe((db) => {
         tags = db.tags.map((el) => (
             {

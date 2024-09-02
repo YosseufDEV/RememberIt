@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 
-import type { Collection, Question, QuestionsCollection, Tag, QuestionTag } from "./lib/typescript/types";
+import type { Collection, Question, QuestionsCollection, Tag, QuestionTag, QuestionSpecificTag } from "./lib/typescript/types";
 
 export async function getAllCollections(unnested?: boolean): Promise<Collection[]> {
     if(unnested) {
@@ -88,4 +88,8 @@ export async function updateQuestionTagExplanationById(id: number, newExplanatio
 
 export async function deleteQuestionTagById(questionTagId: number) {
     await invoke("delete_question_tag_by_id", { questionTagId });
+}
+
+export async function getAllQuestionsTags(): Promise<QuestionSpecificTag[]> {
+    return await invoke("get_all_questions_tags");
 }

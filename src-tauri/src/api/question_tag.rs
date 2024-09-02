@@ -26,12 +26,12 @@ pub fn get_question_tags_by_id(question_id: i32) -> Vec<QuestionSpecificTag> {
     let object = tag::table
             .inner_join(question_tag::table.on(tag::id.eq(question_tag::tag_id)))
             .filter(question_tag::question_id.eq(question_id))
-            .select((tag::all_columns, question_tag::id, question_tag::explanation))
-            .load::<(Tag, i32, Option<String>)>(connection)
+            .select((tag::all_columns, question_tag::id, question_tag::question_id, question_tag::explanation))
+            .load::<(Tag, i32, i32, Option<String>)>(connection)
             .expect("Failed to get question's tags");
     object  
         .into_iter()
-        .map(|(tag, question_tag_id, explanation)| QuestionSpecificTag { id: tag.id, label: tag.label, color: tag.color, explanation, question_tag_id })
+        .map(|(tag, question_tag_id, question_id, explanation)| QuestionSpecificTag { id: tag.id, label: tag.label, color: tag.color, explanation, question_tag_id, question_id})
         .collect()
 }
 
@@ -57,4 +57,22 @@ pub fn delete_question_tag_by_id(question_tag_id: i32) {
     diesel::delete(question_tag.filter(id.eq(question_tag_id)))
             .execute(connection)
             .expect("Faield to delete question tag!");
+}
+
+#[tauri::command]
+pub fn get_all_questions_tags() -> Vec<QuestionSpecificTag> {
+    use crate::schema::question_tag;
+    use crate::schema::tag;
+
+    let connection = &mut establish_connection();
+
+    let object = tag::table
+            .inner_join(question_tag::table.on(tag::id.eq(question_tag::tag_id)))
+            .select((tag::all_columns, question_tag::id, question_tag::question_id, question_tag::explanation))
+            .load::<(Tag, i32, i32, Option<String>)>(connection)
+            .expect("Failed to get question's tags");
+    object  
+        .into_iter()
+        .map(|(tag, question_tag_id, question_id, explanation)| QuestionSpecificTag { id: tag.id, label: tag.label, color: tag.color, explanation, question_tag_id, question_id })
+        .collect()
 }
