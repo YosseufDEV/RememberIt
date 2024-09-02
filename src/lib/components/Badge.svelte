@@ -7,6 +7,7 @@
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { invoke } from "@tauri-apps/api/core";
     import { updateQuestionTagExplanationByBothIds } from "../../database";
+    import BadgeOption from "./BadgeOption.svelte";
 
     export let tag: QuestionSpecificTag, questionId: number;
     let badgeRef: HTMLElement, 
@@ -14,6 +15,7 @@
         explanationRef: HTMLElement,
         badgeLabelRef: HTMLElement;
     $: isVisible = false;
+    let hovered = false;
     let gradientAnimationTimeline: GSAPTimeline;
 
     async function handleDoubleClick(e: MouseEvent) {
@@ -43,13 +45,27 @@
         const newExplanation = e.detail.newText;
 
         await updateQuestionTagExplanationByBothIds(questionId, tag.id, newExplanation);
+        tag.explanation = newExplanation;
+    }
+
+    function handleHover() {
+        hovered = true;
     }
 
 </script>
 
-<div class="container" on:dblclick={handleDoubleClick} bind:this={badgeRef}
+<div class="container" on:dblclick={handleDoubleClick} 
+     on:mouseover={() => hovered = true} on:mouseleave={() => hovered = false} bind:this={badgeRef}
      style={`--bg-color-1: ${tag.color}; --bg-color-2: ${adjustColor(tag.color, -15)}`}>
     <p bind:this={badgeLabelRef} class="label">{tag.label}</p> 
+    {#if hovered}
+        <div class="options-container">
+            <BadgeOption />
+            <BadgeOption />
+            <BadgeOption />
+        </div>
+    {/if}
+
     {#if isVisible} 
         <div class="explanation-container" 
              bind:this={explanationRef} style={`--gradient-color: ${adjustColor(tag.color, 55)};`}>
@@ -80,6 +96,15 @@
         border-radius: 10px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         top: -30px;
+    }
+
+    .options-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: -10px;
+        right: -10px;
     }
     
     :global(.explanation-container p) {
