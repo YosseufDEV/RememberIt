@@ -40,3 +40,16 @@ pub fn get_tag_by_id(tag_id: i32) -> Vec<Tag> {
                     .load(connection)
                     .expect("Failed to Get Tags")
 }
+
+#[tauri::command]
+pub fn update_tag_label_by_id(tag_id: i32, new_label: String) {
+    use crate::schema::tag::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::update(tag)
+            .filter(id.eq(tag_id))
+            .set(label.eq(new_label))
+            .execute(connection)
+            .expect("Failed to Get Tags");
+}

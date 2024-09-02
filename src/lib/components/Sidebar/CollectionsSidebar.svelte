@@ -56,14 +56,15 @@
         background: rgba(0, 0, 0, 0.8);
         height: 100%;
         padding: 40px 5px;
-        padding-bottom: 10px;
+        padding-top: 0;
         min-width: 21%;
         display: flex; 
         flex-direction: column;
     }
     
     .container {
-        padding: 0 5px;
+        z-index: 11;
+        padding: 40px 5px;
         overflow-y: scroll;
     }
 

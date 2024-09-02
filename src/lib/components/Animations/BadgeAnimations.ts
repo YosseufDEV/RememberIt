@@ -1,4 +1,35 @@
+import { adjustColor } from "$lib/typescript/color_generator";
 import gsap from "gsap";
+
+export function darkenBadgeGradient(badgeRef: HTMLElement, badgeColor: string) {
+    const timeline = gsap.timeline({ defaults: { duration: 0.3 } });
+    timeline
+        .from(badgeRef, {
+            background: `linear-gradient(180deg, ${badgeColor}, ${adjustColor(badgeColor, -15)}`,
+            duration: 0,
+        })
+        .to(badgeRef, {
+        background: `linear-gradient(180deg, ${adjustColor(badgeColor, -5)}, ${adjustColor(badgeColor, -30)}`
+    })
+    return timeline;
+}
+
+export function shakeBadge(badgeRef: HTMLElement) {
+    const timeline = gsap.timeline({ defaults: { duration: 0.1, yoyo: true } });
+    timeline
+        .from(badgeRef, {
+            duration: 0,
+            translateX: 0
+        })
+        .to(badgeRef, {
+            translateX: 2
+        }, ">")
+        .to(badgeRef, {
+            translateX: -2
+        }, ">")
+    timeline.repeat(2);
+    return timeline;
+}
 
 export function badgeTapAnimation(badgeRef: HTMLElement) {
     const timeline = gsap.timeline({ defaults: { duration: 0.3 } });
@@ -19,7 +50,7 @@ export function badgeTapOutAnimation(badgeRef: HTMLElement) {
 }
 
 export function explanationAppearAnimation(explanationContainerRef: HTMLElement) {
-    const timeline = gsap.timeline({ defaults: { duration: 0.4, zIndex: 10000 } });
+    const timeline = gsap.timeline({ defaults: { duration: 0.3 } });
     timeline.from(explanationContainerRef, {
         top: 0,
         scaleX: 0.5,
@@ -43,7 +74,7 @@ export function explanationAppearAnimation(explanationContainerRef: HTMLElement)
 
 
 export function explanationDisappearAnimation(explanationContainerRef: HTMLElement) {
-    const timeline = gsap.timeline({ defaults: { duration: 0.2, zIndex: 10000 } });
+    const timeline = gsap.timeline({ defaults: { duration: 0.2 } });
     timeline.to(explanationContainerRef, {
         scaleX: 0.7,
         scaleY: 0.9,

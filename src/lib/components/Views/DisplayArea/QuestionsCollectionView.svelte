@@ -11,10 +11,13 @@
     QUESTION_COLLECTION_SLICE_DATABASE.subscribe((col) => {
         let collectionObjectInDB = col.filter((c) => c.id == questionsCollection.id)[0];
 
-        if(collectionObjectInDB.questions.length != questionsCollection.questions.length) {
-            reativeQuestionsCollection = collectionObjectInDB;
-            reativeQuestionsCollection.questions = collectionObjectInDB.questions
-        }
+        console.log("NO!!!!");
+        reativeQuestionsCollection = collectionObjectInDB
+        // if(collectionObjectInDB.questions.length != questionsCollection.questions.length) {
+        //     console.log("OK!!!!");
+        //     reativeQuestionsCollection = collectionObjectInDB;
+        //     reativeQuestionsCollection.questions = collectionObjectInDB.questions
+        // }
     })
 
 </script>

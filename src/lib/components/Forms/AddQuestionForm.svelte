@@ -24,7 +24,6 @@
                 }
             })
 
-            // TODO: Stack Tags 
             if(notDuplicate) {
                 insertQuestionByCollectionId(questionNumber, activeCollection.id).then(async q => {
                     await insertQuestionTag(q.id, tagId, explanation).then((qt) => {

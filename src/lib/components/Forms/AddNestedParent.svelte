@@ -1,12 +1,23 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-    import { TextBox, Button } from "fluent-svelte"
     import { get } from "svelte/store";
+
+    import type { Collection } from "$lib/typescript/types";
+    import { createCollection } from "../../../database";
     import { active_parent } from "../../stores/active-parent-store";
     import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import { createCollection } from "../../../database";
+    import { TextBox, Button } from "fluent-svelte"
 
     let title: string = "";
+
+    function addCollectionIfSuperParent(root: Collection, collectionId: number, collectionToAdd: Collection) {
+        if(root.id == collectionId) {
+            root.subCollections.push(collectionToAdd);
+        } else {
+            for(const subCollection of root.subCollections) {
+                addCollectionIfSuperParent(subCollection, collectionId, collectionToAdd); 
+            }
+        }
+    }
 
     async function handleNestedCollectionSubmit() {
         let parents = get(PARENTS_SLICE_DATABASE);
@@ -14,26 +25,21 @@
         const index = parents.findIndex((pCol) => pCol.id == active.id);
 
         // FIX: it will throw and error when add in nested.
+        // INFO: Create Colleciton
+        let collection = await createCollection(title, active.id);
+
+        collection.questionsCollections = []
+        collection.subCollections = []
+
         if(index != -1) {
-            let parent = await createCollection(title, active.id);
-
-            parent.questionsCollections = []
-            parent.subCollections = []
-
-            // TODO: Implement reactive nested parent rendering.
-            // while(parentId != null) {
-            //     let t = parents.filter((p) => p.id == parentId)[0]; 
-            //     parentId = t.parent_id;
-            //     if(parentId != null) {
-            //         parentsId.push(parentId);
-            //     } else {
-            //         parentsId.push(t.id);
-            //     }
-            // }
-
             const oldDB = parents; 
-            oldDB[index].subCollections.push(parent);
+            oldDB[index].subCollections.push(collection);
             PARENTS_SLICE_DATABASE.set(oldDB);
+        } else {
+            for(const superCollection of parents) {
+                addCollectionIfSuperParent(superCollection, active.id, collection);
+            }
+            PARENTS_SLICE_DATABASE.set(parents);
         }
     }
 </script>

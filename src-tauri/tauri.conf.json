@@ -1,7 +1,7 @@
 {
   "productName": "rememberit",
-  "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "version": "0.0.1",
+  "identifier": "com.yosseufdev.rememberit",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",

@@ -101,7 +101,6 @@ pub struct CompleteQuestion {
 #[diesel(belongs_to(Tag))]
 #[diesel(belongs_to(Question))]
 #[diesel(table_name = crate::schema::question_tag)]
-// FIX: Question can't have 2 of the same reason
 pub struct QuestionTag {
     pub id: i32,
     pub question_id: i32,

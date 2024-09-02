@@ -1,6 +1,7 @@
 <script lang="ts">
-    import ChromeClose from "$lib/assets/icons/ChromeClose.svelte";
     import { createEventDispatcher } from "svelte";
+
+    import ChromeClose from "$lib/assets/icons/ChromeClose.svelte";
     import type { Tag } from "../../typescript/types";
 
     export let tag: Tag;

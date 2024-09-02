@@ -6,6 +6,9 @@
     import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
     import Draggable from "../DragAndDrop/Draggable.svelte";
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import Layout from "../../../routes/+layout.svelte";
+    import { updateTagLabelById } from "../../../database";
     
     export let tag: Tag;
 
@@ -51,6 +54,12 @@
         }
     }
 
+    async function handleLabelChange(e: CustomEvent) {
+        const newLabel = e.detail.newText; 
+        console.log(newLabel);
+        await updateTagLabelById(tag.id, newLabel);
+    }
+
     onMount(() => {
         tagCount = getQuestionsWithTagCount();
         QUESTION_COLLECTION_SLICE_DATABASE.subscribe((_) => {
@@ -66,7 +75,7 @@
            on:dragdrop={handleDragStop}>
     <div class="container" bind:this={tagContainerRef}>
         <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
-        <p>{tag.label}</p>
+        <EditableText on:finishedEditing={handleLabelChange} text={tag.label} />
         <!-- TODO : Hide this when dragging-->
         <div class="questions-count-container" bind:this={tagQuestionsCountRef}>
             <p class="questions-count">{tagCount}</p>
@@ -80,7 +89,7 @@
         align-items: center;
         display: grid;
         grid-template-columns: auto 1fr auto;
-        z-index: 100000;
+        z-index: 11;
     }
 
     .color {

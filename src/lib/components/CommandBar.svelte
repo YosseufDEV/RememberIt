@@ -17,7 +17,6 @@
     .container {
         font-weight: bold;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 100000000;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -26,11 +25,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 1000;
     }
 
     .command-bar {
         border-radius: 15px;
-        z-index: 100000;
+        z-index: 1000;
         padding: 15px;
         background: rgba(50,50,50, 0.85);
         color: white;

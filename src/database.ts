@@ -22,12 +22,24 @@ export async function getQuestionsCollecitonById(id: number): Promise<Collection
     return await invoke("get_questions_collection_by_id", { pId: id  })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 }
 
+export async function updateQuestionsCollectionTitleById(id: number, newTitle: String) {
+    await invoke("update_question_collection_title_by_id", { collectionId: id, newTitle})
+}
+
+export async function updateQuestionNumberById(id: number, newQuestionNumber: number) {
+    await invoke("update_question_number_by_id", { questionId: id, newQuestionNumber})
+}
+
 export async function createCollection(title: string, parentId?: number): Promise<Collection> {
     return await invoke("create_collection", { title, parentId });
 }
 
 export async function getCollectionById(pId: number): Promise<QuestionsCollection> {
     return await invoke("get_collection_by_id", { pId })
+}
+
+export async function updatesCollectionTitleById(id: number, newTitle: String) {
+    await invoke("update_collection_title_by_id", { collectionId: id, newTitle})
 }
 
 export async function getAllQuesitonsCollections(): Promise<QuestionsCollection[]> {
@@ -58,10 +70,18 @@ export async function getAllTags(): Promise<Tag[]> {
     return await invoke("get_tags")
 }
 
+export async function updateTagLabelById(tagId: number, newLabel: string): Promise<Tag[]> {
+    return await invoke("update_tag_label_by_id", { tagId, newLabel })
+}
+
 export async function insertQuestionTag(questionId: number, tagId: number, explanation: string): Promise<QuestionTag> {
     return await invoke("insert_question_tag", { questionId, tagId, explanation })
 }
 
 export async function getQuestionTagsById(questionId: number): Promise<string[]> {
     return await invoke("get_question_tags_by_id", { questionId })
+}
+
+export async function updateQuestionTagExplanationByBothIds(sQuestionId: number, sTagId: number, newExplanation: String) {
+    await invoke("update_question_tag_explanation_by_both_ids", { sQuestionId, sTagId, newExplanation })
 }

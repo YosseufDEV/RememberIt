@@ -101,3 +101,16 @@ pub fn get_collections_titles() -> Vec<QuestionsCollection> {
                 .expect("Failed to select collections")
     
 }
+
+#[tauri::command]
+pub fn update_question_collection_title_by_id(collection_id: i32, new_title: String) {
+    use crate::schema::questions_collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::update(questions_collection)
+            .filter(id.eq(collection_id))
+            .set(title.eq(new_title))
+            .execute(connection)
+            .expect("Failed to update collection title");
+}

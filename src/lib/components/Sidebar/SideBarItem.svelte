@@ -4,6 +4,8 @@
     import { active_parent } from "../../stores/active-parent-store";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import { updatesCollectionTitleById } from "../../../database";
 
     export let collection: Collection, handleClick: any;
 
@@ -51,6 +53,12 @@
         }
     }
 
+    async function handleTitleUpdate(e: CustomEvent) {
+        const newTitle = e.detail.newText;
+
+        await updatesCollectionTitleById(collection.id, newTitle)
+    }
+
     active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
 
 </script>
@@ -68,7 +76,8 @@
         {/if}
         <div on:click={handleClick} class="container" >
             <!-- TODO: !! REMOVE THIS IN RELEASE !! -->
-            <p class="item" class:selected={selected}>{collection.title ? collection.title : "غير مسمى"}</p>
+            <EditableText on:finishedEditing={handleTitleUpdate} class={ selected ? "selected item" : "item" } text={collection.title ? collection.title : "غير مسمى"}/>
+            <!-- <p class="item" class:selected={selected}>{collection.title ? collection.title : "غير مسمى"}</p> -->
             <div class="collections-count-container">
                 <p class="collections-count">{getCollectionsLength(collection)}</p>
             </div>
@@ -119,16 +128,16 @@
         grid-template-columns: 1fr auto;
     }
 
-    .item {
+    :global(.item) {
         font-size: 20px;
         width: fit-content;
     }
 
-    .item:hover {
+    :global(.item):hover {
         color: red;
     }
 
-    .selected {
+    :global(.selected) {
         color: indianred;
     }
 

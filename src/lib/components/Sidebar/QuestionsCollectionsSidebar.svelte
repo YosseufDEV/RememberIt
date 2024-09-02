@@ -40,7 +40,6 @@
         overflow-y: scroll;
         padding: 40px 10px;
         background: rgba(0, 0, 0, 0.89);
-        direction: ltr;
         min-width: 25%;
         height: 100%;
         display: flex; 

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
+
     import type { DropZone } from "../../typescript/types";
     import { get } from "svelte/store";
     import { DropZones } from "../../stores/drop-zones-store";

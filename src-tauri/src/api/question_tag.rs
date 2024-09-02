@@ -34,3 +34,16 @@ pub fn get_question_tags_by_id(question_id: i32) -> Vec<QuestionSpecificTag> {
         .map(|(tag, explanation)| QuestionSpecificTag { id: tag.id, label: tag.label, color: tag.color, explanation })
         .collect()
 }
+
+#[tauri::command]
+pub fn update_question_tag_explanation_by_both_ids(s_question_id: i32, s_tag_id: i32, new_explanation: String) {
+    use crate::schema::question_tag::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::update(question_tag)
+            .filter(question_id.eq(s_question_id).and(tag_id.eq(s_tag_id)))
+            .set(explanation.eq(new_explanation))
+            .execute(connection)
+            .expect("Failed to update question tag explanation");
+}

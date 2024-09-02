@@ -10,6 +10,7 @@
     async function handleCollectionSubmit() {
         let c = await createCollection(title);
         c.questionsCollections = [];
+        c.subCollections = [];
         let oldDB = get(PARENTS_SLICE_DATABASE);
         oldDB.push(c);
         PARENTS_SLICE_DATABASE.set(oldDB);

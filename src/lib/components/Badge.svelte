@@ -2,39 +2,58 @@
     import { tick } from "svelte";
 
     import type { QuestionSpecificTag } from "../typescript/types";
-    import { badgeTapAnimation, badgeTapOutAnimation, explanationAppearAnimation, explanationDisappearAnimation } from "./Animations/BadgeAnimations";
+    import { badgeTapAnimation, badgeTapOutAnimation, darkenBadgeGradient, explanationAppearAnimation, explanationDisappearAnimation, shakeBadge } from "./Animations/BadgeAnimations";
     import { adjustColor } from "$lib/typescript/color_generator";
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import { invoke } from "@tauri-apps/api/core";
+    import { updateQuestionTagExplanationByBothIds } from "../../database";
 
-    export let tag: QuestionSpecificTag;
+    export let tag: QuestionSpecificTag, questionId: number;
     let badgeRef: HTMLElement, 
         strikeThroughRef: HTMLElement,
-        explanationRef: HTMLElement;
+        explanationRef: HTMLElement,
+        badgeLabelRef: HTMLElement;
     $: isVisible = false;
+    let gradientAnimationTimeline: GSAPTimeline;
 
-    async function handleDoubleClick() {
+    async function handleDoubleClick(e: MouseEvent) {
         // removeBadgeAnimation(badgeRef, strikeThroughRef);
-        // console.log('Double Clicked');
+        if(e.target != badgeRef && e.target != badgeLabelRef) return;
         if(!isVisible) {
-            isVisible = true;
-            await tick();
-            badgeTapAnimation(badgeRef);
-            explanationAppearAnimation(explanationRef);
+            if(tag.explanation.length > 0) {
+                gradientAnimationTimeline = darkenBadgeGradient(badgeRef, tag.color);
+                isVisible = true;
+                badgeTapAnimation(badgeRef);
+                await tick();
+                explanationAppearAnimation(explanationRef);
+            } else {
+                shakeBadge(badgeRef); 
+            }
         } else {
+            await tick();
             badgeTapOutAnimation(badgeRef);
+            gradientAnimationTimeline.revert();
             explanationDisappearAnimation(explanationRef).then(() => {
                 isVisible = false;
             });
         }
     }
+
+    async function handleExplanationEdit(e: CustomEvent) {
+        const newExplanation = e.detail.newText;
+
+        await updateQuestionTagExplanationByBothIds(questionId, tag.id, newExplanation);
+    }
+
 </script>
 
 <div class="container" on:dblclick={handleDoubleClick} bind:this={badgeRef}
      style={`--bg-color-1: ${tag.color}; --bg-color-2: ${adjustColor(tag.color, -15)}`}>
-    <p class="label">{tag.label}</p> 
+    <p bind:this={badgeLabelRef} class="label">{tag.label}</p> 
     {#if isVisible} 
         <div class="explanation-container" 
              bind:this={explanationRef} style={`--gradient-color: ${adjustColor(tag.color, 55)};`}>
-            <p class="label">{tag.explanation}</p> 
+            <EditableText on:finishedEditing={handleExplanationEdit} class="label" text={tag.explanation} /> 
         </div>
     {/if}
     <div bind:this={strikeThroughRef}/>
@@ -54,22 +73,21 @@
     }
 
     .explanation-container {
+        direction: rtl;
         position: absolute;
-        z-index: inherit;
         background: linear-gradient(180deg, #fff, var(--gradient-color));
         padding: 3px 15px;
         border-radius: 10px;
-        width: fit-content;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         top: -30px;
     }
     
-    .explanation-container p {
+    :global(.explanation-container p) {
         color: black;
         white-space: nowrap;
     }
 
-    .label {
+    :global(.label) {
         font-weight: 500;
     }
 </style>

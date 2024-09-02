@@ -24,3 +24,4 @@ libsqlite3-sys = { features = ["bundled"] }
 chrono = "0.4.38"
 dotenvy = "0.15"
 window-vibrancy = "0.5.1"
+diesel_migrations = "2.2.0"

@@ -1,7 +1,7 @@
 <script lang="ts">  
     import { onMount } from "svelte";
 
-    import { type QuestionsCollection, type Collection, type Question, CollectionType, DraggableItemType, type ItemMetadata, type TagItemMetadata } from "../typescript/types"
+    import { type QuestionsCollection, type Collection, type Question, DraggableItemType, type TagItemMetadata } from "../typescript/types"
     import { active_collection } from "../stores/active_collection_store";
     import { colorOverlayAnimation, entranceAnimation, exitingAnimation } from "./Animations/DisplayAreaAnimations";
     import SuperCollectionView from "./Views/DisplayArea/SuperCollectionView.svelte";
@@ -161,18 +161,19 @@
 
 <style>
     .main-container {
+        position: relative;
         background: rgba(0, 0, 0, 0.7);
         width: 100%;
         padding-top: 40px;
         padding-bottom: 10px;
         padding-left: 25px;
+        z-index: 10;
     }
     .container {
-        overflow-x: visible;
         overflow-y: scroll;
         /* HACK: to make the badge explanation appear even in overflow */
-        margin-left: -100px;
-        padding-left: 100px;
+        margin-left: -500px;
+        padding-left: 500px;
         width: calc(100% - 5px);
         height: 100%;
     }

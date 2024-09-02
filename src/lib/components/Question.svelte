@@ -1,15 +1,22 @@
 <script lang="ts">
-    import { get } from "svelte/store";
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
 
     import type { Question } from "../typescript/types";
-    import { TEMP_DATABASE } from "../typescript/Database/TempDatabase";
-    import { newlyAddedQuestionAnimation } from "./Animations/QuestionLifecylceAnimations";
     import Badge from "./Badge.svelte";
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import { updateQuestionNumberById } from "../../database";
 
     let questionRef: HTMLElement;
+    let questionNumberRef: HTMLElement;
+    let tag = 'p';
 
     export let question: Question;
+
+    async function handleQuestionNumberEdit(e: CustomEvent) {
+        const newQuestionNumer = e.detail.newText;
+        console.log(typeof newQuestionNumer);
+        await updateQuestionNumberById(question.id, Number(newQuestionNumer));
+    }
 
     onMount(() => {
         // let tmp = get(TEMP_DATABASE);
@@ -24,18 +31,26 @@
         //
         // TEMP_DATABASE.set(tmp);
     })
+
 </script>
 
 <div class="container" bind:this={questionRef}>
     <div class="number-container">
-        <p>{question.questionNumber}</p>
+        <EditableText on:finishedEditing={handleQuestionNumberEdit} type="number" text={question.questionNumber.toString()} />
     </div>
     {#each question.tags as tag}
-        <Badge tag={tag}/>
+        <Badge questionId={question.id} tag={tag}/>
     {/each}
 </div>
 
 <style>
+    p:focus {
+        align-items: center;
+        justify-content: center;
+        border: none;
+        outline: none;
+    }
+
     .container {
         height: 33px;
         width: fit-content;
@@ -43,16 +58,16 @@
         display: flex;
         padding: 5px;
         margin: 15px 0px;
-        border-radius: 15px;
+        border-radius: 12px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     }
 
     .number-container {
+        overflow: hidden;
         color: white;
         border-radius: 10px;
         border-top-right-radius: 0px;
-        border-bottom: 0px;
-        padding: 2px;
+        padding: 3px;
         width: 35px;
         display: flex;
         align-items: center;
