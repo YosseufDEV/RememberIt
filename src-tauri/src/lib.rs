@@ -40,13 +40,14 @@ pub fn run() {
                 // crate::question_tag::get_number_of_questions_with_tag,
                 crate::question_tag::insert_question_tag,
                 crate::question_tag::get_question_tags_by_id,
-                crate::question_tag::update_question_tag_explanation_by_both_ids,
+                crate::question_tag::update_question_tag_explanation_by_id,
+                crate::question_tag::delete_question_tag_by_id,
         ])
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
             // let _ = apply_mica(&window, Some(true));
-            check_if_database_exists("../database/database.db").unwrap();
+            check_if_database_exists("./database.db").unwrap();
             // let _ = apply_tabbed(&window, Some(true));
             apply_acrylic(&window, Some((0,0,0,10))).unwrap();
             Ok(())

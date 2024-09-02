@@ -2,11 +2,10 @@
     import { tick } from "svelte";
 
     import type { QuestionSpecificTag } from "../typescript/types";
-    import { badgeTapAnimation, badgeTapOutAnimation, darkenBadgeGradient, explanationAppearAnimation, explanationDisappearAnimation, shakeBadge } from "./Animations/BadgeAnimations";
+    import { badgeTapAnimation, badgeTapOutAnimation, darkenBadgeGradient, explanationAppearAnimation, explanationDisappearAnimation, removeBadgeAnimation, shakeBadge } from "./Animations/BadgeAnimations";
     import { adjustColor } from "$lib/typescript/color_generator";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { invoke } from "@tauri-apps/api/core";
-    import { updateQuestionTagExplanationByBothIds } from "../../database";
+    import { deleteQuestionTagById, updateQuestionTagExplanationById } from "../../database";
     import BadgeOption from "./BadgeOption.svelte";
 
     export let tag: QuestionSpecificTag, questionId: number;
@@ -16,15 +15,17 @@
         badgeLabelRef: HTMLElement;
     $: isVisible = false;
     let hovered = false;
+    let hoverLock = false;
     let gradientAnimationTimeline: GSAPTimeline;
 
     async function handleDoubleClick(e: MouseEvent) {
-        // removeBadgeAnimation(badgeRef, strikeThroughRef);
         if(e.target != badgeRef && e.target != badgeLabelRef) return;
         if(!isVisible) {
             if(tag.explanation.length > 0) {
                 gradientAnimationTimeline = darkenBadgeGradient(badgeRef, tag.color);
                 isVisible = true;
+                hoverLock = true;
+                hovered = false;
                 badgeTapAnimation(badgeRef);
                 await tick();
                 explanationAppearAnimation(explanationRef);
@@ -34,9 +35,12 @@
         } else {
             await tick();
             badgeTapOutAnimation(badgeRef);
-            gradientAnimationTimeline.revert();
+            if(gradientAnimationTimeline) 
+                gradientAnimationTimeline.revert();
+
             explanationDisappearAnimation(explanationRef).then(() => {
                 isVisible = false;
+                hoverLock = false;
             });
         }
     }
@@ -44,25 +48,34 @@
     async function handleExplanationEdit(e: CustomEvent) {
         const newExplanation = e.detail.newText;
 
-        await updateQuestionTagExplanationByBothIds(questionId, tag.id, newExplanation);
+        await updateQuestionTagExplanationById(tag.questionTagId, newExplanation);
         tag.explanation = newExplanation;
     }
 
-    function handleHover() {
-        hovered = true;
+    function handleBadgeDelete(e: CustomEvent) {
+        removeBadgeAnimation(badgeRef, strikeThroughRef);
+        deleteQuestionTagById(tag.questionTagId);
+    }
+
+    async function handleExplanationAdd(e: CustomEvent) {
+        tag.explanation = "Edit This Text to add"
+        isVisible = true;
+        await tick();
+        explanationAppearAnimation(explanationRef);
     }
 
 </script>
 
 <div class="container" on:dblclick={handleDoubleClick} 
-     on:mouseover={() => hovered = true} on:mouseleave={() => hovered = false} bind:this={badgeRef}
+     on:mouseover={() => hoverLock ? undefined : hovered = true} on:mouseleave={() => hovered = false} bind:this={badgeRef}
      style={`--bg-color-1: ${tag.color}; --bg-color-2: ${adjustColor(tag.color, -15)}`}>
     <p bind:this={badgeLabelRef} class="label">{tag.label}</p> 
     {#if hovered}
         <div class="options-container">
-            <BadgeOption />
-            <BadgeOption />
-            <BadgeOption />
+            <BadgeOption on:optionClicked={handleBadgeDelete} optionType="deleteBadge"/>
+            {#if tag.explanation.length == 0}
+                <BadgeOption on:optionClicked={handleExplanationAdd} optionType="addExplanation"/>
+            {/if}
         </div>
     {/if}
 
@@ -72,7 +85,7 @@
             <EditableText on:finishedEditing={handleExplanationEdit} class="label" text={tag.explanation} /> 
         </div>
     {/if}
-    <div bind:this={strikeThroughRef}/>
+    <div class="strike-through" bind:this={strikeThroughRef}/>
 </div>
 
 <style>
@@ -98,13 +111,20 @@
         top: -30px;
     }
 
+    .strike-through {
+        border-radius: 50%;
+        position: absolute;
+        width: 100%;
+        height: 2px;
+    }
+
     .options-container {
         display: flex;
         align-items: center;
         justify-content: center;
         position: absolute;
         top: -10px;
-        right: -10px;
+        right: -5px;
     }
     
     :global(.explanation-container p) {

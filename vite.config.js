@@ -8,7 +8,8 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [sveltekit()],
   build: {
-    target: 'esnext'
+    target: 'esnext',
+    drop: ['console', 'debugger'],
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

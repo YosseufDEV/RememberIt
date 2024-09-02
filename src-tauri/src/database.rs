@@ -24,7 +24,7 @@ pub fn create_tables() {
 
 pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
-    let database_url = "../database/database.db";
+    let database_url = "./database.db";
     SqliteConnection::establish(database_url)
                         .unwrap_or_else(|_| panic!("Failed to connect to database {}", database_url))
 }

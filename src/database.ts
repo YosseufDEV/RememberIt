@@ -82,6 +82,10 @@ export async function getQuestionTagsById(questionId: number): Promise<string[]>
     return await invoke("get_question_tags_by_id", { questionId })
 }
 
-export async function updateQuestionTagExplanationByBothIds(sQuestionId: number, sTagId: number, newExplanation: String) {
-    await invoke("update_question_tag_explanation_by_both_ids", { sQuestionId, sTagId, newExplanation })
+export async function updateQuestionTagExplanationById(id: number, newExplanation: String) {
+    await invoke("update_question_tag_explanation_by_id", { questionTagId: id, newExplanation })
+}
+
+export async function deleteQuestionTagById(questionTagId: number) {
+    await invoke("delete_question_tag_by_id", { questionTagId });
 }

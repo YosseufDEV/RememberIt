@@ -96,19 +96,10 @@ export function removeBadgeAnimation(badgeRef: HTMLElement, strikeThroughRef: HT
         scale: 0.95,
         webkitFilter: "brightness(0.75)",
     }, "<")
-    .from(strikeThroughRef, {
-        delay: 0.2,
-        height: "2px",
-        borderRadius: "500px",
-        background: "#404040",
-    }, "<")
     .to(strikeThroughRef, {
-        position: "absolute",
-        height: "2px",
-        borderRadius: "500px",
-        width: "89px",
-        background: "#404040",
-        duration: 0.5,
+        delay: 0.2,
+        background: "black",
+        width: "110%"
     }, "<")
     .to(badgeRef, {
         webkitFilter: "brightness(0.75)",

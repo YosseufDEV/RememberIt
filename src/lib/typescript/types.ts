@@ -5,6 +5,7 @@ export interface Tag {
 }
 
 export interface QuestionSpecificTag {
+    questionTagId: number,
     id: number,
     label: string,
     color: string,

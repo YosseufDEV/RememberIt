@@ -36,6 +36,7 @@
         questionsCollections.forEach((collection) => {
             let questions = collection.questions;
             questions.forEach((q) => {
+                length += q.tags.filter((r) => r.id == tag.id).length > 0 ? 1 : 0;
                 length += q.tags.filter((r) => r.id == tag.id).length;
             })
         })
@@ -87,9 +88,9 @@
     .container {
         display: flex;
         align-items: center;
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: grid; grid-template-columns: auto 1fr auto;
         z-index: 11;
+        overflow: hidden;
     }
 
     .color {
