@@ -58,6 +58,10 @@ export async function getQuestionByQuestionNumber(id: number, questionNumber: nu
      return await invoke("get_question_by_question_number", { colId: id, questionNumber});
 }
 
+export async function getUntitledCount(): Promise<number> {
+    return await invoke("get_untitled_count")
+}
+
 export async function insertTag(label: string, color: string): Promise<Tag> {
     return await invoke("insert_tag", { label, color })
 }

@@ -2,7 +2,8 @@
     import { createEventDispatcher, tick } from "svelte";
 
     type TextType = "number" | "text";
-    export let text="", type: TextType = "text"; 
+    type TagType = "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "span";
+    export let text="", type: TextType = "text", tagType: TagType = "p"; 
     const dispatch = createEventDispatcher();
 
     let isEditing = false;
@@ -40,13 +41,16 @@
 </script>
 
 <div>
-    <p bind:this={textRef} 
-       contenteditable={isEditing} 
-       on:dblclick={enableEditing} 
-       on:focusout={handleFocusLost} 
-       on:keydown={handleKeyDown}
-       on:click={handleClick}
-       class={`${$$props.class}`}>{text}</p>
+    <svelte:element this={tagType}
+                    bind:this={textRef} 
+                    contenteditable={isEditing} 
+                    on:dblclick={enableEditing} 
+                    on:focusout={handleFocusLost} 
+                    on:keydown={handleKeyDown}
+                    on:click={handleClick}
+                    class={`${$$props.class}`}>
+        {text}
+    </svelte:element>
 </div>
 
 <style>

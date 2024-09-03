@@ -19,9 +19,9 @@ tauri = { version = "2.0.0-rc", features = [] }
 tauri-plugin-shell = "2.0.0-rc"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
+diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "chrono"] }
 libsqlite3-sys = { features = ["bundled"] }
-chrono = "0.4.38"
+chrono = { version = "0.4.38", features= ["serde"] }
 dotenvy = "0.15"
 window-vibrancy = "0.5.1"
 diesel_migrations = "2.2.0"

@@ -94,6 +94,19 @@ pub fn get_all_super_collections() -> Vec<CompleteCollection> {
 }
 
 #[tauri::command]
+pub fn get_untitled_count() -> usize {
+    use crate::schema::collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    collection
+        .filter(title.like("%Untitled%"))
+        .select(Collection::as_select())
+        .load(connection)
+        .expect("Failed to fetch parent collection with Untitled in their names").len()
+}
+
+#[tauri::command]
 pub fn get_all_collections() -> Vec<CompleteCollection> {
     use crate::schema::collection;
 

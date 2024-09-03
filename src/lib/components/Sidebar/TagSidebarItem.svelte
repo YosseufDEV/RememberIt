@@ -7,7 +7,6 @@
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
     import Draggable from "../DragAndDrop/Draggable.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import Layout from "../../../routes/+layout.svelte";
     import { updateTagLabelById } from "../../../database";
     
     export let tag: Tag;
@@ -88,7 +87,7 @@
         display: flex;
         align-items: center;
         display: grid; grid-template-columns: auto 1fr auto;
-        z-index: 11;
+        z-index: 101;
         overflow: hidden;
     }
 

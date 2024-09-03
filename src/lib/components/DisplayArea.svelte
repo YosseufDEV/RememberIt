@@ -152,7 +152,7 @@
                 {#if 'questions' in activeCollection}
                     <QuestionsCollectionView questionsCollection={activeCollection} />
                     {:else if activeCollection.id > 0}
-                    <SuperCollectionView superCollection={activeCollection}/>
+                    <SuperCollectionView superCollection={activeCollection} parentFontSize={27}/>
                 {/if}
             {/if}
         </div>
@@ -167,13 +167,12 @@
         padding-top: 40px;
         padding-bottom: 10px;
         padding-left: 25px;
-        z-index: 10;
     }
     .container {
         overflow-y: scroll;
         /* HACK: to make the badge explanation appear even in overflow */
-        margin-left: -500px;
-        padding-left: 500px;
+        margin-left: -200px;
+        padding-left: 200px;
         width: calc(100% - 5px);
         height: 100%;
     }
@@ -182,6 +181,7 @@
         margin-top: -40px;
         margin-left: -25px;
         margin-bottom: -10px;
+        z-index: 0;
         width: 100%;
         height: 100%;
     }

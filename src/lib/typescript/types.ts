@@ -29,18 +29,17 @@ export interface GenericCollection {
     id: number,
     title: string,
     parentId: number,
-    identifiy(): CollectionType;
 }
 
 export interface Collection extends GenericCollection {
     questionsCollections: QuestionsCollection[]
     subCollections: Collection[],
-    identifiy: () => CollectionType.COLLECTION
 }
 
 export interface QuestionsCollection extends GenericCollection {
     questions: Question[]
-    identifiy: () => CollectionType.QUESTION_COLLECTION
+    createdAt: string,
+    updatedAt: string,
 }
 
 export interface Question {

@@ -28,18 +28,35 @@
 
 </script>
 
-<div class="container">
-    {#each activeParentCollection.questionsCollections as childCollection (childCollection.id)}
-        <ChildrenSidebarItem collection={childCollection}/>
-    {/each}
-    <!-- <NestedChildrenSidebarView nestedTitle={activeParentCollection.title} collection={activeParentCollection} /> -->
+<div class="main-container">
+    <div
+        class="container">
+        {#each activeParentCollection.questionsCollections as childCollection (childCollection.id)}
+            <ChildrenSidebarItem collection={childCollection}/>
+        {/each}
+        <NestedChildrenSidebarView parentsTitleArray={[activeParentCollection.title]} collection={activeParentCollection} />
+    </div>
+
 </div>
 
 <style>
     .container {
+        padding: 40px 0;
+        padding-bottom: 10px;
+        overflow-x: hidden;
         overflow-y: scroll;
-        padding: 40px 10px;
-        background: rgba(0, 0, 0, 0.89);
+        background: rgba(0, 0, 0, 0.85);
+        min-width: 25%;
+        width: 100%;
+        height: 100%;
+        display: flex; 
+        flex-direction: column;
+        align-items: right;
+        overflow-y: scroll;
+    }
+
+    .main-container {
+        overflow-x: hidden;
         min-width: 25%;
         height: 100%;
         display: flex; 

@@ -30,6 +30,8 @@ diesel::table! {
         id -> Integer,
         parent_id -> Integer,
         title -> Text,
+        created_at -> Timestamp,
+        updated_at -> Nullable<Timestamp>,
     }
 }
 

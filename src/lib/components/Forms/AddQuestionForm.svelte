@@ -47,7 +47,6 @@
 
                         let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
 
-                        // BUG: Would throw an error when not inside a collection!
                         oldDB = oldDB.map((col) => {
                             if(col.id == activeCollection.id) {
                                 col.questions.push(completeQuestion);

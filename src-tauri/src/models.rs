@@ -24,7 +24,7 @@ pub struct CompleteCollection {
     pub parent_id: Option<i32>,
     pub title: String,
     pub questions_collections: Vec<CompleteQuestionsCollection>,
-    pub sub_collections: Vec<CompleteCollection>
+    pub sub_collections: Vec<CompleteCollection>,
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize, Associations)]
@@ -35,6 +35,8 @@ pub struct QuestionsCollection {
     pub id: i32,
     pub parent_id: i32,
     pub title: String,
+    pub created_at: chrono::NaiveDateTime,
+    pub updated_at: Option<chrono::NaiveDateTime>,
 }
 
 
@@ -44,6 +46,8 @@ pub struct CompleteQuestionsCollection {
     pub id: i32,
     pub parent_id: i32,
     pub title: String,
+    pub created_at: chrono::NaiveDateTime,
+    pub updated_at: Option<chrono::NaiveDateTime>,
     pub questions: Vec<CompleteQuestion>,
 }
 
@@ -52,6 +56,7 @@ pub struct CompleteQuestionsCollection {
 pub struct NewQuestionsCollection {
     pub title: String,
     pub parent_id: i32,
+    pub updated_at: Option<chrono::NaiveDateTime>,
 }
 
 #[derive(Queryable, Identifiable, Selectable, Serialize)]

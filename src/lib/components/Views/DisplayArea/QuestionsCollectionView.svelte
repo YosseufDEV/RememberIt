@@ -24,7 +24,7 @@
 
 <div>
     {#if nestedRendering}
-        <h2>{questionsCollection.title}</h2>
+        <h3>{questionsCollection.title}</h3>
     {/if}
     {#if reativeQuestionsCollection.questions.length > 0}
         {#each reativeQuestionsCollection.questions  as question (question.id)}

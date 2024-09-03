@@ -1,3 +1,6 @@
+import { get } from "svelte/store";
+import { TAGS_SLICE_DATABASE } from "./Database/CachedDatabase";
+
 type Color = {
 	readonly hex: string;
 	readonly shades: string[];
@@ -54,39 +57,26 @@ function whitePercentage(rgb: RGB): number {
     return (rgb[0]+rgb[1]+rgb[2])/(255*3)
 }
 
-export function generateColor(colors: Color[]): string {
-	const idk: number = getRandomInRange(0, 3);
-    let index = -1;
-    let selector = 'hex';
-    const randomIndex: number = getRandomInRange(0, colors.length);
+function colorSimilarityPercentage(color1, color2) {
+    // Destructure RGB values from the input colors
+    const [r1, g1, b1] = color1;
+    const [r2, g2, b2] = color2;
 
-    switch(idk) {
-        case 1: {
-            selector = 'temperatures'
-            index = getRandomInRange(0, colors[randomIndex].temperatures.length);
-        }
-        case 2: {
-            selector = 'hues'
-            index = getRandomInRange(0, colors[randomIndex].hues.length);
-        }
-    }
+    // Calculate the Euclidean distance between the two colors
+    const distance = Math.sqrt(
+    Math.pow(r2 - r1, 2) +
+    Math.pow(g2 - g1, 2) +
+    Math.pow(b2 - b1, 2)
+    );
 
-    let color: string;
+    // Maximum possible distance between two RGB colors is sqrt(255^2 + 255^2 + 255^2) = 441.67
+    const maxDistance = Math.sqrt(255 ** 2 + 255 ** 2 + 255 ** 2);
 
-    if(selector != 'hex') {
-        color = colors[randomIndex][selector][index];
-    } else {
-        color = colors[randomIndex]['hex'];
-    }
+    // Convert distance to a similarity percentage
+    const similarityPercentage = ((maxDistance - distance) / maxDistance) * 100;
 
-    let colorAsRgb = hexToRgb(color);
-    let isGreyish: boolean = (colorAsRgb[0] == colorAsRgb[1] && colorAsRgb[1] == colorAsRgb[2]);
-
-    const contrastRatio = contrast(hexToRgb(color), [255,255,255])
-
-    if(contrastRatio <= 3.5 || isGreyish)
-        return generateColor(colors); 
-    return color;
+    // Return the similarity percentage
+    return similarityPercentage;
 }
 
 export function adjustColor(hex: string, percentage: number): string {
@@ -114,3 +104,42 @@ export function adjustColor(hex: string, percentage: number): string {
 
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+export function generateColor(colors: Color[]): string {
+	const idk: number = getRandomInRange(0, 3);
+    let index = -1;
+    let selector = 'hex';
+    const randomIndex: number = getRandomInRange(0, colors.length);
+    const lastColor = get(TAGS_SLICE_DATABASE)[get(TAGS_SLICE_DATABASE).length-1].color;
+      //
+
+    switch(idk) {
+        case 1: {
+            selector = 'temperatures'
+            index = getRandomInRange(0, colors[randomIndex].temperatures.length);
+        }
+        case 2: {
+            selector = 'hues'
+            index = getRandomInRange(0, colors[randomIndex].hues.length);
+        }
+    }
+
+    let color: string;
+
+    if(selector != 'hex') {
+        color = colors[randomIndex][selector][index];
+    } else {
+        color = colors[randomIndex]['hex'];
+    }
+    const colorSimilarty = colorSimilarityPercentage(hexToRgb(color), lastColor);
+
+    let colorAsRgb = hexToRgb(color);
+    let isGreyish: boolean = (colorAsRgb[0] == colorAsRgb[1] && colorAsRgb[1] == colorAsRgb[2]);
+
+    const contrastRatio = contrast(hexToRgb(color), [255,255,255])
+
+    if(contrastRatio <= 3.5 && contrastRatio >= 1 && colorSimilarty < 25 || isGreyish)
+        return generateColor(colors); 
+    return color;
+}
+

@@ -30,7 +30,6 @@ export function exitingAnimation(containerRef: HTMLElement, callback: GSAPCallba
 export function colorOverlayAnimation(overlay: HTMLElement, color: string, opacity: number) {
     const timeline = gsap.timeline();
     timeline.to(overlay, {
-        zIndex: 10000,
         background: color,
         autoAlpha: opacity
     })

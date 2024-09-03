@@ -1,5 +1,7 @@
 use diesel::prelude::*;
 use crate::database::establish_connection;
+use crate::question::get_question_by_id;
+use crate::question_collection::update_question_collection_updated_at;
 use crate::models::{ Tag, NewQuestionTag, QuestionSpecificTag, QuestionTag };
 
 #[tauri::command]
@@ -9,11 +11,17 @@ pub fn insert_question_tag(question_id: i32, tag_id: i32, explanation: Option<St
     let connection = &mut establish_connection();
     let question_tag_obj = NewQuestionTag { question_id, tag_id, explanation };
 
-    diesel::dsl::insert_into(question_tag::table)
-                .values(&question_tag_obj)
-                .returning(QuestionTag::as_returning())
-                .get_result(connection)
-                .expect("Failed to insert Question Tag")
+
+    let question_tag = diesel::dsl::insert_into(question_tag::table)
+                        .values(&question_tag_obj)
+                        .returning(QuestionTag::as_returning())
+                        .get_result(connection)
+                        .expect("Failed to insert Question Tag");
+
+    let question = get_question_by_id(question_id);
+    update_question_collection_updated_at(question.collection_id);
+
+    return question_tag;
 }
 
 #[tauri::command]
@@ -41,11 +49,14 @@ pub fn update_question_tag_explanation_by_id(question_tag_id: i32, new_explanati
 
     let connection = &mut establish_connection();
 
-    diesel::update(question_tag)
-            .filter(id.eq(question_tag_id))
-            .set(explanation.eq(new_explanation))
-            .execute(connection)
-            .expect("Failed to update question tag explanation");
+    let c: QuestionTag = diesel::update(question_tag)
+                            .filter(id.eq(question_tag_id))
+                            .set(explanation.eq(new_explanation))
+                            .get_result(connection)
+                            .expect("Failed to update question tag explanation");
+
+    let question = get_question_by_id(c.question_id);
+    update_question_collection_updated_at(question.collection_id);
 }
 
 #[tauri::command]

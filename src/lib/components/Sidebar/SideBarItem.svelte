@@ -60,6 +60,7 @@
     }
 
     active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
+    active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
 
 </script>
 
@@ -142,7 +143,6 @@
     }
 
     .children {
-        z-index: 0;
         position: relative;
         margin-left: 15px;
     }

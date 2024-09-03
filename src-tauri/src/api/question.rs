@@ -2,6 +2,7 @@ use diesel::prelude::*;
 
 use crate::database::establish_connection;
 use crate::models::*;
+use crate::question_collection::update_question_collection_updated_at;
 use crate::api::question_tag::get_question_tags_by_id;
 
 #[tauri::command]
@@ -14,6 +15,8 @@ pub fn insert_question_by_collection_id(question_number: i32, collection_id: i32
         question_number,
         collection_id
     };
+
+    update_question_collection_updated_at(collection_id);
 
     diesel::insert_into(question::table)
             .values(&question)
@@ -74,15 +77,28 @@ pub fn get_question_by_question_number(col_id: i32, question_number: i32) -> Com
 
 }
 
+pub fn get_question_by_id(question_id: i32) -> Question {
+    use crate::schema::question::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    question
+        .filter(id.eq(question_id))
+        .get_result(connection)
+        .expect("Failed to get question by id")
+}
+
 #[tauri::command]
 pub fn update_question_number_by_id(question_id: i32, new_question_number: i32) {
     use crate::schema::question::dsl;
 
     let connection = &mut establish_connection();
 
-    diesel::update(dsl::question)
-            .filter(dsl::id.eq(question_id))
-            .set(dsl::question_number.eq(new_question_number))
-            .execute(connection)
-            .expect("Failed to update question_number");
+
+    let c: Question = diesel::update(dsl::question)
+                        .filter(dsl::id.eq(question_id))
+                        .set(dsl::question_number.eq(new_question_number))
+                        .get_result(connection)
+                        .expect("Failed to update question_number");
+    update_question_collection_updated_at(c.collection_id);
 }

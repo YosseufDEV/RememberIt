@@ -11,6 +11,7 @@ import { TAGS_SLICE_DATABASE } from "../../../typescript/Database/CachedDatabase
     })
 
 </script>
+
 <div class="tag-view-container">
     <div class="tags-icon-container">
         <Tags size={28}/>
@@ -27,6 +28,7 @@ import { TAGS_SLICE_DATABASE } from "../../../typescript/Database/CachedDatabase
     .tag-view-container {
         display: flex;
         flex-direction: column;
+        z-index: 100;
     }
 
     .tags-icon-container {

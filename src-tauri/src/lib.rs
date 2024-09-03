@@ -29,6 +29,7 @@ pub fn run() {
                 crate::collection::get_all_collections,
                 crate::collection::get_all_super_collections,
                 crate::collection::update_collection_title_by_id,
+                crate::collection::get_untitled_count,
                 crate::question::insert_question_by_collection_id,
                 crate::question::get_questions_by_collection_id,
                 crate::question::get_question_by_question_number,
@@ -48,7 +49,7 @@ pub fn run() {
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
             // let _ = apply_mica(&window, Some(true));
-            check_if_database_exists("../database/database.db").unwrap();
+            check_if_database_exists("./database.db").unwrap();
             // let _ = apply_tabbed(&window, Some(true));
             apply_acrylic(&window, Some((0,0,0,10))).unwrap();
             Ok(())

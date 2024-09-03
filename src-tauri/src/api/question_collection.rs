@@ -12,7 +12,8 @@ pub fn create_questions_collection(title: String, parent_id: i32) -> QuestionsCo
 
     let collection = NewQuestionsCollection {
         parent_id,
-        title
+        title,
+        updated_at: None
     };
 
     diesel::insert_into(questions_collection::table)
@@ -37,6 +38,8 @@ pub fn get_questions_collection_by_id(col_id: i32) -> CompleteQuestionsCollectio
         title: collection.title,
         id: collection.id,
         parent_id: collection.parent_id, 
+        created_at: collection.created_at,
+        updated_at: collection.updated_at,
         questions
     }
 }
@@ -58,6 +61,8 @@ pub fn get_collections_by_parent_id(par_id: i32) -> Vec<CompleteQuestionsCollect
         let whole_collection = CompleteQuestionsCollection {
             id: collection.id,
             title: collection.title.clone(),
+            created_at: collection.created_at,
+            updated_at: collection.updated_at,
             questions: selected_questions,
             parent_id: par_id
         };
@@ -82,6 +87,8 @@ pub fn get_all_questions_collections() -> Vec<CompleteQuestionsCollection> {
             id: collection.id,
             title: collection.title.clone(),
             parent_id: collection.parent_id,
+            created_at: collection.created_at,
+            updated_at: collection.updated_at,
             questions
         };
         complete_collections.push(complete_collection)
@@ -110,7 +117,19 @@ pub fn update_question_collection_title_by_id(collection_id: i32, new_title: Str
 
     diesel::update(questions_collection)
             .filter(id.eq(collection_id))
-            .set(title.eq(new_title))
+            .set((title.eq(new_title), updated_at.eq(chrono::Utc::now().naive_utc())))
+            .execute(connection)
+            .expect("Failed to update collection title");
+}
+
+pub fn update_question_collection_updated_at(collection_id: i32) {
+    use crate::schema::questions_collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::update(questions_collection)
+            .filter(id.eq(collection_id))
+            .set(updated_at.eq(chrono::Utc::now().naive_utc()))
             .execute(connection)
             .expect("Failed to update collection title");
 }
