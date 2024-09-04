@@ -4,20 +4,12 @@
     import Question from "../../Question.svelte";
 
     export let questionsCollection: QuestionsCollection, nestedRendering=false;
-    console.log(questionsCollection);
 
     $: reativeQuestionsCollection = questionsCollection;
 
     QUESTION_COLLECTION_SLICE_DATABASE.subscribe((col) => {
         let collectionObjectInDB = col.filter((c) => c.id == questionsCollection.id)[0];
-
-        console.log("NO!!!!");
         reativeQuestionsCollection = collectionObjectInDB
-        // if(collectionObjectInDB.questions.length != questionsCollection.questions.length) {
-        //     console.log("OK!!!!");
-        //     reativeQuestionsCollection = collectionObjectInDB;
-        //     reativeQuestionsCollection.questions = collectionObjectInDB.questions
-        // }
     })
 
 </script>

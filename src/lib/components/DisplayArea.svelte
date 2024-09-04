@@ -107,6 +107,7 @@
 
             }
         }, 200)
+        return collection;
     }
 
     function filterSuperCollectionQuestions(collection: Collection, reasonId: number[]) {

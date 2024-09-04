@@ -5,5 +5,5 @@ CREATE TABLE questions_collection (
     title TEXT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME,
-    FOREIGN KEY (parent_id) REFERENCES collection(id)
+    FOREIGN KEY (parent_id) REFERENCES collection(id) ON DELETE CASCADE
 );

@@ -57,9 +57,7 @@
                     handleParnetClick(e, collection.id)} collection={collection} />
             {/each}
         </div>
-        <AddNestedParent />
         <AddCollectionForm />
-        <AddLabelForm />
         <TagsView />
     </div>
 </div>

@@ -38,6 +38,7 @@ function contrast(rgb1: RGB, rgb2: RGB) {
 }
 
 function hexToRgb(hex: string): RGB {
+    if(!hex) return;
 	let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	if (result) {
 		return [
@@ -58,6 +59,7 @@ function whitePercentage(rgb: RGB): number {
 }
 
 function colorSimilarityPercentage(color1, color2) {
+    if(!color1 || !color2) return;
     // Destructure RGB values from the input colors
     const [r1, g1, b1] = color1;
     const [r2, g2, b2] = color2;
@@ -110,7 +112,7 @@ export function generateColor(colors: Color[]): string {
     let index = -1;
     let selector = 'hex';
     const randomIndex: number = getRandomInRange(0, colors.length);
-    const lastColor = get(TAGS_SLICE_DATABASE)[get(TAGS_SLICE_DATABASE).length-1].color;
+    const lastColor = get(TAGS_SLICE_DATABASE)[get(TAGS_SLICE_DATABASE).length-1]?.color;
       //
 
     switch(idk) {
@@ -138,7 +140,7 @@ export function generateColor(colors: Color[]): string {
 
     const contrastRatio = contrast(hexToRgb(color), [255,255,255])
 
-    if(contrastRatio <= 3.5 && contrastRatio >= 1 && colorSimilarty < 25 || isGreyish)
+    if(contrastRatio <= 3.5 && colorSimilarty > 25)
         return generateColor(colors); 
     return color;
 }

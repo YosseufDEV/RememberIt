@@ -1,18 +1,27 @@
 <script lang="ts">
+    import { Menu, MenuItem, PredefinedMenuItem } from '@tauri-apps/api/menu';
+
+    import { onMount } from 'svelte';
+    import { get } from 'svelte/store';
+
     import type { Collection } from "../../typescript/types";
-    import { animateChevronClosed, animateChevronOpened, collapseCollection, expandCollection } from "../Animations/CollapseAndExpansionAnimations";
+    import { animateChevronClosed, animateChevronOpened, collapseCollection, deleteCollectionAnimation, expandCollection } from "../Animations/CollectionAnimations";
     import { active_parent } from "../../stores/active-parent-store";
     import SidebarNestedItems from "./SidebarNestedItems.svelte";
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { updatesCollectionTitleById } from "../../../database";
+    import { createCollection, deleteCollectionById, getUntitledCount, updatesCollectionTitleById } from "../../../database";
+    import { PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
 
     export let collection: Collection, handleClick: any;
+    let menu: Menu;
 
     let children: HTMLElement,
         chevron: HTMLElement,
         collapsableCollection: HTMLElement;
     let activeAnimation: GSAPTween | GSAPTimeline;
+    let containerRef: HTMLElement;
+
 
     function getCollectionsLength(collection: Collection) {
         let length = 0;
@@ -37,6 +46,7 @@
     // Constant Flags
     const isNested = collection.parentId != null;
 
+
     let maxWidth: number = 0;
 
     function toggleCollection() {
@@ -59,13 +69,73 @@
         await updatesCollectionTitleById(collection.id, newTitle)
     }
 
-    active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
-    active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
+    function addCollectionIfSuperParent(root: Collection, collectionId: number, collectionToAdd: Collection) {
+        if(root.id == collectionId) {
+            root.subCollections.push(collectionToAdd);
+        } else {
+            for(const subCollection of root.subCollections) {
+                addCollectionIfSuperParent(subCollection, collectionId, collectionToAdd); 
+            }
+        }
+    }
+
+    async function addSubCollection() {
+        let parents = get(PARENTS_SLICE_DATABASE);
+        const index = parents.findIndex((pCol) => pCol.id == collection.id);
+
+        let subCollection = await createCollection(`Untitled ${await getUntitledCount()+1}`, collection.id);
+
+        subCollection.questionsCollections = []
+        subCollection.subCollections = []
+
+        if(index != -1) {
+            const oldDB = parents; 
+            oldDB[index].subCollections.push(subCollection);
+            PARENTS_SLICE_DATABASE.set(oldDB);
+        } else {
+            for(const superCollection of parents) {
+                addCollectionIfSuperParent(superCollection, collection.id, subCollection);
+            }
+            PARENTS_SLICE_DATABASE.set(parents);
+        }
+    }
+
+    async function showContextMenu() {
+        await menu.popup().catch();
+    }
+
+    function deleteCollection() {
+        deleteCollectionAnimation(containerRef).then(async () => {
+                await deleteCollectionById(collection.id); 
+        })
+    }
+
+    onMount(async () => {
+        active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
+
+        const menuItems = await Promise.all([
+            MenuItem.new({
+                text: 'Create Subcollection',
+                action: addSubCollection
+            }),
+            PredefinedMenuItem.new({ item: 'Separator' }),
+            MenuItem.new({
+                text: 'Delete Collection',
+                action: deleteCollection
+            }),
+        ])
+
+        menu = await Menu.new({
+            items: menuItems
+        })
+
+    })
 
 </script>
 
-<div bind:clientWidth={maxWidth} class="div-container"> 
+<div bind:clientWidth={maxWidth} bind:this={containerRef} class="div-container"> 
     <div class="collection-container" 
+         on:contextmenu={showContextMenu}
          class:children-doesnt-have-nested={!hasNested && isNested} 
          class:has-nested-parents={hasNested}
          class:doesnt-have-nested-parents={!isNested && !hasNested}

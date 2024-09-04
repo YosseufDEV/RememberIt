@@ -24,6 +24,15 @@ pub fn create_questions_collection(title: String, parent_id: i32) -> QuestionsCo
 }
 
 #[tauri::command]
+pub fn delete_questions_collection_by_id(col_id: i32) {
+    use crate::schema::questions_collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::delete(questions_collection.filter(id.eq(col_id))).execute(connection);
+}
+
+#[tauri::command]
 pub fn get_questions_collection_by_id(col_id: i32) -> CompleteQuestionsCollection {
     use crate::schema::questions_collection::dsl::*;
 

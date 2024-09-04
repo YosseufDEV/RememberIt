@@ -17,6 +17,16 @@ pub fn create_collection(title: String, parent_id: Option<i32>) -> Collection {
             .get_result(conn)
             .expect("Failed to insert collection")
 }
+#[tauri::command]
+pub fn delete_collection_by_id(col_id: i32) {
+    use crate::schema::collection::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::delete(collection.filter(id.eq(col_id)))
+            .execute(connection)
+            .expect(&(format!("Failed to delete collection with id {}", col_id).to_string()));
+}
 
 fn get_collection_sub_collections_by_id(connection: &mut SqliteConnection, p_id: i32) -> Vec<CompleteCollection> {
     use crate::schema::collection;
