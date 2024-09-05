@@ -1,10 +1,10 @@
 import { writable } from "svelte/store";
-import type { ParentCollection, Question, Reason } from "../types"
+import type { Collection, Question, Tag } from "$lib/typescript/types.ts"
 
 interface Database {
-    parents: ParentCollection[],
+    parents: Collection[],
     questions: Question[],
-    tags: Reason[],
+    tags: Tag[],
 }
 
 let d: Database = {

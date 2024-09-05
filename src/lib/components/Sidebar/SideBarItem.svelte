@@ -22,7 +22,6 @@
     let activeAnimation: GSAPTween | GSAPTimeline;
     let containerRef: HTMLElement;
 
-
     function getCollectionsLength(collection: Collection) {
         let length = 0;
 

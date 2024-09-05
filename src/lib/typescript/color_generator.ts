@@ -140,7 +140,7 @@ export function generateColor(colors: Color[]): string {
 
     const contrastRatio = contrast(hexToRgb(color), [255,255,255])
 
-    if(contrastRatio <= 3.5 && colorSimilarty > 25)
+    if(contrastRatio <= 3.5 || colorSimilarty > 25)
         return generateColor(colors); 
     return color;
 }
