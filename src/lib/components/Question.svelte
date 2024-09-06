@@ -6,10 +6,9 @@
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { updateQuestionNumberById } from "../../database";
     import { QUESTION_TAGS_COLLECTION_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase";
+    import DropZone from "./DragAndDrop/DropZone.svelte";
 
     let questionRef: HTMLElement;
-    let questionNumberRef: HTMLElement;
-    let tag = 'p';
 
     export let question: Question;
 

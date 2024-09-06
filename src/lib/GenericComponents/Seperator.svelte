@@ -6,13 +6,7 @@
 
 <style>
     .seperator {
-        position: absolute;
-        transform: translateZ(-10px);
-        margin-bottom: 20px;
-        margin-top: 10px;
-        margin-left: -10px;
-        width: calc(100% + 20px);
-        position: relative;
+        width: 100%;
     }
 
 </style>

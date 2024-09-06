@@ -112,11 +112,18 @@
 
     function filterSuperCollectionQuestions(collection: Collection, reasonId: number[]) {
         const filteredQuestionsCollection = [];
+
         for(const questionsCollection of collection.questionsCollections) {
             const filteredQuestions = getFilteredQuestions(questionsCollection, reasonId);
             questionsCollection.questions = filteredQuestions;
             filteredQuestionsCollection.push(questionsCollection);
         }
+
+        // INFO: SOLVED By Mistake LMFAO
+        for(const subCollection of collection.subCollections) {
+            subCollection.questionsCollections = filterSuperCollectionQuestions(subCollection, reasonId);
+        }
+
         return filteredQuestionsCollection;
     }
 
@@ -125,6 +132,7 @@
                 exitingAnimation(displayContainerRef, () => {
                     entranceAnimation(displayContainerRef)
                     activeCollection = collection
+                    filterRules = [];
                     unfilteredCollecition = structuredClone(collection);
                 })
         }, 200)

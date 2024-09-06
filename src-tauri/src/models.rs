@@ -39,7 +39,6 @@ pub struct QuestionsCollection {
     pub updated_at: Option<chrono::NaiveDateTime>,
 }
 
-
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CompleteQuestionsCollection {
@@ -99,7 +98,7 @@ pub struct CompleteQuestion {
     pub id: i32,
     pub question_number: i32,
     pub collection_id: i32,
-    pub tags: Vec<QuestionSpecificTag>
+    pub tags: Vec<QuestionSpecificTag>,
 }
 
 #[derive(Identifiable, Insertable, Selectable, Queryable, Associations, Serialize)]
@@ -110,7 +109,7 @@ pub struct QuestionTag {
     pub id: i32,
     pub question_id: i32,
     pub tag_id: i32,
-    pub explanation: Option<String>
+    pub explanation: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -129,5 +128,5 @@ pub struct QuestionSpecificTag {
 pub struct NewQuestionTag {
     pub question_id: i32,
     pub tag_id: i32,
-    pub explanation: Option<String>
+    pub explanation: Option<String>,
 }

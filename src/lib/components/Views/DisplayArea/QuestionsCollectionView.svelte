@@ -24,13 +24,14 @@
         {/each}
 
         {:else}
-            <h4 class="collection-empty-text">Nothing to show here</h4>
+            <h4 class="collection-empty-text">لا يوجد اسئلة لعرضها</h4>
     {/if}
 </div>
 
 <style>
     .collection-empty-text {
         color: white; 
-        font-weight: 400;
+        margin-bottom: 30px;
+        margin-top: 10px;
     }
 </style>

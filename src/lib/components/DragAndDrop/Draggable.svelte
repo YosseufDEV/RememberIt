@@ -60,10 +60,10 @@
         isDragged = false;
         if(hoveredDropZone) {
             hoveredDropZone.dropCallback(draggableItemMetadata); 
-            dispatch("dragdrop");
         }
         draggableRef.style['position'] = 'relative';
         draggableRef.style['top'] = draggableRef.style['left'] = '0';
+        dispatch("dragdrop");
     }
 
 </script>

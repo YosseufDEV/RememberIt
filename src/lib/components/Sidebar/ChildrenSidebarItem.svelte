@@ -48,6 +48,8 @@
     {/if}
 </div>
 
+<Seperator color="#5a5a5a"/>
+
 <style> 
     .container {
         padding: 20px 20px;

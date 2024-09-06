@@ -11,6 +11,7 @@
     import { generateColor } from "$lib/typescript/color_generator";
 
     let reasons: Tag[] = [];
+    let hovered = false;
 
     TAGS_SLICE_DATABASE.subscribe((db) => {
         reasons = db;
@@ -29,12 +30,15 @@
 </script>
 
 <div class="tag-view-container">
-    <div class="tags-icon-container">
+    <div class="tags-icon-container"
+         on:mouseenter={() => hovered = true} on:mouseleave={() => hovered=false}>
         <div class='icon-container'>
             <Tags size={28}/>
             <p class="tags-text">Tags</p>
         </div>
-        <AddCirlceIcon size={30} handleClick={addLabel}/>
+        {#if hovered}
+            <AddCirlceIcon size={30} handleClick={addLabel}/>
+        {/if}
     </div>
     <div class="tags-container">
         {#each reasons as reason}

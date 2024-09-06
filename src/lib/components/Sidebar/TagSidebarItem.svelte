@@ -2,12 +2,15 @@
     import { get } from "svelte/store";
     import { onMount } from "svelte";
 
+    import colors from "$lib/assets/colors/colors.json";
+
     import { DraggableItemType, type QuestionsCollection, type Tag, type TagItemMetadata } from "../../typescript/types";
     import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { mutateTagToBadgeAnimation } from "../Animations/TagItemAnimations";
     import Draggable from "../DragAndDrop/Draggable.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { updateTagLabelById } from "../../../database";
+    import { updateTagColorById, updateTagLabelById } from "../../../database";
+    import { generateColor } from "$lib/typescript/color_generator";
     
     export let tag: Tag;
 
@@ -21,7 +24,7 @@
                                     color: tag.color,
                                     label: tag.label,        
                                 }
-
+    
     let mutateAnimation: GSAPTimeline | null;
     $: tagCount = 0;
 
@@ -48,6 +51,7 @@
     }
 
     function handleDragStop() {
+        console.log("Stop!");
         if(mutateAnimation) {
             mutateAnimation.reverse().then(() => mutateAnimation = null);
         }
@@ -55,8 +59,13 @@
 
     async function handleLabelChange(e: CustomEvent) {
         const newLabel = e.detail.newText; 
-        console.log(newLabel);
         await updateTagLabelById(tag.id, newLabel);
+    }
+    
+    async function handleTagColorChange() {
+        let color = generateColor(colors);
+        updateTagColorById(tag.id, color);
+        tag.color = color;
     }
 
     onMount(() => {
@@ -72,7 +81,7 @@
            on:dragstart={handleDragStart} 
            on:dragmove={handleDragMove} 
            on:dragdrop={handleDragStop}>
-    <div class="container" bind:this={tagContainerRef}>
+    <div class="container" on:dblclick={handleTagColorChange} bind:this={tagContainerRef}>
         <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
         <EditableText on:finishedEditing={handleLabelChange} text={tag.label} />
         <!-- TODO : Hide this when dragging-->

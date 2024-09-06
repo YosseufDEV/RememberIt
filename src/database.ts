@@ -82,6 +82,10 @@ export async function updateTagLabelById(tagId: number, newLabel: string): Promi
     return await invoke("update_tag_label_by_id", { tagId, newLabel })
 }
 
+export async function updateTagColorById(tagId: number, newColor: string): Promise<Tag[]> {
+    return await invoke("update_tag_color_by_id", { tagId, newColor })
+}
+
 export async function insertQuestionTag(questionId: number, tagId: number, explanation: string): Promise<QuestionTag> {
     return await invoke("insert_question_tag", { questionId, tagId, explanation })
 }

@@ -14,17 +14,9 @@
     import { PARENTS_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase"
     import { active_collection } from '$lib/stores/active_collection_store';
     import { active_parent } from '$lib/stores/active-parent-store';
-    import SplashScreen from '$lib/Screens/SplashScreen.svelte';
-    
-    let reasons;
-    $: isCommandBarVisible = false;
-    let modifierKeys = [],
-        primaryKeys = []; 
 
     async function selectFirstParent() {
         let firstParent = get(PARENTS_SLICE_DATABASE)[0];
-        console.log(firstParent);
-        console.log("ok");
         if(firstParent) {
             active_collection.set(firstParent);
         }
@@ -34,23 +26,13 @@
     onMount(async () => {
         await selectFirstParent();
     })
-
-    // TODO: Make the shortcuts more dynamic!
-    function handleKeyDown(e: KeyboardEvent) {
-        if (e.ctrlKey && e.keyCode == 84) { //CTRL+ALT+F4
-            if('questions' in get(active_collection)) {
-                isCommandBarVisible = !isCommandBarVisible;
-            }
-        }
-    }
-
 </script>
 
-<svelte:window on:keydown={handleKeyDown}/>
+<!-- <svelte:window on:contextmenu|preventDefault /> -->
 
 <div class="container">
     <StatusBar />
-    <CommandBar isVisible={isCommandBarVisible}/>
+    <CommandBar />
     <div class="main-view-container">
         <CollectionsSidebar />
         <QuestionsCollectionsSidebar />

@@ -1,8 +1,23 @@
 <script lang="ts">
-    import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
+    import { get } from "svelte/store";
 
-    export let isVisible: boolean;
+    import AddQuestionForm from "./Forms/AddQuestionForm.svelte";
+    import { active_collection } from "$lib/stores/active_collection_store";
+
+    let isVisible: boolean = false;
+
+    function handleKeyDown(e: KeyboardEvent) {
+        if (e.ctrlKey && e.keyCode == 84) {
+            if('questions' in get(active_collection)) 
+                isVisible = !isVisible;
+
+        }
+    }
+
 </script>
+
+<svelte:window on:keydown={handleKeyDown}/>
+
 <div>
     {#if isVisible}
         <div class="container" style={`display: ${isVisible};`}>

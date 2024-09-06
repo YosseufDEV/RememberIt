@@ -1,8 +1,9 @@
-use std::fs::File; use std::io::Error;
+use std::fs::File;
+use std::io::Error;
 use std::path::Path;
 
-use diesel_migrations::{ EmbeddedMigrations, MigrationHarness, embed_migrations };
 use diesel::prelude::*;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use dotenvy::dotenv;
 
 const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
@@ -13,7 +14,7 @@ pub fn check_if_database_exists(path: &str) -> Result<(), Error> {
     if !path.exists() {
         File::create(path)?;
         create_tables();
-    } 
+    }
     Ok(())
 }
 
@@ -26,5 +27,5 @@ pub fn establish_connection() -> SqliteConnection {
     dotenv().ok();
     let database_url = "./database.db";
     SqliteConnection::establish(database_url)
-                        .unwrap_or_else(|_| panic!("Failed to connect to database {}", database_url))
+        .unwrap_or_else(|_| panic!("Failed to connect to database {}", database_url))
 }

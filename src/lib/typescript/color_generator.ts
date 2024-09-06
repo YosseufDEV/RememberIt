@@ -37,17 +37,37 @@ function contrast(rgb1: RGB, rgb2: RGB) {
   return (brightest + 0.05) / (darkest + 0.05);
 }
 
-function hexToRgb(hex: string): RGB {
-    if(!hex) return;
-	let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	if (result) {
-		return [
-			parseInt(result[1], 16),
-			parseInt(result[2], 16),
-			parseInt(result[3], 16),
-		];
-    }
-    return [0,0,0];
+// Function to calculate the brightness of a color
+function getBrightness(r: number, g: number, b: number) {
+    // Formula for brightness calculation
+    return Math.sqrt(
+        0.299 * r * r +
+        0.587 * g * g +
+        0.114 * b * b
+    );
+}
+
+// Function to calculate the saturation of a color
+function getSaturation(r: number, g: number, b: number) {
+    // Find max and min values among RGB
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    return (max - min) / max;
+}
+
+// Main function to check if a color is vibrant
+function isVibrantColor(color: RGB) {
+    const [ r, g, b ] = color;
+
+    // Define thresholds for vibrant colors
+    const brightnessThreshold = 130; // Adjust as needed
+    const saturationThreshold = 0.4; // Adjust as needed
+
+    const brightness = getBrightness(r, g, b);
+    const saturation = getSaturation(r, g, b);
+
+    // Check if both brightness and saturation meet vibrant criteria
+    return brightness > brightnessThreshold && saturation > saturationThreshold;
 }
 
 function getRandomInRange(min: number, max: number): number {
@@ -58,7 +78,7 @@ function whitePercentage(rgb: RGB): number {
     return (rgb[0]+rgb[1]+rgb[2])/(255*3)
 }
 
-function colorSimilarityPercentage(color1, color2) {
+function colorSimilarityPercentage(color1: RGB, color2: RGB) {
     if(!color1 || !color2) return;
     // Destructure RGB values from the input colors
     const [r1, g1, b1] = color1;
@@ -104,7 +124,21 @@ export function adjustColor(hex: string, percentage: number): string {
   // Convert back to hex and ensure 2 digits
   const toHex = (c: number) => c.toString(16).padStart(2, '0');
 
+  // Convert back to hex and ensure 2 digits
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function hexToRgb(hex: string): RGB {
+    if(!hex) return;
+	let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	if (result) {
+		return [
+			parseInt(result[1], 16),
+			parseInt(result[2], 16),
+			parseInt(result[3], 16),
+		];
+    }
+    return [0,0,0];
 }
 
 export function generateColor(colors: Color[]): string {
@@ -136,12 +170,12 @@ export function generateColor(colors: Color[]): string {
     const colorSimilarty = colorSimilarityPercentage(hexToRgb(color), lastColor);
 
     let colorAsRgb = hexToRgb(color);
-    let isGreyish: boolean = (colorAsRgb[0] == colorAsRgb[1] && colorAsRgb[1] == colorAsRgb[2]);
 
     const contrastRatio = contrast(hexToRgb(color), [255,255,255])
 
-    if(contrastRatio <= 3.5 || colorSimilarty > 25)
+    if(contrastRatio <= 4 || !isVibrantColor(colorAsRgb))
         return generateColor(colors); 
     return color;
+    
 }
 

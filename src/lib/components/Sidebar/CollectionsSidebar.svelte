@@ -2,23 +2,19 @@
     import { get } from "svelte/store";
 
 
-    import type { Tag } from "../../typescript/types";
     import { createCollection, getCollectionById, getUntitledCount } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent } from "../../stores/active-parent-store";
     import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
 
-    import AddParentCollectionForm from "../Forms/AddParentCollectionForm.svelte";
     import SideBarItem from "./SideBarItem.svelte";
-    import AddNestedParent from "../Forms/AddNestedParent.svelte";
-    import AddLabelForm from "../Forms/AddLabelForm.svelte";
     import TagsView from "../Views/ParentSidebar/TagsView.svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import AddCirlceIcon from "$lib/assets/icons/AddCirlceIcon.svelte";
 
-
     $: parentCollections = get(PARENTS_SLICE_DATABASE);
+    let hovered = false;
 
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getCollectionById(id)
@@ -27,7 +23,7 @@
     }
 
     async function handleCollectionCreate() {
-        let c = await createCollection(`Untitled ${await getUntitledCount()+1}`);
+        let c = await createCollection(`غير مسمى ${await getUntitledCount()+1}`);
         c.questionsCollections = [];
         c.subCollections = [];
         console.log("Ok");
@@ -44,12 +40,15 @@
 
 <div class="main-container">
     <div class="container">
-        <div class="question-icon-container">
+        <div class="question-icon-container" 
+             on:mouseenter={() => hovered = true} on:mouseleave={() => hovered = false}>
             <div class="icon-container">
                 <Notebook size={33}/>
                 <p class="question-text">Questions</p>
             </div>
-            <AddCirlceIcon handleClick={handleCollectionCreate} size={30}/>
+            {#if hovered}
+                <AddCirlceIcon handleClick={handleCollectionCreate} size={30}/>
+            {/if}
         </div>
         <div class="collections-container">
             {#each parentCollections as collection (collection.id)}

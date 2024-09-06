@@ -9,6 +9,8 @@
 
     let dropZoneRef: HTMLElement;
 
+    export let zIndex = 1;
+
     function registerDropZone(dropZoneRef: HTMLElement) {
         const DROP_ZONES = get(DropZones);
 
