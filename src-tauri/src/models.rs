@@ -67,6 +67,7 @@ pub struct Tag {
     pub label: String,
 }
 
+
 #[derive(Insertable, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[diesel(table_name = crate::schema::tag)]
@@ -129,4 +130,20 @@ pub struct NewQuestionTag {
     pub question_id: i32,
     pub tag_id: i32,
     pub explanation: Option<String>,
+}
+
+#[derive(Queryable, Identifiable, Selectable, Serialize)]
+#[serde(rename_all = "camelCase")]
+#[diesel(table_name = crate::schema::question_type)]
+pub struct QuestionType {
+    pub id: i32,
+    pub label: String,
+    pub color: String,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::question_type)]
+pub struct NewQuestionType {
+    pub label: String,
+    pub color: String,
 }

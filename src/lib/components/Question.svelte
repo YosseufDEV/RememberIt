@@ -1,37 +1,59 @@
 <script lang="ts">
-    import { onMount, tick } from "svelte";
+    import { onMount } from "svelte";
+    import { Menu, MenuItem } from "@tauri-apps/api/menu"
 
     import type { Question } from "../typescript/types";
+    import { deleteQuestionById, updateQuestionNumberById } from "../../database";
+    import { QUESTION_TAGS_COLLECTION_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase";
+    import { deleteQuestionAnimation } from "./Animations/QuestionLifecylceAnimations";
+
     import Badge from "./Badge.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { updateQuestionNumberById } from "../../database";
-    import { QUESTION_TAGS_COLLECTION_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase";
-    import DropZone from "./DragAndDrop/DropZone.svelte";
-
-    let questionRef: HTMLElement;
 
     export let question: Question;
+    let questionRef: HTMLElement;
+    let menu: Menu;
 
     $: questionsTags = question.tags;
 
     async function handleQuestionNumberEdit(e: CustomEvent) {
         const newQuestionNumer = e.detail.newText;
-        console.log(typeof newQuestionNumer);
         await updateQuestionNumberById(question.id, Number(newQuestionNumer));
     }
 
-    onMount(() => {
+    async function showMenu() {
+        await menu.popup();
+    }
+
+    function deleteQuestion() {
+        deleteQuestionAnimation(questionRef).then(async () => {
+            await deleteQuestionById(question.id);
+        })
+    }
+    
+    onMount(async () => {
         QUESTION_TAGS_COLLECTION_SLICE_DATABASE.subscribe((col) => {
             let specificTags = col.filter((q) => q.questionId == question.id);
             if(specificTags.length != questionsTags.length) {
                 questionsTags = specificTags;
             }
         })
+
+        const menuItems = await Promise.all([
+            MenuItem.new({
+                text: 'Delete Question',
+                action: deleteQuestion,
+            }),
+        ])
+
+        menu = await Menu.new({
+            items: menuItems
+        })
     })
 
 </script>
 
-<div class="container" bind:this={questionRef}>
+<div class="container" bind:this={questionRef} on:contextmenu={showMenu} >
     <div class="number-container">
         <EditableText on:finishedEditing={handleQuestionNumberEdit} type="number" text={question.questionNumber.toString()} />
     </div>

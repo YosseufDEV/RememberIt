@@ -1,20 +1,22 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-
+    import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { createCollection, getCollectionById, getUntitledCount } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent } from "../../stores/active-parent-store";
-    import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+
+    import Header from "$lib/GenericComponents/Header.svelte";
+
+    import TagsView from "../../Views/ParentSidebar/TagsView.svelte";
 
     import SideBarItem from "./SideBarItem.svelte";
-    import TagsView from "../Views/ParentSidebar/TagsView.svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
-    import AddCirlceIcon from "$lib/assets/icons/AddCirlceIcon.svelte";
+    import QuestionTypeTags from "$lib/assets/icons/QuestionTypeTags.svelte";
+    import QuestionTypesView from "$lib/Views/ParentSidebar/QuestionTypesView.svelte";
 
     $: parentCollections = get(PARENTS_SLICE_DATABASE);
-    let hovered = false;
 
     async function handleParnetClick(e: MouseEvent, id: number) {
         const parent = await getCollectionById(id)
@@ -40,24 +42,15 @@
 
 <div class="main-container">
     <div class="container">
-        <div class="question-icon-container" 
-             on:mouseenter={() => hovered = true} on:mouseleave={() => hovered = false}>
-            <div class="icon-container">
-                <Notebook size={33}/>
-                <p class="question-text">Questions</p>
-            </div>
-            {#if hovered}
-                <AddCirlceIcon handleClick={handleCollectionCreate} size={30}/>
-            {/if}
-        </div>
+        <Header handleAddClick={handleCollectionCreate} Icon={Notebook} text="Questions"/>
         <div class="collections-container">
             {#each parentCollections as collection (collection.id)}
-                <SideBarItem handleClick={(e) => 
-                    handleParnetClick(e, collection.id)} collection={collection} />
+                <SideBarItem handleClick={(e) => handleParnetClick(e, collection.id)} collection={collection} />
             {/each}
         </div>
         <AddCollectionForm />
         <TagsView />
+        <QuestionTypesView />
     </div>
 </div>
 
@@ -81,20 +74,5 @@
     .collections-container {
         margin-left: 15px;
         margin-bottom: 20px;
-    }
-
-    .icon-container {
-        display: flex; 
-    }
-
-    .question-icon-container {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        margin-bottom: 15px;
-    }
-
-    .question-icon-container p {
-        margin-left: 10px;
-        font-size: 22px;
     }
 </style>

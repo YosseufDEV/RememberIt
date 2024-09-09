@@ -3,7 +3,7 @@
 
     import { PARENTS_SLICE_DATABASE, QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { active_parent, active_parent_index } from "../../stores/active-parent-store";
-    import NestedChildrenSidebarView from "../Views/NestedChildrenSidebarView.svelte";
+    import NestedChildrenSidebarView from "$lib/Views/NestedChildrenSidebarView.svelte";
     import ChildrenSidebarItem from "./ChildrenSidebarItem.svelte";
     import Seperator from "$lib/GenericComponents/Seperator.svelte";
 

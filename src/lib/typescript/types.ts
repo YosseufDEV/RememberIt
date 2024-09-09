@@ -20,6 +20,12 @@ export interface QuestionTag {
     explanation: string,
 }
 
+export interface QuestionType {
+    id: number,
+    label: string,
+    color: string,
+}
+
 export enum CollectionType {
     COLLECTION,
     QUESTION_COLLECTION

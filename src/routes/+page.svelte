@@ -29,7 +29,6 @@
 </script>
 
 <!-- <svelte:window on:contextmenu|preventDefault /> -->
-
 <div class="container">
     <StatusBar />
     <CommandBar />
@@ -38,7 +37,6 @@
         <QuestionsCollectionsSidebar />
         <DisplayArea />
     </div>
-    <!-- <SplashScreen /> -->
 </div>
 
 <style>

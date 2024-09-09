@@ -18,3 +18,21 @@ export function newlyAddedQuestionAnimation(questionRef: HTMLElement) {
             scale: 1,
         });
 }
+
+export function deleteQuestionAnimation(questionRef: HTMLElement) {
+    const timeline = gsap.timeline({ defaults: { duration: 0.3 } });
+    timeline.to(questionRef, {
+        autoAlpha: 0,
+        margin: 0,
+        padding: 0,
+    }).to(questionRef, {
+        delay: 0.2,
+        margin: 0,
+        padding: 0,
+        height: 0,
+        onComplete: () => {
+            questionRef.remove();
+        }
+    }, "<")
+    return timeline;
+}

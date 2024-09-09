@@ -12,7 +12,7 @@
     import { updateTagColorById, updateTagLabelById } from "../../../database";
     import { generateColor } from "$lib/typescript/color_generator";
     
-    export let tag: Tag;
+    export let tag: Tag, showCount=false;
 
     let tagContainerRef: HTMLElement;
     let tagCircleRef: HTMLElement;
@@ -85,9 +85,11 @@
         <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
         <EditableText on:finishedEditing={handleLabelChange} text={tag.label} />
         <!-- TODO : Hide this when dragging-->
-        <div class="questions-count-container" bind:this={tagQuestionsCountRef}>
-            <p class="questions-count">{tagCount}</p>
-        </div>
+        {#if showCount}
+            <div class="questions-count-container" bind:this={tagQuestionsCountRef}>
+                <p class="questions-count">{tagCount}</p>
+            </div>
+        {/if}
     </div>
 </Draggable>
 
@@ -96,7 +98,7 @@
         display: flex;
         align-items: center;
         display: grid; grid-template-columns: auto 1fr auto;
-        z-index: 101;
+        z-index: 102;
         overflow: hidden;
     }
 

@@ -101,3 +101,14 @@ pub fn update_question_number_by_id(question_id: i32, new_question_number: i32) 
         .expect("Failed to update question_number");
     update_question_collection_updated_at(c.collection_id);
 }
+
+#[tauri::command]
+pub fn delete_question_by_id(question_id: i32) {
+    use crate::schema::question::dsl::*;
+
+    let connection = &mut establish_connection();
+
+    diesel::delete(question.filter(id.eq(question_id)))
+        .execute(connection)
+        .expect(&(format!("Failed to delete collection with id {}", question_id).to_string()));
+}

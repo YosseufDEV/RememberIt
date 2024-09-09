@@ -26,6 +26,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    question_type (id) {
+        id -> Integer,
+        label -> Text,
+        color -> Text,
+    }
+}
+
+diesel::table! {
     questions_collection (id) {
         id -> Integer,
         parent_id -> Integer,
@@ -52,6 +60,7 @@ diesel::allow_tables_to_appear_in_same_query!(
     collection,
     question,
     question_tag,
+    question_type,
     questions_collection,
     tag,
 );

@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 
-import type { Collection, Question, QuestionsCollection, Tag, QuestionTag, QuestionSpecificTag } from "./lib/typescript/types";
+import type { Collection, Question, QuestionsCollection, Tag, QuestionTag, QuestionSpecificTag, QuestionType } from "./lib/typescript/types";
 
 export async function getAllCollections(unnested?: boolean): Promise<Collection[]> {
     if(unnested) {
@@ -32,6 +32,10 @@ export async function updateQuestionsCollectionTitleById(id: number, newTitle: S
 
 export async function updateQuestionNumberById(id: number, newQuestionNumber: number) {
     await invoke("update_question_number_by_id", { questionId: id, newQuestionNumber})
+}
+
+export async function deleteQuestionById(id: number) {
+    await invoke("delete_question_by_id", { questionId: id })
 }
 
 export async function createCollection(title: string, parentId?: number): Promise<Collection> {
@@ -100,6 +104,14 @@ export async function updateQuestionTagExplanationById(id: number, newExplanatio
 
 export async function deleteQuestionTagById(questionTagId: number) {
     await invoke("delete_question_tag_by_id", { questionTagId });
+}
+
+export async function insertQuestionType(label: string, color: string): Promise<QuestionType> {
+    return await invoke("insert_question_type", { label, color });
+}
+
+export async function getAllQuestionTypes(): Promise<QuestionType[]> {
+    return await invoke("get_all_question_types");
 }
 
 export async function getAllQuestionsTags(): Promise<QuestionSpecificTag[]> {

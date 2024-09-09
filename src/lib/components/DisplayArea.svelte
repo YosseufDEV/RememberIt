@@ -4,8 +4,8 @@
     import { type QuestionsCollection, type Collection, type Question, DraggableItemType, type TagItemMetadata } from "../typescript/types"
     import { active_collection } from "../stores/active_collection_store";
     import { colorOverlayAnimation, entranceAnimation, exitingAnimation } from "./Animations/DisplayAreaAnimations";
-    import SuperCollectionView from "./Views/DisplayArea/SuperCollectionView.svelte";
-    import QuestionsCollectionView from "./Views/DisplayArea/QuestionsCollectionView.svelte";
+    import SuperCollectionView from "../Views/DisplayArea/SuperCollectionView.svelte";
+    import QuestionsCollectionView from "../Views/DisplayArea/QuestionsCollectionView.svelte";
     import DropZone from "./DragAndDrop/DropZone.svelte";
     import FilterRuleTag from "./FilterRules/FilterRuleTag.svelte";
 
@@ -42,7 +42,6 @@
             })
         } else {
             let flatRules = filterRules.map((el) => el.id);
-            console.log(flatRules);
             filterCollection(flatRules, unfilteredCollecition);
         }
 
@@ -127,20 +126,20 @@
         return filteredQuestionsCollection;
     }
 
-    active_collection.subscribe((collection) => {
-        setTimeout(() => {
-                exitingAnimation(displayContainerRef, () => {
-                    entranceAnimation(displayContainerRef)
-                    activeCollection = collection
-                    filterRules = [];
-                    unfilteredCollecition = structuredClone(collection);
-                })
-        }, 200)
-    });
-
     onMount(() => {
         entranceAnimation(displayContainerRef);
-        console.log("rerendered");
+
+        active_collection.subscribe((collection) => {
+            setTimeout(() => {
+                    exitingAnimation(displayContainerRef, () => {
+                        entranceAnimation(displayContainerRef)
+                        activeCollection = collection
+                        filterRules = [];
+                        unfilteredCollecition = structuredClone(collection);
+                    })
+            }, 200)
+        });
+
     })
 
 </script>
@@ -182,6 +181,8 @@
         /* HACK: to make the badge explanation appear even in overflow */
         margin-left: -200px;
         padding-left: 200px;
+        margin-right: -200px;
+        padding-right: 200px;
         width: calc(100% - 5px);
         height: 100%;
     }
@@ -190,7 +191,6 @@
         margin-top: -40px;
         margin-left: -25px;
         margin-bottom: -10px;
-        z-index: 0;
         width: 100%;
         height: 100%;
     }
