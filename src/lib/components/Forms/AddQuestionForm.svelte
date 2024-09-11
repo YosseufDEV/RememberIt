@@ -1,18 +1,21 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import { type Collection, type Question, type QuestionsCollection, type QuestionSpecificTag } from "../../typescript/types";
-    import { ComboBox, Button, TextBox } from "fluent-svelte";
-    import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, QUESTION_TAGS_COLLECTION_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { DATABASE, QUESTION_COLLECTION_SLICE_DATABASE, QUESTION_TAGS_COLLECTION_SLICE_DATABASE, QUESTION_TYPES_SLICE_DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { type Collection, type Question, type QuestionsCollection, type QuestionSpecificTag, type Tag } from "../../typescript/types";
     import { active_collection } from "../../stores/active_collection_store";
     import { getQuestionByQuestionNumber, insertQuestionByCollectionId, insertQuestionTag } from "../../../database";
+    import { ComboBox, Button, TextBox } from "fluent-svelte";
 
     const activeCollection: QuestionsCollection | Collection = get(active_collection);
 
-    let tags: { name: string, value: number }[] = [];
+    let tags: Tag[] = get(TAGS_SLICE_DATABASE);
+    let types: Tag[] = get(QUESTION_TYPES_SLICE_DATABASE);
+
     let questionNumber: number,
         explanation: string,
-        tagId: number = 1;
+        tagId: number = 1,
+        typeId: number = 1;
 
     async function addQuestionToCurrentCollection() {
         if(!('questions' in activeCollection)) return;
@@ -20,25 +23,42 @@
         let notDuplicate = true;
 
         activeCollection.questions.forEach((q: Question) => {
-            if(q.questionNumber == questionNumber) {
+            if(q.questionNumber == questionNumber && q.questionType.id == typeId) {
                 notDuplicate = false;
             }
         })
 
         if(notDuplicate) {
             console.log("Not!");
-            insertQuestionByCollectionId(questionNumber, activeCollection.id).then(async q => {
+            insertQuestionByCollectionId(questionNumber, activeCollection.id, typeId).then(async q => {
                 await insertQuestionTag(q.id, tagId, explanation).then((qt) => {
                     let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
 
-                    let specificTag: QuestionSpecificTag = { id: tag.id, questionId: qt.questionId, questionTagId: qt.id, color: tag.color, label: tag.label, explanation: qt.explanation };
-                    let completeQuestion = { id: q.id, questionNumber: q.questionNumber, collectionId: q.collectionId, tags: [ specificTag ] }
+                    console.log({ qt })
+                    let specificTag: QuestionSpecificTag = {
+                        id: tag.id,
+                        questionId: qt.question_id,
+                        questionTagId: qt.id,
+                        color: tag.color,
+                        label: tag.label,
+                        explanation: qt.explanation,
+                    };
+
+                    let completeQuestion = {
+                        id: q.id,
+                        questionNumber: q.questionNumber,
+                        questionType: q.questionType,
+                        collectionId: q.collectionId,
+                        tags: [ specificTag ],
+                    }
 
                     let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
                     let oldActiveCollection = activeCollection;
 
-                    oldActiveCollection.questions.push(completeQuestion);
+                    let oldQuestionTagsDB = get(QUESTION_TAGS_COLLECTION_SLICE_DATABASE);
 
+                    oldQuestionTagsDB.push(specificTag);
+                    oldActiveCollection.questions.push(completeQuestion);
                     oldDB = oldDB.map((col) => {
                         if(col.id == activeCollection.id) {
                             col.questions.push(completeQuestion);
@@ -46,6 +66,8 @@
                         return col;
                     })
 
+
+                    QUESTION_TAGS_COLLECTION_SLICE_DATABASE.set(oldQuestionTagsDB);
                     QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
                     active_collection.set(oldActiveCollection);
 
@@ -67,13 +89,8 @@
             };
 
             let oldDB = get(QUESTION_TAGS_COLLECTION_SLICE_DATABASE);
-            let oldActiveCollection = activeCollection;
-
-            oldActiveCollection.questions.filter((q) => q.id==specificTag.questionId)[0].tags.push(specificTag);
 
             oldDB.push(specificTag);
-
-            active_collection.set(oldActiveCollection);
             QUESTION_TAGS_COLLECTION_SLICE_DATABASE.set(oldDB);
         }
     }
@@ -82,15 +99,13 @@
         addQuestionToCurrentCollection();
     }
 
-    DATABASE.subscribe((db) => {
-        tags = db.tags.map((el) => (
-            {
-                value: el.id,
-                name: el.label,
-            }
-        ));
+    TAGS_SLICE_DATABASE.subscribe((db) => {
+        tags = db;
     })
 
+    QUESTION_TYPES_SLICE_DATABASE.subscribe((db) => {
+        types = db;
+    })
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
@@ -99,7 +114,8 @@
         <TextBox class="text-box" placeholder="Explanation" bind:value={explanation} type="text"/>
     </div>
     <div>
-        <ComboBox bind:value={tagId} class="combo-box" items={tags}/>
+        <ComboBox bind:value={tagId} class="combo-box" items={ tags.map((el) => ({ value: el.id, name: el.label }) ) }/>
+        <ComboBox bind:value={typeId} class="combo-box" items={types.map((el) => ({ value: el.id, name: el.label }) )}/>
         <Button variant="accent">Add</Button>
     </div>
 </form>

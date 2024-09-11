@@ -81,8 +81,8 @@
            on:dragstart={handleDragStart} 
            on:dragmove={handleDragMove} 
            on:dragdrop={handleDragStop}>
-    <div class="container" on:dblclick={handleTagColorChange} bind:this={tagContainerRef}>
-        <div class="color" style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
+    <div class="container" bind:this={tagContainerRef}>
+        <div class="color" on:dblclick|self={handleTagColorChange} style={`background: ${tag.color}`} bind:this={tagCircleRef}/>
         <EditableText on:finishedEditing={handleLabelChange} text={tag.label} />
         <!-- TODO : Hide this when dragging-->
         {#if showCount}

@@ -39,6 +39,7 @@ pub fn run() {
             crate::question::get_question_by_question_number,
             crate::question::update_question_number_by_id,
             crate::question::delete_question_by_id,
+            crate::question::update_question_type_by_id,
             crate::tag::insert_tag,
             crate::tag::get_tags,
             crate::tag::get_tag_by_id,
@@ -46,6 +47,7 @@ pub fn run() {
             crate::tag::update_tag_color_by_id,
             crate::question_type::insert_question_type,
             crate::question_type::get_all_question_types,
+            crate::question_type::update_type_color_by_id,
             // crate::question_tag::get_number_of_questions_with_tag,
             crate::question_tag::insert_question_tag,
             crate::question_tag::get_question_tags_by_id,
@@ -57,7 +59,7 @@ pub fn run() {
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
             // let _ = apply_mica(&window, Some(true));
-            check_if_database_exists("./database.db").unwrap();
+            check_if_database_exists("../database/database.db").unwrap();
             // let _ = apply_tabbed(&window, Some(true));
             apply_acrylic(&window, Some((0, 0, 0, 10))).unwrap();
             Ok(())

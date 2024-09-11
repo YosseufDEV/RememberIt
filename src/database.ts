@@ -54,8 +54,8 @@ export async function getAllQuesitonsCollections(): Promise<QuestionsCollection[
     return await invoke("get_all_questions_collections")
 }
 
-export async function insertQuestionByCollectionId(questionNumber: number, id: number): Promise<Question> {
-    return await invoke("insert_question_by_collection_id", { questionNumber, collectionId: id });
+export async function insertQuestionByCollectionId(questionNumber: number, id: number, questionType: number): Promise<Question> {
+    return await invoke("insert_question_by_collection_id", { questionNumber, collectionId: id, questionType });
 }
 
 export async function getQuestionsByCollectionId(id: number): Promise<Question[]> {
@@ -64,6 +64,10 @@ export async function getQuestionsByCollectionId(id: number): Promise<Question[]
 
 export async function getQuestionByQuestionNumber(id: number, questionNumber: number): Promise<Question> {
      return await invoke("get_question_by_question_number", { colId: id, questionNumber});
+}
+
+export async function updateQuestionTypeById(id: number, newTypeId: number): Promise<Question> {
+     return await invoke("update_question_type_by_id", { questionId: id, newTypeId});
 }
 
 export async function getUntitledCount(): Promise<number> {
@@ -108,6 +112,10 @@ export async function deleteQuestionTagById(questionTagId: number) {
 
 export async function insertQuestionType(label: string, color: string): Promise<QuestionType> {
     return await invoke("insert_question_type", { label, color });
+}
+
+export async function updateTypeColorById(typeId: number, newColor: string): Promise<QuestionType> {
+    return await invoke("update_type_color_by_id", { typeId, newColor });
 }
 
 export async function getAllQuestionTypes(): Promise<QuestionType[]> {

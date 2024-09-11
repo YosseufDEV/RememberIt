@@ -83,6 +83,7 @@ pub struct NewTag {
 pub struct Question {
     pub id: i32,
     pub question_number: i32,
+    pub question_type: i32,
     pub collection_id: i32,
 }
 
@@ -91,6 +92,7 @@ pub struct Question {
 pub struct NewQuestion {
     pub question_number: i32,
     pub collection_id: i32,
+    pub question_type: i32,
 }
 
 #[derive(Serialize)]
@@ -99,6 +101,7 @@ pub struct CompleteQuestion {
     pub id: i32,
     pub question_number: i32,
     pub collection_id: i32,
+    pub question_type: QuestionType,
     pub tags: Vec<QuestionSpecificTag>,
 }
 

@@ -12,6 +12,7 @@ diesel::table! {
     question (id) {
         id -> Integer,
         question_number -> Integer,
+        question_type -> Integer,
         collection_id -> Integer,
     }
 }
@@ -51,6 +52,7 @@ diesel::table! {
     }
 }
 
+diesel::joinable!(question -> question_type (question_type));
 diesel::joinable!(question -> questions_collection (collection_id));
 diesel::joinable!(question_tag -> question (question_id));
 diesel::joinable!(question_tag -> tag (tag_id));

@@ -37,70 +37,9 @@ function contrast(rgb1: RGB, rgb2: RGB) {
   return (brightest + 0.05) / (darkest + 0.05);
 }
 
-// Function to calculate the brightness of a color
-function getBrightness(r: number, g: number, b: number) {
-    // Formula for brightness calculation
-    return Math.sqrt(
-        0.299 * r * r +
-        0.587 * g * g +
-        0.114 * b * b
-    );
-}
-
-// Function to calculate the saturation of a color
-function getSaturation(r: number, g: number, b: number) {
-    // Find max and min values among RGB
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    return (max - min) / max;
-}
-
-// Main function to check if a color is vibrant
-function isVibrantColor(color: RGB) {
-    const [ r, g, b ] = color;
-
-    // Define thresholds for vibrant colors
-    const brightnessThreshold = 130; // Adjust as needed
-    const saturationThreshold = 0.4; // Adjust as needed
-
-    const brightness = getBrightness(r, g, b);
-    const saturation = getSaturation(r, g, b);
-
-    // Check if both brightness and saturation meet vibrant criteria
-    return brightness > brightnessThreshold && saturation > saturationThreshold;
-}
-
 function getRandomInRange(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min) + min);
 }
-
-function whitePercentage(rgb: RGB): number {
-    return (rgb[0]+rgb[1]+rgb[2])/(255*3)
-}
-
-function colorSimilarityPercentage(color1: RGB, color2: RGB) {
-    if(!color1 || !color2) return;
-    // Destructure RGB values from the input colors
-    const [r1, g1, b1] = color1;
-    const [r2, g2, b2] = color2;
-
-    // Calculate the Euclidean distance between the two colors
-    const distance = Math.sqrt(
-    Math.pow(r2 - r1, 2) +
-    Math.pow(g2 - g1, 2) +
-    Math.pow(b2 - b1, 2)
-    );
-
-    // Maximum possible distance between two RGB colors is sqrt(255^2 + 255^2 + 255^2) = 441.67
-    const maxDistance = Math.sqrt(255 ** 2 + 255 ** 2 + 255 ** 2);
-
-    // Convert distance to a similarity percentage
-    const similarityPercentage = ((maxDistance - distance) / maxDistance) * 100;
-
-    // Return the similarity percentage
-    return similarityPercentage;
-}
-
 export function adjustColor(hex: string, percentage: number): string {
   // Ensure the percentage is within the range of -100 to 100
   percentage = Math.max(-100, Math.min(percentage, 100));
@@ -129,7 +68,6 @@ export function adjustColor(hex: string, percentage: number): string {
 }
 
 function hexToRgb(hex: string): RGB {
-    if(!hex) return;
 	let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	if (result) {
 		return [
@@ -141,40 +79,35 @@ function hexToRgb(hex: string): RGB {
     return [0,0,0];
 }
 
-export function generateColor(colors: Color[]): string {
-	const idk: number = getRandomInRange(0, 3);
+export function generateColor(colors: Color[], dark: boolean=false): string {
+	const toSelectFrom: number = getRandomInRange(0, 3);
     let index = -1;
-    let selector = 'hex';
     const randomIndex: number = getRandomInRange(0, colors.length);
-    const lastColor = get(TAGS_SLICE_DATABASE)[get(TAGS_SLICE_DATABASE).length-1]?.color;
-      //
 
-    switch(idk) {
-        case 1: {
-            selector = 'temperatures'
+    let color: string = "#000000";
+
+    switch(toSelectFrom) {
+        case 0: {
             index = getRandomInRange(0, colors[randomIndex].temperatures.length);
+            color = colors[randomIndex]['hex'][index];
+        }
+
+        case 1: {
+            index = getRandomInRange(0, colors[randomIndex].temperatures.length);
+            color = colors[randomIndex]['temperatures'][index];
         }
         case 2: {
-            selector = 'hues'
             index = getRandomInRange(0, colors[randomIndex].hues.length);
+            color = colors[randomIndex]['hues'][index];
         }
     }
 
-    let color: string;
+    const l = luminance(...hexToRgb(color));
+    const s = dark == false ? ( l > 0.5 || l <= 0.1) : ( l >= 0.5)
+    console.log(dark);
 
-    if(selector != 'hex') {
-        color = colors[randomIndex][selector][index];
-    } else {
-        color = colors[randomIndex]['hex'];
-    }
-    const colorSimilarty = colorSimilarityPercentage(hexToRgb(color), lastColor);
-
-    let colorAsRgb = hexToRgb(color);
-
-    const contrastRatio = contrast(hexToRgb(color), [255,255,255])
-
-    if(contrastRatio <= 4 || !isVibrantColor(colorAsRgb))
-        return generateColor(colors); 
+    if(s)
+        return generateColor(colors, dark); 
     return color;
     
 }

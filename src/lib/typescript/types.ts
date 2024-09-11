@@ -51,6 +51,7 @@ export interface QuestionsCollection extends GenericCollection {
 export interface Question {
     id: number,
     questionNumber: number,
+    questionType: QuestionType,
     collectionId: number,
     tags: QuestionSpecificTag[],
 }
