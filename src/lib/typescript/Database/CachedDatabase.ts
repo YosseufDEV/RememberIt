@@ -1,46 +1,15 @@
 import { writable } from "svelte/store";
-import { getAllQuesitonsCollections, getAllCollections, getAllTags, getAllQuestionsTags, getAllQuestionTypes } from "../../../database"
+import { getAllQuestionsTags, loadSQLITEDatabase } from "../../../database"
 import type { Collection, QuestionsCollection, QuestionSpecificTag, QuestionType, Tag } from "../types"
-import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
-
-interface Database {
-    parents: Collection[],
-    unnested: Collection[],
-    tags: Tag[],
-    types: QuestionType[],
-    questionCollections: QuestionsCollection[],
-}
-
-async function loadSQLITEDatabase(): Promise<Database> {
-    const unnested = await getAllCollections(true);
-    const parents = await getAllCollections();
-    const tags = await getAllTags();
-    const questionCollections = await getAllQuesitonsCollections();
-    const types = await getAllQuestionTypes();
-    return {
-        parents,
-        unnested,
-        tags,
-        questionCollections,
-        types
-    }
-}
-
-// TODO: do this!
-async function exportDatabaseAsJSON() {
-    const object = JSON.stringify(db);
-    writeTextFile('save.json', object, {
-        baseDir: BaseDirectory.Desktop
-    }) 
-}
+import Database from "@tauri-apps/plugin-sql";
 
 const db = await loadSQLITEDatabase();
+
 export const DATABASE = writable<Database>(db);
+
 export const TAGS_SLICE_DATABASE = writable<Tag[]>(db.tags);
 export const PARENTS_SLICE_DATABASE = writable<Collection[]>(db.unnested);
 export const ALL_PARENTS_SLICE_DATABASE = writable<Collection[]>(db.parents);
 export const QUESTION_COLLECTION_SLICE_DATABASE = writable<QuestionsCollection[]>(db.questionCollections);
 export const QUESTION_TAGS_COLLECTION_SLICE_DATABASE = writable<QuestionSpecificTag[]>(await getAllQuestionsTags());
 export const QUESTION_TYPES_SLICE_DATABASE = writable<QuestionType[]>(db.types);
-
-// exportDatabaseAsJSON();

@@ -67,7 +67,6 @@ pub struct Tag {
     pub label: String,
 }
 
-
 #[derive(Insertable, Serialize)]
 #[serde(rename_all = "camelCase")]
 #[diesel(table_name = crate::schema::tag)]

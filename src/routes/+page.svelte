@@ -14,13 +14,29 @@
     import { PARENTS_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase"
     import { active_collection } from '$lib/stores/active_collection_store';
     import { active_parent } from '$lib/stores/active-parent-store';
+    import { open } from '@tauri-apps/plugin-dialog';
+    import { readTextFile } from '@tauri-apps/plugin-fs';
+    import { exportDatabaseAsJSON, importFromJson } from '../database';
 
     async function selectFirstParent() {
-        let firstParent = get(PARENTS_SLICE_DATABASE)[0];
-        if(firstParent) {
-            active_collection.set(firstParent);
+        // let firstParent = get(PARENTS_SLICE_DATABASE)[0];
+        // if(firstParent) {
+        //     active_collection.set(firstParent);
+        // }
+        // active_parent.set(firstParent);
+    }
+
+    async function handleKeyDown(e: KeyboardEvent) {
+        if (e.ctrlKey && e.key == "i") {
+            const path = await open({
+                filters: [{ name: "JSON", extensions: ['json']}]
+            })
+            const file = await readTextFile(path!);
+            await importFromJson(JSON.parse(file));
         }
-        active_parent.set(firstParent);
+        if (e.ctrlKey && e.key == "e") {
+            exportDatabaseAsJSON();
+        }
     }
 
     onMount(async () => {
@@ -28,7 +44,7 @@
     })
 </script>
 
-<!-- <svelte:window on:contextmenu|preventDefault /> -->
+<svelte:window on:keydown={handleKeyDown} />
 <div class="container">
     <StatusBar />
     <CommandBar />

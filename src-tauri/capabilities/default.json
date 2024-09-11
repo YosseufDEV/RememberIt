@@ -6,6 +6,15 @@
     "main"
   ],
   "permissions": [
+    "fs:default",
+    {
+      "identifier": "fs:allow-app-write",
+      "allow": [
+        {
+          "path": "$DESKTOP/*"
+        }
+      ]
+    },
     "core:default",
     "shell:allow-open",
     "core:window:allow-set-effects",
@@ -18,6 +27,8 @@
     "core:window:allow-unmaximize",
     "core:window:allow-start-dragging",
     "core:window:allow-start-resize-dragging",
-    "fs:allow-app-write"
+    "fs:allow-app-write",
+    "fs:allow-app-read",
+    "dialog:default"
   ]
 }

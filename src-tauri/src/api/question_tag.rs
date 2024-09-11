@@ -5,14 +5,11 @@ use crate::question_collection::update_question_collection_updated_at;
 use diesel::prelude::*;
 
 #[tauri::command]
-pub fn insert_question_tag(
-    question_id: i32,
-    tag_id: i32,
-    explanation: Option<String>,
-) -> QuestionTag {
+pub fn insert_question_tag(question_id: i32, tag_id: i32, explanation: Option<String>) -> QuestionTag {
     use crate::schema::question_tag;
 
     let connection = &mut establish_connection();
+
     let question_tag_obj = NewQuestionTag {
         question_id,
         tag_id,
@@ -23,7 +20,7 @@ pub fn insert_question_tag(
         .values(&question_tag_obj)
         .returning(QuestionTag::as_returning())
         .get_result(connection)
-        .expect("Failed to insert Question Tag");
+        .expect(&format!("Failed to insert Question Tag with q_id: {}, tag_id: {}", question_id, tag_id));
 
     let question = get_question_by_id(question_id);
     update_question_collection_updated_at(question.collection_id);

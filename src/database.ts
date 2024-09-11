@@ -1,6 +1,67 @@
 import { invoke } from "@tauri-apps/api/core";
+import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 
 import type { Collection, Question, QuestionsCollection, Tag, QuestionTag, QuestionSpecificTag, QuestionType } from "./lib/typescript/types";
+
+export interface Database {
+    parents: Collection[],
+    unnested: Collection[],
+    tags: Tag[],
+    types: QuestionType[],
+    questionCollections: QuestionsCollection[],
+}
+
+export async function loadSQLITEDatabase(): Promise<Database> {
+    const unnested = await getAllCollections(true);
+    const parents = await getAllCollections();
+    const tags = await getAllTags();
+    const questionCollections = await getAllQuesitonsCollections();
+    const types = await getAllQuestionTypes();
+    return {
+        parents,
+        unnested,
+        tags,
+        questionCollections,
+        types
+    }
+}
+
+export async function importFromJson(json: Database) {
+    const updatedTags: Tag[] = [];
+
+    json.tags.forEach(async (tag) => {
+        updatedTags.push(await insertTag(tag.label, tag.color));
+    })
+
+    json.types.forEach((type) => {
+        insertQuestionType(type.label, type.color);
+    })
+
+    json.parents.forEach((el) => {
+        createCollection(el.title, el.parentId);
+    })
+
+    json.questionCollections.forEach((el) => {
+        createQuestionsCollection(el.title, el.parentId).then((col) => {
+            el.questions.forEach((oldQ) => {
+                insertQuestionByCollectionId(oldQ.questionNumber, col.id, oldQ.questionType.id).then((q) => {
+                    oldQ.tags.forEach((tag) => {
+                        const tagId = updatedTags.find((el) => el.label == tag.label && el.color == tag.color)?.id!;
+                        insertQuestionTag(q.id, tagId, tag.explanation);
+                    })
+                })
+            })
+        })
+    })
+}
+
+// TODO: do this!
+export async function exportDatabaseAsJSON() {
+    const object = JSON.stringify(await loadSQLITEDatabase());
+    writeTextFile('save.json', object, {
+        baseDir: BaseDirectory.Desktop
+    }) 
+}
 
 export async function getAllCollections(unnested?: boolean): Promise<Collection[]> {
     if(unnested) {
