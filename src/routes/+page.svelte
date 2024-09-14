@@ -19,11 +19,11 @@
     import { exportDatabaseAsJSON, importFromJson } from '../database';
 
     async function selectFirstParent() {
-        // let firstParent = get(PARENTS_SLICE_DATABASE)[0];
-        // if(firstParent) {
-        //     active_collection.set(firstParent);
-        // }
-        // active_parent.set(firstParent);
+        let firstParent = get(PARENTS_SLICE_DATABASE)[0];
+        if(firstParent) {
+            active_collection.set(firstParent);
+        }
+        active_parent.set(firstParent);
     }
 
     async function handleKeyDown(e: KeyboardEvent) {

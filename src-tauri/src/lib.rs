@@ -49,6 +49,7 @@ pub fn run() {
             crate::question_type::insert_question_type,
             crate::question_type::get_all_question_types,
             crate::question_type::update_type_color_by_id,
+            crate::question_type::update_type_label_by_id,
             // crate::question_tag::get_number_of_questions_with_tag,
             crate::question_tag::insert_question_tag,
             crate::question_tag::get_question_tags_by_id,

@@ -26,33 +26,65 @@ export async function loadSQLITEDatabase(): Promise<Database> {
     }
 }
 
-export async function importFromJson(json: Database) {
-    const updatedTags: Tag[] = [];
+async function importCollection(collection: Collection, 
+                                tagArr: Tag[], 
+                                typesArr: QuestionType[], 
+                                parentId?: number) {
+    let pId: number;
 
-    json.tags.forEach(async (tag) => {
-        updatedTags.push(await insertTag(tag.label, tag.color));
-    })
+    await createCollection(collection.title, parentId).then(parent => {
+        pId = parent.id;
 
-    json.types.forEach((type) => {
-        insertQuestionType(type.label, type.color);
-    })
+        collection.questionsCollections.forEach((el) => {
+            createQuestionsCollection(el.title, parent.id).then((col) => {
+                el.questions.forEach((oldQ) => {
+                    const type = oldQ.questionType;
+                    let typeId: number = -1;
+                    console.log(typesArr);
+                    if(type) {
+                        typeId = typesArr.find((el) => el.label == type.label && el.color == type.color)?.id!;
+                    }
+                    const qId = typeId != -1 ? typeId : typesArr[0].id;
 
-    json.parents.forEach((el) => {
-        createCollection(el.title, el.parentId);
-    })
-
-    json.questionCollections.forEach((el) => {
-        createQuestionsCollection(el.title, el.parentId).then((col) => {
-            el.questions.forEach((oldQ) => {
-                insertQuestionByCollectionId(oldQ.questionNumber, col.id, oldQ.questionType.id).then((q) => {
-                    oldQ.tags.forEach((tag) => {
-                        const tagId = updatedTags.find((el) => el.label == tag.label && el.color == tag.color)?.id!;
-                        insertQuestionTag(q.id, tagId, tag.explanation);
+                    insertQuestionByCollectionId(oldQ.questionNumber, col.id, qId).then((q) => {
+                        oldQ.tags.forEach((tag) => {
+                            const tagId = tagArr.find((el) => el.label == tag.label && el.color == tag.color)?.id!;
+                            insertQuestionTag(q.id, tagId, tag.explanation);
+                        })
                     })
                 })
             })
         })
+
+        collection.subCollections.forEach(async (el) => {
+            await importCollection(el, tagArr, typesArr, pId)
+        })
     })
+
+}
+
+export async function importFromJson(json: Database) {
+    const updatedTags: Tag[] = [];
+    const updatedTypes: Tag[] = [];
+
+    json.tags.forEach(async (tag) => {
+        updatedTags.push(await insertTag(tag.label, tag.color));
+    })
+    if(!json.types || json.types.length == 0) {
+        updatedTypes.push(await insertQuestionType("Imported Type", "#000"));
+    }
+
+    if(json.types) {
+        json.types.forEach(async (type) => {
+            updatedTypes.push(await insertQuestionType(type.label, type.color));
+        })
+        console.log({ updatedTypes })
+    }
+
+    json.unnested.forEach(async (el) => {
+        await importCollection(el, updatedTags, updatedTypes);
+    })
+
 }
 
 // TODO: do this!
@@ -127,8 +159,8 @@ export async function getQuestionByQuestionNumber(id: number, questionNumber: nu
      return await invoke("get_question_by_question_number", { colId: id, questionNumber});
 }
 
-export async function updateQuestionTypeById(id: number, newTypeId: number): Promise<Question> {
-     return await invoke("update_question_type_by_id", { questionId: id, newTypeId});
+export async function updateQuestionTypeById(questionId: number, newTypeId: number): Promise<Question> {
+     return await invoke("update_question_type_by_id", { questionId, newTypeId});
 }
 
 export async function getUntitledCount(): Promise<number> {
@@ -149,6 +181,10 @@ export async function getAllTags(): Promise<Tag[]> {
 
 export async function updateTagLabelById(tagId: number, newLabel: string): Promise<Tag[]> {
     return await invoke("update_tag_label_by_id", { tagId, newLabel })
+}
+
+export async function updateTypeLabelById(typeId: number, newLabel: string): Promise<QuestionType[]> {
+    return await invoke("update_type_label_by_id", { typeId, newLabel })
 }
 
 export async function updateTagColorById(tagId: number, newColor: string): Promise<Tag[]> {
@@ -175,8 +211,8 @@ export async function insertQuestionType(label: string, color: string): Promise<
     return await invoke("insert_question_type", { label, color });
 }
 
-export async function updateTypeColorById(typeId: number, newColor: string): Promise<QuestionType> {
-    return await invoke("update_type_color_by_id", { typeId, newColor });
+export async function updateTypeColorById(questionTypeId: number, newColor: string): Promise<QuestionType> {
+    return await invoke("update_type_color_by_id", { questionTypeId, newColor });
 }
 
 export async function getAllQuestionTypes(): Promise<QuestionType[]> {

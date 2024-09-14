@@ -7,11 +7,7 @@ use crate::question_collection::update_question_collection_updated_at;
 use crate::question_type::get_question_type_by_id;
 
 #[tauri::command]
-pub fn insert_question_by_collection_id(
-    question_number: i32,
-    collection_id: i32,
-    question_type: i32,
-) -> CompleteQuestion {
+pub fn insert_question_by_collection_id(question_number: i32, collection_id: i32, question_type: i32) -> CompleteQuestion {
     use crate::schema::question;
 
     let conn = &mut establish_connection();
@@ -35,7 +31,7 @@ pub fn insert_question_by_collection_id(
     CompleteQuestion {
         id: question.id,
         question_number: question.question_number,
-        question_type,
+        question_type: question_type.expect("No Question Type Provided (Should be impossible!)"),
         collection_id: question.collection_id,
         tags: Vec::new(),
     }
@@ -59,10 +55,12 @@ pub fn get_questions_by_collection_id(col_id: i32) -> Vec<CompleteQuestion> {
     for question in questions.iter() {
         let tags = get_question_tags_by_id(question.id);
 
+        let question_type = get_question_type_by_id(question.question_type);
+
         let question = CompleteQuestion {
             id: question.id,
             question_number: question.question_number,
-            question_type: get_question_type_by_id(question.question_type),
+            question_type: question_type.expect("No Question Type Provided (Should be impossible!)"),
             collection_id: question.collection_id,
             tags,
         };
@@ -88,10 +86,12 @@ pub fn get_question_by_question_number(col_id: i32, question_number: i32) -> Com
 
     let tags = get_question_tags_by_id(question.id);
 
+    let question_type = get_question_type_by_id(question.question_type);
+
     CompleteQuestion {
         id: question.id,
         question_number: question.question_number,
-        question_type: get_question_type_by_id(question.question_type),
+        question_type: question_type.expect("No Question Type Provided (Should be impossible!)"),
         collection_id: question.collection_id,
         tags,
     }

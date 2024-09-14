@@ -12,6 +12,7 @@
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { createCollection, deleteCollectionById, getUntitledCount, updatesCollectionTitleById } from "../../../database";
     import { PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
+    import { active_collection } from '$lib/stores/active_collection_store';
 
     export let collection: Collection, handleClick: any;
     let menu: Menu;
@@ -39,12 +40,13 @@
 
     // Changable Flags
     $: hasNested = collection.subCollections.length > 0;
+    $: collectionLength = 0;
+
     let selected = false,
         collapsed=false;
 
     // Constant Flags
     const isNested = collection.parentId != null;
-
 
     let maxWidth: number = 0;
 
@@ -110,7 +112,22 @@
     }
 
     onMount(async () => {
-        active_parent.subscribe(col => col && col.id == collection.id ? selected = true : selected = false);
+        active_collection.subscribe((col) => {
+            if(col && col.id == collection.id) {
+                console.log("ok");
+                collectionLength = getCollectionsLength(collection);
+            }
+        })
+
+        active_parent.subscribe((col) => {
+            if(col && col.id == collection.id) {
+                selected = true;
+            } else {
+                selected = false;
+            }
+        });
+
+        collectionLength = getCollectionsLength(collection);
 
         const menuItems = await Promise.all([
             MenuItem.new({
@@ -123,6 +140,8 @@
                 action: deleteCollection
             }),
         ])
+
+        toggleCollection();
 
         menu = await Menu.new({
             items: menuItems
@@ -149,7 +168,7 @@
             <EditableText on:finishedEditing={handleTitleUpdate} class={ selected ? "selected item" : "item" } text={collection.title ? collection.title : "غير مسمى"}/>
             <!-- <p class="item" class:selected={selected}>{collection.title ? collection.title : "غير مسمى"}</p> -->
             <div class="collections-count-container">
-                <p class="collections-count">{getCollectionsLength(collection)}</p>
+                <p class="collections-count">{collectionLength}</p>
             </div>
         </div>
     </div>
