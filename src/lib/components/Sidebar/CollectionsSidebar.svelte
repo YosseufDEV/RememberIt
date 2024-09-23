@@ -1,8 +1,8 @@
 <script lang="ts">
     import { get } from "svelte/store";
 
-    import { PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
-    import { createCollection, getCollectionById, getUntitledCount } from "../../../database"
+    import { ALL_PARENTS_SLICE_DATABASE, PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { createCollection, getUntitledCount } from "../../../database"
     import { active_collection } from "../../stores/active_collection_store";
     import { active_parent } from "../../stores/active-parent-store";
 
@@ -13,22 +13,16 @@
     import SideBarItem from "./SideBarItem.svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
-    import QuestionTypeTags from "$lib/assets/icons/QuestionTypeTags.svelte";
     import QuestionTypesView from "$lib/Views/ParentSidebar/QuestionTypesView.svelte";
 
-    $: parentCollections = get(PARENTS_SLICE_DATABASE);
+    let parentCollections = get(ALL_PARENTS_SLICE_DATABASE);
+    let allParents = get(ALL_PARENTS_SLICE_DATABASE);
 
-    async function handleParnetClick(e: MouseEvent, id: number) {
-        const parent = await getCollectionById(id)
-        active_collection.set(parent)
-        active_parent.set(parent)
-    }
 
     async function handleCollectionCreate() {
         let c = await createCollection(`غير مسمى ${await getUntitledCount()+1}`);
         c.questionsCollections = [];
         c.subCollections = [];
-        console.log("Ok");
         let oldDB = get(PARENTS_SLICE_DATABASE);
         oldDB.push(c);
         PARENTS_SLICE_DATABASE.set(oldDB);
@@ -38,6 +32,11 @@
         parentCollections = pCol;
     })
 
+    ALL_PARENTS_SLICE_DATABASE.subscribe((aPCol) => {
+        console.log(aPCol);
+        allParents = aPCol;
+    })
+
 </script>
 
 <div class="main-container">
@@ -45,7 +44,7 @@
         <Header handleAddClick={handleCollectionCreate} Icon={Notebook} text="Questions"/>
         <div class="collections-container">
             {#each parentCollections as collection (collection.id)}
-                <SideBarItem handleClick={(e) => handleParnetClick(e, collection.id)} collection={collection} />
+                <SideBarItem handleClick={(e) => handleParnetClick(collection.id)} collection={collection} />
             {/each}
         </div>
         <AddCollectionForm />

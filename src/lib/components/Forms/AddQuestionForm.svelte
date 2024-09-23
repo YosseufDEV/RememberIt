@@ -34,7 +34,6 @@
                 await insertQuestionTag(q.id, tagId, explanation).then((qt) => {
                     let tag = get(TAGS_SLICE_DATABASE).filter((t) => t.id == tagId)[0]
 
-                    console.log({ qt })
                     let specificTag: QuestionSpecificTag = {
                         id: tag.id,
                         questionId: qt.question_id,
@@ -52,24 +51,24 @@
                         tags: [ specificTag ],
                     }
 
-                    let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
+                    let oldDB = get(DATABASE);
                     let oldActiveCollection = activeCollection;
 
-                    let oldQuestionTagsDB = get(QUESTION_TAGS_COLLECTION_SLICE_DATABASE);
-
-                    oldQuestionTagsDB.push(specificTag);
+                    oldDB.questionTags.push(specificTag);
                     oldActiveCollection.questions.push(completeQuestion);
-                    oldDB = oldDB.map((col) => {
+
+                    oldDB.questionCollections = oldDB.questionCollections.map((col) => {
                         if(col.id == activeCollection.id) {
                             col.questions.push(completeQuestion);
                         }
                         return col;
                     })
 
-
-                    QUESTION_TAGS_COLLECTION_SLICE_DATABASE.set(oldQuestionTagsDB);
-                    QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
-                    active_collection.set(oldActiveCollection);
+                    if('subCollections' in activeCollection) {
+                        active_collection.set(oldDB.parents.find((p) => p.id==activeCollection.id));
+                    } else {
+                        active_collection.set(oldDB.questionCollections.find((p) => p.id==activeCollection.id));
+                    }
 
                 })
             })
@@ -88,10 +87,10 @@
                 explanation: qt.explanation
             };
 
-            let oldDB = get(QUESTION_TAGS_COLLECTION_SLICE_DATABASE);
+            let oldDB = get(DATABASE);
 
-            oldDB.push(specificTag);
-            QUESTION_TAGS_COLLECTION_SLICE_DATABASE.set(oldDB);
+            oldDB.questionTags.push(specificTag);
+            DATABASE.set(oldDB);
         }
     }
 

@@ -12,7 +12,9 @@ const config = {
     handler(warning);
   },
   kit: {
-    adapter: adapter(),
+    adapter: adapter({
+        precompress: true,
+    }),
   },
 };
 

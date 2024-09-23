@@ -103,7 +103,7 @@ export function removeBadgeAnimation(badgeRef: HTMLElement, strikeThroughRef: HT
     }, "<")
     .to(badgeRef, {
         webkitFilter: "brightness(0.75)",
-        opacity: 0,
+        autoAlpha: 0,
     }).to(badgeRef, {
         marginRight: 0,
         padding: 0,

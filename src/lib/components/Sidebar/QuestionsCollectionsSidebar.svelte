@@ -7,8 +7,8 @@
     import ChildrenSidebarItem from "./ChildrenSidebarItem.svelte";
     import Seperator from "$lib/GenericComponents/Seperator.svelte";
 
-    const activeParentIndex = get(active_parent_index);
-    let parents = get(PARENTS_SLICE_DATABASE);
+    const activeParentIndex = $active_parent_index;
+    let parents = $PARENTS_SLICE_DATABASE;
 
     // TODO: Make this better
     $: activeParentCollection = activeParentIndex ? parents[activeParentIndex] : {

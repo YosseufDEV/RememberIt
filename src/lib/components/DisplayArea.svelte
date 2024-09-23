@@ -142,9 +142,26 @@
 
     })
 
+    // TODO: Implement Smooth scrolling, max-scroll
+    function handleMouseWheel(e: WheelEvent) {
+        e.preventDefault(); // Prevent default scroll behavior
+        const elRect = displayContainerRef.getBoundingClientRect();
+        // Calculate the current Y offset
+        let currentY = elRect.top;
+
+        // Determine the new Y position
+        let newY = currentY - e.deltaY;
+
+        if(newY >= 0) {
+            newY = 0;
+        }
+
+        displayContainerRef.style.transform = `translateY(${newY}px)`;
+    }
+
 </script>
 
-<div class="main-container" bind:this={mainContainerRef}>
+<div class="main-container" on:mousewheel={handleMouseWheel} bind:this={mainContainerRef}>
     <div bind:this={hoverDivRef} class="hover-div"/>
     <DropZone on:drop={handleDraggableDrop} on:hoverenter={handleHoverEnter} on:hoverleave={handleHoverLeave} >
         <div class="container" bind:this={displayContainerRef}>
@@ -170,6 +187,7 @@
 <style>
     .main-container {
         position: relative;
+        z-index: 100;
         background: rgba(0, 0, 0, 0.7);
         width: 100%;
         padding-top: 40px;
@@ -177,12 +195,7 @@
         padding-left: 25px;
     }
     .container {
-        overflow-y: scroll;
         /* HACK: to make the badge explanation appear even in overflow */
-        margin-left: -200px;
-        padding-left: 200px;
-        margin-right: -200px;
-        padding-right: 200px;
         width: calc(100% - 5px);
         height: 100%;
     }
@@ -191,6 +204,7 @@
         margin-top: -40px;
         margin-left: -25px;
         margin-bottom: -10px;
+        z-index: 100;
         width: 100%;
         height: 100%;
     }

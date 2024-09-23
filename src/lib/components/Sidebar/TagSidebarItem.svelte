@@ -98,7 +98,7 @@
         display: flex;
         align-items: center;
         display: grid; grid-template-columns: auto 1fr auto;
-        z-index: 102;
+        z-index: 112;
         overflow: hidden;
     }
 

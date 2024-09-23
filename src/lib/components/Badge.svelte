@@ -19,7 +19,6 @@
     let gradientAnimationTimeline: GSAPTimeline;
 
     async function handleDoubleClick(e: MouseEvent) {
-        console.log(e.target);
         if(e.target != badgeRef && e.target != badgeLabelRef && e.target != strikeThroughRef) return;
         if(!isVisible) {
             if(tag.explanation.length > 0) {

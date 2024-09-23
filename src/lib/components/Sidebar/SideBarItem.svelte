@@ -5,16 +5,17 @@
     import { get } from 'svelte/store';
 
     import type { Collection } from "../../typescript/types";
+    import { ALL_PARENTS_SLICE_DATABASE, PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
+
     import { animateChevronClosed, animateChevronOpened, collapseCollection, deleteCollectionAnimation, expandCollection } from "../Animations/CollectionAnimations";
     import { active_parent } from "../../stores/active-parent-store";
-    import SidebarNestedItems from "./SidebarNestedItems.svelte";
-    import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
-    import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { createCollection, deleteCollectionById, getUntitledCount, updatesCollectionTitleById } from "../../../database";
-    import { PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
     import { active_collection } from '$lib/stores/active_collection_store';
 
-    export let collection: Collection, handleClick: any;
+    import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+
+    export let collection: Collection;
     let menu: Menu;
 
     let children: HTMLElement,
@@ -22,6 +23,13 @@
         collapsableCollection: HTMLElement;
     let activeAnimation: GSAPTween | GSAPTimeline;
     let containerRef: HTMLElement;
+
+    $: hasNested = collection.subCollections.length > 0;
+    $: collectionLength = 0;
+
+    // TODO: IMplement Subscribr!
+
+    let allParents = $ALL_PARENTS_SLICE_DATABASE;
 
     function getCollectionsLength(collection: Collection) {
         let length = 0;
@@ -37,13 +45,8 @@
         return length;
     } 
 
-
-    // Changable Flags
-    $: hasNested = collection.subCollections.length > 0;
-    $: collectionLength = 0;
-
     let selected = false,
-        collapsed=false;
+        collapsed=true;
 
     // Constant Flags
     const isNested = collection.parentId != null;
@@ -102,7 +105,30 @@
     }
 
     async function showContextMenu() {
-        await menu.popup().catch();
+        const menuItems = await Promise.all([
+            MenuItem.new({
+                text: 'Create Subcollection',
+                action: addSubCollection
+            }),
+            PredefinedMenuItem.new({ item: 'Separator' }),
+            MenuItem.new({
+                text: 'Delete Collection',
+                action: deleteCollection
+            }),
+        ])
+
+        menu = await Menu.new({
+            items: menuItems
+        })
+
+        await menu.popup()
+    }
+
+    async function handleParnetClick() {
+        console.log(collection.id);
+        const parent = allParents.find(p => p.id == collection.id)
+        active_collection.set(parent)
+        active_parent.set(parent)
     }
 
     function deleteCollection() {
@@ -114,7 +140,6 @@
     onMount(async () => {
         active_collection.subscribe((col) => {
             if(col && col.id == collection.id) {
-                console.log("ok");
                 collectionLength = getCollectionsLength(collection);
             }
         })
@@ -129,24 +154,7 @@
 
         collectionLength = getCollectionsLength(collection);
 
-        const menuItems = await Promise.all([
-            MenuItem.new({
-                text: 'Create Subcollection',
-                action: addSubCollection
-            }),
-            PredefinedMenuItem.new({ item: 'Separator' }),
-            MenuItem.new({
-                text: 'Delete Collection',
-                action: deleteCollection
-            }),
-        ])
-
-        toggleCollection();
-
-        menu = await Menu.new({
-            items: menuItems
-        })
-
+        //
     })
 
 </script>
@@ -163,7 +171,7 @@
                 <ChevronDown fill={"#505050"} size={23} bind:ref={chevron}/>
             </div>
         {/if}
-        <div on:click={handleClick} class="container" >
+        <div on:click={handleParnetClick} class="container" >
             <!-- TODO: !! REMOVE THIS IN RELEASE !! -->
             <EditableText on:finishedEditing={handleTitleUpdate} class={ selected ? "selected item" : "item" } text={collection.title ? collection.title : "غير مسمى"}/>
             <!-- <p class="item" class:selected={selected}>{collection.title ? collection.title : "غير مسمى"}</p> -->
@@ -173,7 +181,9 @@
         </div>
     </div>
     <div class="children" bind:this={children}>
-        <SidebarNestedItems collection={collection}/>
+        {#each collection.subCollections as nested_collection }
+            <svelte:self collection={nested_collection} />
+        {/each}
     </div>
 </div>
 
@@ -231,7 +241,8 @@
     }
 
     .children {
-        position: relative;
+        position: absolute;
+        top: -1000px;
         margin-left: 15px;
     }
 

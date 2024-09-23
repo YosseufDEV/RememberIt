@@ -1,7 +1,7 @@
 import gsap from "gsap";
 
 export function mutateTagToBadgeAnimation(tagContainerRef: HTMLElement, tagCircleRef: HTMLElement, countRef: HTMLElement) {
-    const timeline = gsap.timeline();
+    const timeline = gsap.timeline({ defaults: { zIndex: 10000 } });
     timeline
         .to(tagContainerRef, {
             background: `${tagCircleRef.style.background}`,

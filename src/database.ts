@@ -9,6 +9,7 @@ export interface Database {
     tags: Tag[],
     types: QuestionType[],
     questionCollections: QuestionsCollection[],
+    questionTags: QuestionSpecificTag[],
 }
 
 export async function loadSQLITEDatabase(): Promise<Database> {
@@ -17,10 +18,13 @@ export async function loadSQLITEDatabase(): Promise<Database> {
     const tags = await getAllTags();
     const questionCollections = await getAllQuesitonsCollections();
     const types = await getAllQuestionTypes();
+    const questionTags = await getAllQuestionsTags();
+
     return {
         parents,
         unnested,
         tags,
+        questionTags,
         questionCollections,
         types
     }
@@ -40,7 +44,6 @@ async function importCollection(collection: Collection,
                 el.questions.forEach((oldQ) => {
                     const type = oldQ.questionType;
                     let typeId: number = -1;
-                    console.log(typesArr);
                     if(type) {
                         typeId = typesArr.find((el) => el.label == type.label && el.color == type.color)?.id!;
                     }
@@ -78,7 +81,6 @@ export async function importFromJson(json: Database) {
         json.types.forEach(async (type) => {
             updatedTypes.push(await insertQuestionType(type.label, type.color));
         })
-        console.log({ updatedTypes })
     }
 
     json.unnested.forEach(async (el) => {
