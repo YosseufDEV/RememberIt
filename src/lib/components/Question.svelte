@@ -10,12 +10,11 @@
     import Badge from "./Badge.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import { get } from "svelte/store";
-    import { TextBox, Tooltip } from "fluent-svelte";
+    import { Tooltip } from "fluent-svelte";
 
     export let question: Question;
     let questionRef: HTMLElement;
     let questionTypes = get(QUESTION_TYPES_SLICE_DATABASE);
-    let menu: Menu;
 
     $: questionsTags = question.tags;
 
@@ -25,6 +24,32 @@
     }
 
     async function showMenu() {
+        console.log("Zinkp");
+
+        const typesSubmenuItems = questionTypes.map(el => (
+            MenuItem.new({
+                text: el.label,
+                action: () => changeTypeTo(el.id)
+            })
+        ))
+
+        const menuItems = await Promise.all([
+            Submenu.new({
+                text: "Change Type",
+                items: await Promise.all(typesSubmenuItems)
+            }),
+            MenuItem.new({
+                text: 'Delete Question',
+                action: deleteQuestion,
+            }),
+        ])
+
+
+        const menu = await Menu.new({
+            items: menuItems
+        })
+        console.log(menu);
+
         await menu.popup();
     }
 
@@ -48,26 +73,6 @@
             }
         })
  
-        // const typesSubmenuItems = questionTypes.map(el => (
-        //     MenuItem.new({
-        //         text: el.label,
-        //         action: () => changeTypeTo(el.id)
-        //     })
-        // ))
-        // const menuItems = await Promise.all([
-        //     Submenu.new({
-        //         text: "Change Type",
-        //         items: await Promise.all(typesSubmenuItems)
-        //     }),
-        //     MenuItem.new({
-        //         text: 'Delete Question',
-        //         action: deleteQuestion,
-        //     }),
-        // ])
-        //
-        // menu = await Menu.new({
-        //     items: menuItems
-        // })
     })
 </script>
 

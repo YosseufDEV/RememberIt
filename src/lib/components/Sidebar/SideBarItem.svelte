@@ -153,8 +153,6 @@
         });
 
         collectionLength = getCollectionsLength(collection);
-
-        //
     })
 
 </script>
