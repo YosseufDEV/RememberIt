@@ -30,7 +30,7 @@
 
 <form class="form" on:submit|preventDefault={handleCollectionSubmit}>
     <TextBox placeholder="Parent Title..." bind:value={title}/>
-    <Button variant="accent">Add</Button>
+    <Button variant="variant">Add</Button>
 </form>
 
 <style>

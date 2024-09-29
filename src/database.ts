@@ -92,7 +92,7 @@ export async function importFromJson(json: Database) {
 // TODO: do this!
 export async function exportDatabaseAsJSON() {
     const object = JSON.stringify(await loadSQLITEDatabase());
-    writeTextFile('save.json', object, {
+    writeTextFile(`backup-${Date.now()}.json`, object, {
         baseDir: BaseDirectory.Desktop
     }) 
 }

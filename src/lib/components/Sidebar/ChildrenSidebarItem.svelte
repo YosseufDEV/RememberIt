@@ -1,10 +1,12 @@
 <script lang="ts">
-    import { Menu, MenuItem, Submenu } from "@tauri-apps/api/menu"
+    import { Menu, MenuItem } from "@tauri-apps/api/menu"
 
     import moment from "moment";
+
+    import type { QuestionsCollection, Dialouge } from "../../typescript/types"
     import { deleteQuestionsCollectionById, updateQuestionsCollectionTitleById } from "../../../database";
     import { active_collection } from "../../stores/active_collection_store";
-    import type { QuestionsCollection } from "../../typescript/types"
+    import { active_dialouge } from "$lib/stores/active-dialouge-store";
 
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
     import Seperator from "$lib/GenericComponents/Seperator.svelte";
@@ -24,8 +26,31 @@
     }
 
     async function deleteCollection() {
-        ref.remove();
-        await deleteQuestionsCollectionById(collection.id)
+        let dialouge: Dialouge = {
+            title: `Delete questions collection \"${collection.title}\"?`,
+            content: "This action cannot be undone",
+            opened: true,
+            button: [
+                {
+                    text: "Confirm",
+                    variant: "accent",
+                    onClick: async () => {
+                        ref.remove();
+                        await deleteQuestionsCollectionById(collection.id)
+                        $active_dialouge.callback();
+                    }
+                },
+                {
+                    text: "Cancel",
+                    variant: "standard",
+                    onClick: () => {
+                        $active_dialouge.callback();
+                    }
+                }
+            ],
+            callback: $active_dialouge.callback
+        }
+        active_dialouge.set(dialouge);
     }
 
     async function showMenu() {

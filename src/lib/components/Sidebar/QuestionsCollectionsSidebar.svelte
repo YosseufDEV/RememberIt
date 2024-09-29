@@ -41,8 +41,6 @@
 
 <style>
     .container {
-        padding: 40px 0;
-        padding-bottom: 10px;
         overflow-x: hidden;
         overflow-y: scroll;
         background: rgba(0, 0, 0, 0.85);

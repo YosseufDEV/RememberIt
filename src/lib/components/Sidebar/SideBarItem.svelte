@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
     import { get } from 'svelte/store';
 
-    import type { Collection } from "../../typescript/types";
+    import type { Collection, Dialouge } from "../../typescript/types";
     import { ALL_PARENTS_SLICE_DATABASE, PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
 
     import { animateChevronClosed, animateChevronOpened, collapseCollection, deleteCollectionAnimation, expandCollection } from "../Animations/CollectionAnimations";
@@ -14,6 +14,7 @@
 
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import { active_dialouge } from '$lib/stores/active-dialouge-store';
 
     export let collection: Collection;
     let menu: Menu;
@@ -132,9 +133,32 @@
     }
 
     function deleteCollection() {
-        deleteCollectionAnimation(containerRef).then(async () => {
-                await deleteCollectionById(collection.id); 
-        })
+        let dialouge: Dialouge = {
+            title: `Delete collection \"${collection.title}\"?`,
+            content: "This action cannot be undone",
+            opened: true,
+            button: [
+                {
+                    text: "Confirm",
+                    variant: "accent",
+                    onClick: () => {
+                        deleteCollectionAnimation(containerRef).then(async () => {
+                                await deleteCollectionById(collection.id); 
+                        })
+                        $active_dialouge.callback();
+                    }
+                },
+                {
+                    text: "Cancel",
+                    variant: "standard",
+                    onClick: () => {
+                        $active_dialouge.callback();
+                    }
+                }
+            ],
+            callback: $active_dialouge.callback
+        }
+        active_dialouge.set(dialouge)
     }
 
     onMount(async () => {

@@ -13,6 +13,20 @@ export interface QuestionSpecificTag {
     explanation: string,
 }
 
+export interface Button {
+    text: string,
+    variant: "accent" | "standard",
+    onClick: Function,
+}
+
+export interface Dialouge {
+    title: string,
+    content?: string,
+    opened: boolean,
+    button: Button[],
+    callback: Function
+}
+
 export interface QuestionTag {
     id: number,
     tagId: number,
