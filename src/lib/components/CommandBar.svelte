@@ -22,7 +22,7 @@
     {#if isVisible}
         <div class="container" style={`display: ${isVisible};`}>
             <div class="command-bar">
-                <h1>New Question</h1>
+                <h3 style:margin-bottom="15px">New Question</h3>
                 <AddQuestionForm />
             </div>
         </div>

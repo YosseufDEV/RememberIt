@@ -27,7 +27,6 @@
             filterRules = [...filterRules, item];
             filterCollection([item.id]);
         }
-
     }
 
     function handleRuleRemove(rule: TagItemMetadata) {
@@ -44,8 +43,6 @@
             let flatRules = filterRules.map((el) => el.id);
             filterCollection(flatRules, unfilteredCollecition);
         }
-
-
     }
 
     function handleHoverEnter(e: CustomEvent) {
@@ -144,7 +141,6 @@
 
     // TODO: Implement Smooth scrolling, max-scroll
     function handleMouseWheel(e: WheelEvent) {
-        e.preventDefault(); // Prevent default scroll behavior
         const elRect = displayContainerRef.getBoundingClientRect();
         // Calculate the current Y offset
         let currentY = elRect.top;
@@ -161,7 +157,7 @@
 
 </script>
 
-<div class="main-container" on:mousewheel={handleMouseWheel} bind:this={mainContainerRef}>
+<div class="main-container" on:mousewheel|passive={handleMouseWheel} bind:this={mainContainerRef}>
     <div bind:this={hoverDivRef} class="hover-div"/>
     <DropZone on:drop={handleDraggableDrop} on:hoverenter={handleHoverEnter} on:hoverleave={handleHoverLeave} >
         <div class="container" bind:this={displayContainerRef}>
@@ -195,7 +191,6 @@
         padding-left: 25px;
     }
     .container {
-        /* HACK: to make the badge explanation appear even in overflow */
         width: calc(100% - 5px);
         height: 100%;
     }

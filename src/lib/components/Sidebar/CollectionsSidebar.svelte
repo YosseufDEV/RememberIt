@@ -44,7 +44,7 @@
         <Header handleAddClick={handleCollectionCreate} Icon={Notebook} text="Questions"/>
         <div class="collections-container">
             {#each parentCollections as collection (collection.id)}
-                <SideBarItem handleClick={(e) => handleParnetClick(collection.id)} collection={collection} />
+                <SideBarItem collection={collection} />
             {/each}
         </div>
         <AddCollectionForm />

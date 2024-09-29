@@ -44,7 +44,8 @@
     })
 </script>
 
-<svelte:window on:keydown={handleKeyDown} on:contextmenu|preventDefault />
+<svelte:window on:keydown={handleKeyDown} />
+
 <div class="container">
     <StatusBar />
     <CommandBar />

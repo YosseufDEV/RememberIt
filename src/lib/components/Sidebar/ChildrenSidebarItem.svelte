@@ -1,12 +1,16 @@
 <script lang="ts">
-    import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import Seperator from "$lib/GenericComponents/Seperator.svelte";
+    import { Menu, MenuItem, Submenu } from "@tauri-apps/api/menu"
+
     import moment from "moment";
-    import { updateQuestionsCollectionTitleById } from "../../../database";
+    import { deleteQuestionsCollectionById, updateQuestionsCollectionTitleById } from "../../../database";
     import { active_collection } from "../../stores/active_collection_store";
     import type { QuestionsCollection } from "../../typescript/types"
 
+    import EditableText from "$lib/GenericComponents/EditableText.svelte";
+    import Seperator from "$lib/GenericComponents/Seperator.svelte";
+
     let selected = false;
+    let ref: HTMLElement;
 
     async function handleClick() {
         active_collection.set(collection)
@@ -17,6 +21,26 @@
         const newTitle = e.detail.newText;
 
         await updateQuestionsCollectionTitleById(collection.id, newTitle)
+    }
+
+    async function deleteCollection() {
+        ref.remove();
+        await deleteQuestionsCollectionById(collection.id)
+    }
+
+    async function showMenu() {
+        const menuItems = await Promise.all([
+            MenuItem.new({
+                text: 'Delete Collection',
+                action: async () => await deleteCollection(),
+            }),
+        ])
+
+        const menu = await Menu.new({
+            items: menuItems
+        })
+
+        await menu.popup();
     }
 
     export let collection: QuestionsCollection;
@@ -37,9 +61,12 @@
     setInterval(() => {
         updatedAt = momentUpdatedAt.fromNow();
     }, 1000)
+
 </script>
 
 <div
+    bind:this={ref}
+    on:contextmenu={showMenu}
     on:click={handleClick} class="container" class:selected={selected}>
     <EditableText tagType="h3" on:finishedEditing={handleTitleUpdate} class="questions-collection-item" text={collection.title} />
     <p class="date">{localizedDate}</p>

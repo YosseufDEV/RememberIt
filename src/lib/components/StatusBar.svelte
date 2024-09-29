@@ -1,4 +1,5 @@
 <script>
+    import { invoke } from "@tauri-apps/api/core";
     import { getCurrentWindow } from '@tauri-apps/api/window'
     import { onMount } from 'svelte';
     import ChromeMaximize from '$lib/assets/icons/ChromeMaximize.svelte';
@@ -9,6 +10,8 @@
     const ICON_SIZE = 11;
     let COLOR = "#fff";
     let isMaximized = false;
+    
+    let isDevBuild = false;
 
     async function listenToMaximize() {
         await getCurrentWindow().onResized(async () => {
@@ -47,11 +50,18 @@
             titleBarClose.addEventListener('click', () => getCurrentWindow().close())
         }
 
+        isDevBuild = await invoke("is_dev_build");
+
         await listenToMaximize();
         await listenToIsFocused();
     })
 </script>
 
+{#if isDevBuild}
+<div class="developement-text">
+    <p style:background="none">DEV BUILD</p>
+</div>
+{/if}
 <div data-tauri-drag-region class="titlebar">
     <div class="titlebar-button" id="titlebar-minimize">
         <ChromeMinimize size={ICON_SIZE} color={COLOR}/>
@@ -69,6 +79,19 @@
 </div>
 
 <style>
+    .developement-text {
+        z-index: 10000;
+        background: none;
+        position: absolute;
+        top: 10;
+        margin-left: 50px;
+    }
+
+    .developement-text p {
+        color: brown;
+        font-weight: bold;
+    }
+
     .titlebar {
         height: 40px;
         z-index: 1000000;

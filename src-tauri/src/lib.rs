@@ -7,13 +7,16 @@ mod schema;
 use tauri::Manager;
 use window_vibrancy::apply_acrylic;
 
+use dotenvy::dotenv;
+use std::env;
+
 use crate::api::collection;
 use crate::api::question;
 use crate::api::question_collection;
 use crate::api::question_tag;
 use crate::api::question_type;
 use crate::api::tag;
-use crate::database::check_if_database_exists;
+use crate::database::{ check_if_database_exists, is_dev_build };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 // TODO: Check if Database exists first
@@ -50,20 +53,27 @@ pub fn run() {
             crate::question_type::get_all_question_types,
             crate::question_type::update_type_color_by_id,
             crate::question_type::update_type_label_by_id,
-            // crate::question_tag::get_number_of_questions_with_tag,
             crate::question_tag::insert_question_tag,
             crate::question_tag::get_question_tags_by_id,
             crate::question_tag::update_question_tag_explanation_by_id,
             crate::question_tag::delete_question_tag_by_id,
+            crate::database::is_dev_build,
             crate::question_tag::get_all_questions_tags,
         ])
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
-            // let _ = apply_mica(&window, Some(true));
-            check_if_database_exists("../database/database.db").unwrap();
+
+            let mut url = "./database.db";
+
+            if is_dev_build() {
+                url = "../database/database.db"
+            }
+
+            check_if_database_exists(url).unwrap();
+
             // let _ = apply_tabbed(&window, Some(true));
-            apply_acrylic(&window, Some((0, 0, 0, 10))).unwrap();
+            apply_acrylic(&window, Some((0, 0, 0, 0))).unwrap();
             Ok(())
         })
         .run(tauri::generate_context!())

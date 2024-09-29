@@ -108,16 +108,16 @@
 </script>
 
 <form on:submit|preventDefault={handleSubmit}>
-    <div>
         <TextBox class="text-box" placeholder="Question Number" bind:value={questionNumber} type="number"/>
         <TextBox class="text-box" placeholder="Explanation" bind:value={explanation} type="text"/>
-    </div>
-    <div>
         <ComboBox bind:value={tagId} class="combo-box" items={ tags.map((el) => ({ value: el.id, name: el.label }) ) }/>
         <ComboBox bind:value={typeId} class="combo-box" items={types.map((el) => ({ value: el.id, name: el.label }) )}/>
         <Button variant="accent">Add</Button>
-    </div>
 </form>
 
 <style>
+    form {
+        display: grid;
+        grid-row-gap: 20px; 
+    }
 </style>

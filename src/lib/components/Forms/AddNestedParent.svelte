@@ -24,8 +24,6 @@
         let active = get(active_parent)
         const index = parents.findIndex((pCol) => pCol.id == active.id);
 
-        // FIX: it will throw and error when add in nested.
-        // INFO: Create Colleciton
         let collection = await createCollection(title, active.id);
 
         collection.questionsCollections = []

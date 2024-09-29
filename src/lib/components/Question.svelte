@@ -1,15 +1,16 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import { Menu, MenuItem, Submenu } from "@tauri-apps/api/menu"
 
+    import { onMount } from "svelte";
+    import { get } from "svelte/store";
+
     import type { Question } from "../typescript/types";
-    import { deleteQuestionById, updateQuestionNumberById, updateQuestionTypeById } from "../../database";
     import { QUESTION_TAGS_COLLECTION_SLICE_DATABASE, QUESTION_TYPES_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase";
+    import { deleteQuestionById, updateQuestionNumberById, updateQuestionTypeById } from "../../database";
     import { deleteQuestionAnimation } from "./Animations/QuestionLifecylceAnimations";
 
     import Badge from "./Badge.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { get } from "svelte/store";
     import { Tooltip } from "fluent-svelte";
 
     export let question: Question;

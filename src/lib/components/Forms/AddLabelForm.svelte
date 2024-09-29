@@ -4,7 +4,7 @@
 
     import { Button, TextBox } from "fluent-svelte";
     import { insertTag } from "../../../database";
-    import { DATABASE, TAGS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { DATABASE } from "../../typescript/Database/CachedDatabase";
     import { generateColor } from "../../typescript/color_generator";
 
     let label: string = "";
@@ -15,7 +15,6 @@
         insertTag(label, generateColor(colors)).then((tag) => {
             oldDB.tags.push({ id: tag.id, label: tag.label, color: tag.color })
             DATABASE.set(oldDB);
-            TAGS_SLICE_DATABASE.set(oldDB.tags)
         });
     }
 
