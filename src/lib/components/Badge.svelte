@@ -67,8 +67,11 @@
 </script>
 
 <div class="container" on:dblclick={handleDoubleClick} 
-     on:mouseover={() => hoverLock ? undefined : hovered = true} on:mouseleave={() => hovered = false} bind:this={badgeRef}
-     style={`--bg-color-1: ${tag.color}; --bg-color-2: ${adjustColor(tag.color, -15)}`}>
+     bind:this={badgeRef}
+     on:mouseover={() => hoverLock ? undefined : hovered = true} 
+     on:mouseleave={() => hovered = false} 
+     style:--bg-color-1={tag.color}
+     style:--bg-color-2={adjustColor(tag.color, -15)}>
     <p bind:this={badgeLabelRef} class="label">{tag.label}</p> 
     {#if hovered}
         <div class="options-container">

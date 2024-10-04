@@ -1,7 +1,9 @@
-<script>
+<script lang="ts">
     import { invoke } from "@tauri-apps/api/core";
     import { getCurrentWindow } from '@tauri-apps/api/window'
     import { onMount } from 'svelte';
+    import { getVersion } from "@tauri-apps/api/app"
+
     import ChromeMaximize from '$lib/assets/icons/ChromeMaximize.svelte';
     import ChromeMinimize from '$lib/assets/icons/ChromeMinimize.svelte';
     import ChromeClose from '$lib/assets/icons/ChromeClose.svelte';
@@ -12,6 +14,7 @@
     let isMaximized = false;
     
     let isDevBuild = false;
+    let version: string;
 
     async function listenToMaximize() {
         await getCurrentWindow().onResized(async () => {
@@ -51,6 +54,7 @@
         }
 
         isDevBuild = await invoke("is_dev_build");
+        version = await getVersion();
 
         await listenToMaximize();
         await listenToIsFocused();
@@ -59,7 +63,7 @@
 
 {#if isDevBuild}
 <div class="developement-text">
-    <p style:background="none">DEV BUILD</p>
+    <p style:background="none">DEV BUILD @{version}</p>
 </div>
 {/if}
 <div data-tauri-drag-region class="titlebar">
@@ -88,7 +92,7 @@
     }
 
     .developement-text p {
-        color: brown;
+        color: lightcoral;
         font-weight: bold;
     }
 

@@ -2,16 +2,13 @@
     import { onMount } from 'svelte'
     import { get } from "svelte/store"
 
-    import StatusBar from '$lib/components/StatusBar.svelte';
-
     import '../app.css'
     import "fluent-svelte/theme.css";
-    import DisplayArea from "$lib/components/DisplayArea.svelte";
-    import QuestionsCollectionsSidebar from "$lib/components/Sidebar/QuestionsCollectionsSidebar.svelte"
-    import CommandBar from "$lib/components/CommandBar.svelte";
-    import CollectionsSidebar from '$lib/components/Sidebar/CollectionsSidebar.svelte';
-    import { ContentDialog, Button } from "fluent-svelte";
 
+    import StatusBar from '$lib/components/StatusBar.svelte';
+
+
+    import type { Dialouge } from '$lib/typescript/types';
     import { PARENTS_SLICE_DATABASE } from "$lib/typescript/Database/CachedDatabase"
     import { active_collection } from '$lib/stores/active_collection_store';
     import { active_parent } from '$lib/stores/active-parent-store';
@@ -19,7 +16,13 @@
     import { open } from '@tauri-apps/plugin-dialog';
     import { readTextFile } from '@tauri-apps/plugin-fs';
     import { exportDatabaseAsJSON, importFromJson } from '../database';
-    import type { Dialouge } from '$lib/typescript/types';
+
+    import DisplayArea from "$lib/components/DisplayArea.svelte";
+    import QuestionsCollectionsSidebar from "$lib/components/Sidebar/QuestionsCollectionsSidebar.svelte"
+    import CommandBar from "$lib/components/CommandBar.svelte";
+    import CollectionsSidebar from '$lib/components/Sidebar/CollectionsSidebar.svelte';
+    import { ContentDialog, Button } from "fluent-svelte";
+
 
     let dialouge: Dialouge = {
         title: "This Shouldn't Appear",
@@ -66,7 +69,7 @@
 
 <div class="container">
     <ContentDialog bind:open={dialouge.opened} size="standard" title={dialouge.title}>
-        {#if dialouge.content}
+        {#if dialouge.content }
             {dialouge.content}
         {/if}
         <svelte:fragment slot="footer">

@@ -3,7 +3,7 @@
 
     import { TextBox, Button } from "fluent-svelte"
     import { active_collection } from "../../stores/active_collection_store";
-    import { QUESTION_COLLECTION_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { DATABASE } from "../../typescript/Database/CachedDatabase";
     import { createQuestionsCollection } from "../../../database";
 
     let title: string = "";
@@ -13,9 +13,9 @@
         if(parentCollection) {
             let c = await createQuestionsCollection(title, parentCollection.id);
             c.questions = [];
-            let oldDB = get(QUESTION_COLLECTION_SLICE_DATABASE);
-            oldDB.push(c);
-            QUESTION_COLLECTION_SLICE_DATABASE.set(oldDB);
+            let oldDB = get(DATABASE);
+            oldDB.questionCollections.push(c);
+            DATABASE.set(oldDB);
         }
     }
 </script>

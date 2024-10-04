@@ -5,16 +5,16 @@
     import { get } from 'svelte/store';
 
     import type { Collection, Dialouge } from "../../typescript/types";
-    import { ALL_PARENTS_SLICE_DATABASE, PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
+    import { ALL_PARENTS_SLICE_DATABASE, DATABASE, PARENTS_SLICE_DATABASE } from '$lib/typescript/Database/CachedDatabase';
 
     import { animateChevronClosed, animateChevronOpened, collapseCollection, deleteCollectionAnimation, expandCollection } from "../Animations/CollectionAnimations";
+    import { active_dialouge } from '$lib/stores/active-dialouge-store';
     import { active_parent } from "../../stores/active-parent-store";
     import { createCollection, deleteCollectionById, getUntitledCount, updatesCollectionTitleById } from "../../../database";
     import { active_collection } from '$lib/stores/active_collection_store';
 
     import ChevronDown from "$lib/assets/icons/chevron_down.svelte";
     import EditableText from "$lib/GenericComponents/EditableText.svelte";
-    import { active_dialouge } from '$lib/stores/active-dialouge-store';
 
     export let collection: Collection;
     let menu: Menu;
@@ -28,8 +28,7 @@
     $: hasNested = collection.subCollections.length > 0;
     $: collectionLength = 0;
 
-    // TODO: IMplement Subscribr!
-
+    // TODO: Implement Subscriber For this!
     let allParents = $ALL_PARENTS_SLICE_DATABASE;
 
     function getCollectionsLength(collection: Collection) {
@@ -39,9 +38,11 @@
             length += childCollection.questions.length;
         }
 
-        for(const nestedCollection of collection.subCollections) {
-            length+=getCollectionsLength(nestedCollection);
+        if(!collapsed) {
+            for(const nestedCollection of collection.subCollections) {
+                length+=getCollectionsLength(nestedCollection);
 
+            }
         }
         return length;
     } 
@@ -66,6 +67,7 @@
             animateChevronClosed(chevron);
             collapsed = true;
         }
+        collectionLength = getCollectionsLength(collection);
     }
 
     async function handleTitleUpdate(e: CustomEvent) {
@@ -94,28 +96,27 @@
         subCollection.subCollections = []
 
         if(index != -1) {
-            const oldDB = parents; 
-            oldDB[index].subCollections.push(subCollection);
-            PARENTS_SLICE_DATABASE.set(oldDB);
+            const oldDB = $DATABASE; 
+            oldDB.unnested[index].subCollections.push(subCollection);
+            DATABASE.set(oldDB);
         } else {
             for(const superCollection of parents) {
                 addCollectionIfSuperParent(superCollection, collection.id, subCollection);
             }
-            PARENTS_SLICE_DATABASE.set(parents);
+            const oldDB = $DATABASE; 
+            DATABASE.set(oldDB);
+        }
+
+        if(collapsed) {
+            toggleCollection();
         }
     }
 
     async function showContextMenu() {
         const menuItems = await Promise.all([
-            MenuItem.new({
-                text: 'Create Subcollection',
-                action: addSubCollection
-            }),
+            MenuItem.new({ text: 'Create Subcollection', action: addSubCollection }),
             PredefinedMenuItem.new({ item: 'Separator' }),
-            MenuItem.new({
-                text: 'Delete Collection',
-                action: deleteCollection
-            }),
+            MenuItem.new({ text: 'Delete Collection', action: deleteCollection }),
         ])
 
         menu = await Menu.new({
@@ -126,8 +127,8 @@
     }
 
     async function handleParnetClick() {
-        console.log(collection.id);
         const parent = allParents.find(p => p.id == collection.id)
+        console.log(parent)
         active_collection.set(parent)
         active_parent.set(parent)
     }
@@ -177,6 +178,10 @@
         });
 
         collectionLength = getCollectionsLength(collection);
+    })
+
+    ALL_PARENTS_SLICE_DATABASE.subscribe((p) => {
+        allParents = p;
     })
 
 </script>

@@ -1,31 +1,29 @@
 <script lang="ts">
-    import { get } from "svelte/store";
-
-    import { ALL_PARENTS_SLICE_DATABASE, PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
+    import { ALL_PARENTS_SLICE_DATABASE, DATABASE, PARENTS_SLICE_DATABASE } from "../../typescript/Database/CachedDatabase";
     import { createCollection, getUntitledCount } from "../../../database"
-    import { active_collection } from "../../stores/active_collection_store";
-    import { active_parent } from "../../stores/active-parent-store";
 
     import Header from "$lib/GenericComponents/Header.svelte";
 
     import TagsView from "../../Views/ParentSidebar/TagsView.svelte";
-
     import SideBarItem from "./SideBarItem.svelte";
     import Notebook from "$lib/assets/icons/Notebook.svelte";
     import AddCollectionForm from "../Forms/AddCollectionForm.svelte";
     import QuestionTypesView from "$lib/Views/ParentSidebar/QuestionTypesView.svelte";
 
-    let parentCollections = get(ALL_PARENTS_SLICE_DATABASE);
-    let allParents = get(ALL_PARENTS_SLICE_DATABASE);
-
+    let parentCollections = $PARENTS_SLICE_DATABASE;
+    let allParents = $ALL_PARENTS_SLICE_DATABASE;
 
     async function handleCollectionCreate() {
-        let c = await createCollection(`غير مسمى ${await getUntitledCount()+1}`);
+        let c = await createCollection(`Untitled ${await getUntitledCount()+1}`);
         c.questionsCollections = [];
         c.subCollections = [];
-        let oldDB = get(PARENTS_SLICE_DATABASE);
-        oldDB.push(c);
-        PARENTS_SLICE_DATABASE.set(oldDB);
+
+        let oldDB = $DATABASE;
+
+        oldDB.unnested.push(c);
+        oldDB.parents.push(c);
+
+        DATABASE.set(oldDB);
     }
 
     PARENTS_SLICE_DATABASE.subscribe((pCol) => {
@@ -33,7 +31,6 @@
     })
 
     ALL_PARENTS_SLICE_DATABASE.subscribe((aPCol) => {
-        console.log(aPCol);
         allParents = aPCol;
     })
 

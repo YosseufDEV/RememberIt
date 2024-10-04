@@ -154,7 +154,6 @@
 
         displayContainerRef.style.transform = `translateY(${newY}px)`;
     }
-
 </script>
 
 <div class="main-container" on:mousewheel|passive={handleMouseWheel} bind:this={mainContainerRef}>
